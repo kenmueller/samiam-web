@@ -22,7 +22,9 @@ const pageMetadata = (options: PageMetadataOptions): Metadata => {
 			? `/api/preview?title=${encodeURIComponent(options.previewTitle)}`
 			: `/_next/image?url=${encodeURIComponent(
 					options.previewImage.src
-			  )}&w=1200&q=${options.previewImage.quality ?? 75}`
+			  )}&w=${encodeURIComponent(1200)}&q=${encodeURIComponent(
+					options.previewImage.quality ?? 75
+			  )}`
 
 	return {
 		alternates: { canonical: url },
