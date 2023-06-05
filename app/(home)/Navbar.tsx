@@ -35,14 +35,16 @@ const Navbar = () => {
 	}, [loadNetworkFromStorage])
 
 	return (
-		<nav className="flex items-center gap-4">
+		<nav className="absolute top-4 left-4 right-4 flex items-center gap-4 px-4 py-2 bg-white border-2 rounded-xl">
 			<h1>SamIam</h1>
-			<button className="text-sky-500" onClick={openNetwork}>
-				Open
-			</button>
-			<button className="text-sky-500" onClick={exportNetwork}>
-				Export
-			</button>
+			<div className="flex items-center gap-4 translate-y-[2px]">
+				<button className="text-sky-500" onClick={openNetwork}>
+					Open
+				</button>
+				<button className="text-sky-500" onClick={exportNetwork}>
+					Export
+				</button>
+			</div>
 		</nav>
 	)
 }
