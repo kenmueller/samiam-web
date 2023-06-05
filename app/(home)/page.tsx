@@ -1,4 +1,7 @@
 import pageMetadata from '@/lib/metadata/page'
+import Navbar from './Navbar'
+import Main from './Main'
+import Options from './Options'
 
 export const generateMetadata = () =>
 	pageMetadata({
@@ -8,8 +11,10 @@ export const generateMetadata = () =>
 	})
 
 const HomePage = () => (
-	<main className="flex flex-col h-full">
-		<h1 className="m-auto text-5xl font-black">SamIam</h1>
+	<main className="relative h-full">
+		<Navbar />
+		<Main />
+		<Options />
 	</main>
 )
 
