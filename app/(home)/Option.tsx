@@ -2,16 +2,16 @@
 
 import { useCallback } from 'react'
 import cx from 'classnames'
-import { FaHandPointUp } from 'react-icons/fa'
+import { FaHandPointUp, FaCircle, FaArrowRight, FaTrash } from 'react-icons/fa'
 import { IconType } from 'react-icons'
 
 import useOptionStore, { Option } from '@/lib/stores/option'
 
 const OPTION_ICONS: Record<Option, IconType> = {
 	pointer: FaHandPointUp,
-	'add-node': FaHandPointUp,
-	'add-edge': FaHandPointUp,
-	remove: FaHandPointUp
+	'add-node': FaCircle,
+	'add-edge': FaArrowRight,
+	remove: FaTrash
 }
 
 const Option = ({ option }: { option: Option }) => {
