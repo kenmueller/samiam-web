@@ -1,5 +1,5 @@
-const Navbar = () => {
+const Main = () => {
 	return null
 }
 
-export default Navbar
+export default Main
