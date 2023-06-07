@@ -6,6 +6,7 @@ import { FaHandPointUp, FaCircle, FaArrowRight, FaTrash } from 'react-icons/fa'
 import { IconType } from 'react-icons'
 
 import useOptionStore, { Option } from '@/lib/stores/option'
+import pick from '@/lib/pick'
 
 const OPTION_ICONS: Record<Option, IconType> = {
 	pointer: FaHandPointUp,
@@ -15,10 +16,9 @@ const OPTION_ICONS: Record<Option, IconType> = {
 }
 
 const Option = ({ option }: { option: Option }) => {
-	const { option: currentOption, setOption } = useOptionStore(state => ({
-		option: state.option,
-		setOption: state.setOption
-	}))
+	const { option: currentOption, setOption } = useOptionStore(
+		pick('option', 'setOption')
+	)
 
 	const selected = option === currentOption
 	const Icon = OPTION_ICONS[option]

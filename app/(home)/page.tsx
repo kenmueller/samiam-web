@@ -11,11 +11,11 @@ export const generateMetadata = () =>
 	})
 
 const HomePage = () => (
-	<main className="relative h-full">
+	<div className="relative h-full">
 		<Navbar />
 		<Main />
 		<Options />
-	</main>
+	</div>
 )
 
 export default HomePage

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-import Network from '@/lib/network'
+import Network, { Position } from '@/lib/network'
 import getNextNodeId from '@/lib/network/getNextNodeId'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 
@@ -10,7 +10,7 @@ export interface NetworkStore {
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
-	addNode: () => void
+	addNode: (position: Position) => void
 }
 
 const useNetworkStore = create(
@@ -78,12 +78,12 @@ const useNetworkStore = create(
 
 			saveAs(file, 'network.json')
 		},
-		addNode: () => {
+		addNode: (position: Position) => {
 			set(state => {
 				state.network.nodes.push({
 					id: getNextNodeId(state.network.nodes),
-					x: 0,
-					y: 0
+					name: 'Node',
+					...position
 				})
 			})
 
