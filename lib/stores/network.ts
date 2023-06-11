@@ -102,6 +102,8 @@ const useNetworkStore = create(
 
 				Object.assign(node, position)
 			})
+
+			saveNetworkToStorage(get().network)
 		},
 		removeNode: id => {
 			set(state => {
@@ -113,6 +115,8 @@ const useNetworkStore = create(
 					edge => !(edge.from === id || edge.to === id)
 				)
 			})
+
+			saveNetworkToStorage(get().network)
 		},
 		addEdge: edge => {
 			set(state => {
@@ -129,6 +133,8 @@ const useNetworkStore = create(
 
 				state.network.edges.push(edge)
 			})
+
+			saveNetworkToStorage(get().network)
 		},
 		removeEdge: ({ from, to }) => {
 			set(state => {
@@ -139,6 +145,8 @@ const useNetworkStore = create(
 
 				state.network.edges.splice(index, 1)
 			})
+
+			saveNetworkToStorage(get().network)
 		}
 	}))
 )
