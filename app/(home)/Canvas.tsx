@@ -1,6 +1,14 @@
 'use client'
 
-import { CSSProperties, MouseEvent, useCallback, useState } from 'react'
+import {
+	CSSProperties,
+	MouseEvent,
+	useCallback,
+	useEffect,
+	useId,
+	useRef,
+	useState
+} from 'react'
 
 import useNetworkStore from '@/lib/stores/network'
 import useOptionStore from '@/lib/stores/option'
@@ -10,8 +18,12 @@ import useEvent from '@/lib/useEvent'
 import { Position } from '@/lib/network'
 import useMouse from '@/lib/useMouse'
 import useCanvasStore from '@/lib/stores/canvas'
+import useView from '@/lib/useView'
+import NetworkEdge from './Edge'
 
 const Canvas = () => {
+	const arrowId = useId()
+
 	const { network, addNode } = useNetworkStore(pick('network', 'addNode'))
 	const { center, setCenter, currentArrowFrom, setCurrentArrowFrom } =
 		useCanvasStore(
@@ -20,10 +32,12 @@ const Canvas = () => {
 	const { option } = useOptionStore(pick('option'))
 
 	const mouse = useMouse()
+	const view = useView()
+
 	const [draggingMouse, setDraggingMouse] = useState<Position | null>(null)
 
-	const onMouseDown = useCallback(
-		(event: MouseEvent<HTMLDivElement>) => {
+	const onRootMouseDown = useCallback(
+		(event: globalThis.MouseEvent) => {
 			switch (option) {
 				case 'pointer':
 					setDraggingMouse({ x: event.clientX, y: event.clientY })
@@ -64,11 +78,21 @@ const Canvas = () => {
 	useEvent('body', 'mousemove', onMouseMove)
 	useEvent('body', 'mouseup', onMouseUp)
 
+	const ref = useRef<HTMLDivElement | null>(null)
+
+	useEffect(() => {
+		const root = ref.current
+		if (!root) return
+
+		root.addEventListener('mousedown', onRootMouseDown)
+
+		return () => {
+			root.removeEventListener('mousedown', onRootMouseDown)
+		}
+	}, [ref, onRootMouseDown])
+
 	return (
-		<main
-			className="absolute inset-0 overflow-hidden z-0"
-			onMouseDown={onMouseDown}
-		>
+		<main ref={ref} className="absolute inset-0 overflow-hidden z-0">
 			<span
 				className="pointer-events-none absolute bg-black bg-opacity-10 left-0 right-0 top-[calc(50%-var(--y))] h-[1px] -translate-y-1/2"
 				style={{ '--y': `${center.y}px` } as CSSProperties}
@@ -80,6 +104,43 @@ const Canvas = () => {
 			{network.nodes.map(node => (
 				<NetworkNode key={node.id} node={node} />
 			))}
+			{view && (
+				<svg viewBox={`0 0 ${view.width} ${view.height}`}>
+					<defs>
+						<marker
+							id={arrowId}
+							viewBox="0 0 10 10"
+							refX={5}
+							refY={5}
+							markerWidth={6}
+							markerHeight={6}
+							orient="auto-start-reverse"
+						>
+							<path d="M 0 0 L 10 5 L 0 10 z" />
+						</marker>
+					</defs>
+					{network.edges.map(edge => (
+						<NetworkEdge
+							key={`${edge.from}-${edge.to}`}
+							arrowId={arrowId}
+							edge={edge}
+							position={{
+								from: network.nodes.find(node => node.id === edge.from),
+								to: network.nodes.find(node => node.id === edge.to)
+							}}
+						/>
+					))}
+					{!(currentArrowFrom === null || mouse === null) && (
+						<NetworkEdge
+							arrowId={arrowId}
+							position={{
+								from: network.nodes.find(node => node.id === currentArrowFrom),
+								to: mouse
+							}}
+						/>
+					)}
+				</svg>
+			)}
 		</main>
 	)
 }

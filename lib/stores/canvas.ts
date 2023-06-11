@@ -13,7 +13,7 @@ export interface CanvasStore {
 }
 
 const useCanvasStore = create(
-	immer<CanvasStore>((set, get) => ({
+	immer<CanvasStore>(set => ({
 		center: { x: 0, y: 0 },
 		setCenter: center => {
 			set(state => {

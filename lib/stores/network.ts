@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-import Network, { Position } from '@/lib/network'
+import Network, { Position, Edge } from '@/lib/network'
 import getNextNodeId from '@/lib/network/getNextNodeId'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 
@@ -11,6 +11,10 @@ export interface NetworkStore {
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
 	addNode: (position: Position) => void
+	setNodePosition: (id: number, position: Position) => void
+	removeNode: (id: number) => void
+	addEdge: (edge: Edge) => void
+	removeEdge: (edge: Edge) => void
 }
 
 const useNetworkStore = create(
@@ -90,6 +94,51 @@ const useNetworkStore = create(
 			})
 
 			saveNetworkToStorage(get().network)
+		},
+		setNodePosition: (id, position) => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				Object.assign(node, position)
+			})
+		},
+		removeNode: id => {
+			set(state => {
+				const index = state.network.nodes.findIndex(node => node.id === id)
+				if (index < 0) return
+
+				state.network.nodes.splice(index, 1)
+				state.network.edges = state.network.edges.filter(
+					edge => !(edge.from === id || edge.to === id)
+				)
+			})
+		},
+		addEdge: edge => {
+			set(state => {
+				if (edge.from === edge.to)
+					throw new Error('Cannot connect node to itself')
+
+				if (
+					state.network.edges.some(
+						otherEdge =>
+							otherEdge.from === edge.from && otherEdge.to === edge.to
+					)
+				)
+					throw new Error('Edge already exists')
+
+				state.network.edges.push(edge)
+			})
+		},
+		removeEdge: ({ from, to }) => {
+			set(state => {
+				const index = state.network.edges.findIndex(
+					edge => edge.from === from && edge.to === to
+				)
+				if (index < 0) return
+
+				state.network.edges.splice(index, 1)
+			})
 		}
 	}))
 )
