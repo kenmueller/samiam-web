@@ -1,6 +1,6 @@
 import pageMetadata from '@/lib/metadata/page'
 import Navbar from './Navbar'
-import Main from './Main'
+import Canvas from './Canvas'
 import Options from './Options'
 
 export const generateMetadata = () =>
@@ -13,7 +13,7 @@ export const generateMetadata = () =>
 const HomePage = () => (
 	<div className="relative h-full">
 		<Navbar />
-		<Main />
+		<Canvas />
 		<Options />
 	</div>
 )

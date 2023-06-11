@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 /** Calls the effect only on change. */
-const useNewEffect: typeof useEffect = (effect, deps) => {
+const useChangeEffect: typeof useEffect = (effect, deps) => {
 	const didMount = useRef(false)
 
 	useEffect(() => {
@@ -16,4 +16,4 @@ const useNewEffect: typeof useEffect = (effect, deps) => {
 	}, deps)
 }
 
-export default useNewEffect
+export default useChangeEffect

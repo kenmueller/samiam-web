@@ -68,6 +68,8 @@ const useNetworkStore = create(
 			set(state => {
 				state.network = network
 			})
+
+			saveNetworkToStorage(network)
 		},
 		saveNetworkToFile: async () => {
 			const { default: saveAs } = await import('file-saver')
