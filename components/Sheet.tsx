@@ -45,7 +45,7 @@ const SheetInner = () => {
 		<div className="fixed inset-0 z-10 pointer-events-none">
 			<div
 				className={cx(
-					'absolute top-0 right-0 bottom-0 bg-white transition-all duration-200 pointer-events-auto shadow-xl select-text touch-auto',
+					'absolute top-0 right-0 bottom-0 bg-white transition-all duration-200 pointer-events-auto shadow-xl select-text touch-auto grid grid-rows-[auto_1fr]',
 					isFullScreen ? 'left-0' : 'left-[calc(100%-600px)]'
 				)}
 			>
@@ -63,7 +63,7 @@ const SheetInner = () => {
 						<FontAwesomeIcon icon={faXmark} />
 					</button>
 				</div>
-				{content}
+				<div className="overflow-y-auto p-2">{content}</div>
 			</div>
 		</div>,
 		document.body
