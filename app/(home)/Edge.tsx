@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
-import { Edge, Position } from '@/lib/network'
+import { Edge } from '@/lib/stores/network'
+import { Position } from '@/lib/network'
 import pick from '@/lib/pick'
 import useCanvasStore from '@/lib/stores/canvas'
 import useOptionStore from '@/lib/stores/option'
