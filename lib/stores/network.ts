@@ -114,7 +114,7 @@ const useNetworkStore = create(
 					name: `Node ${id}`,
 					parents: [],
 					values: ['yes', 'no'],
-					cpt: [[0.5, 0.5]],
+					cpt: [[0.5], [0.5]],
 					...position
 				})
 			})
