@@ -1,6 +1,6 @@
 'use client'
 
-import { CSSProperties, useCallback, useEffect, useState } from 'react'
+import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
 
 import { Node, Position } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -177,12 +177,18 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<p
-				className="whitespace-nowrap"
-				dangerouslySetInnerHTML={{ __html: renderTextWithMath(node.name) }}
-			/>
+			<NodeName name={node.name} />
 		</div>
 	)
 }
+
+const _NodeName = ({ name }: { name: string }) => (
+	<p
+		className="whitespace-nowrap"
+		dangerouslySetInnerHTML={{ __html: renderTextWithMath(name) }}
+	/>
+)
+
+const NodeName = memo(_NodeName)
 
 export default NetworkNode
