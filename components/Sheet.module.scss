@@ -1,0 +1,15 @@
+.enter {
+	@apply opacity-0 scale-90;
+}
+
+.enterActive {
+	@apply opacity-100 transform-none transition-all duration-200;
+}
+
+.exit {
+	@apply opacity-100 transform-none;
+}
+
+.exitActive {
+	@apply opacity-0 scale-90 transition-all duration-200;
+}

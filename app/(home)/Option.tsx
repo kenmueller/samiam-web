@@ -2,17 +2,23 @@
 
 import { useCallback } from 'react'
 import cx from 'classnames'
-import { FaHandPointUp, FaCircle, FaArrowRight, FaTrash } from 'react-icons/fa'
-import { IconType } from 'react-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+	faHandPointUp,
+	faCircle,
+	faArrowRight,
+	faTrash,
+	IconDefinition
+} from '@fortawesome/free-solid-svg-icons'
 
 import useOptionStore, { Option } from '@/lib/stores/option'
 import pick from '@/lib/pick'
 
-const OPTION_ICONS: Record<Option, IconType> = {
-	pointer: FaHandPointUp,
-	'add-node': FaCircle,
-	'add-edge': FaArrowRight,
-	remove: FaTrash
+const OPTION_ICONS: Record<Option, IconDefinition> = {
+	pointer: faHandPointUp,
+	'add-node': faCircle,
+	'add-edge': faArrowRight,
+	remove: faTrash
 }
 
 const Option = ({ option }: { option: Option }) => {
@@ -21,7 +27,6 @@ const Option = ({ option }: { option: Option }) => {
 	)
 
 	const selected = option === currentOption
-	const Icon = OPTION_ICONS[option]
 
 	const updateOption = useCallback(() => {
 		setOption(option)
@@ -36,7 +41,7 @@ const Option = ({ option }: { option: Option }) => {
 			aria-current={selected || undefined}
 			onClick={updateOption}
 		>
-			<Icon />
+			<FontAwesomeIcon icon={OPTION_ICONS[option]} />
 		</button>
 	)
 }
