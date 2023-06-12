@@ -5,9 +5,12 @@ import cx from 'classnames'
 
 import baseMetadata from '@/lib/metadata/base'
 import ToastContainer from './ToastContainer'
+import Sheet from '@/components/Sheet'
+import FontAwesomeConfig from './FontAwesomeConfig'
 
 import 'balloon-css/balloon.css'
 import 'react-toastify/dist/ReactToastify.css'
+import '@fortawesome/fontawesome-svg-core/styles.css'
 import './layout.scss'
 
 const inter = Inter({
@@ -44,6 +47,8 @@ const RootLayout = ({ children }: { children: ReactNode }) => (
 			className={cx(inter.className, sfMono.variable, 'h-full scroll-smooth')}
 		>
 			{children}
+			<Sheet />
+			<FontAwesomeConfig />
 			<ToastContainer />
 		</body>
 	</html>

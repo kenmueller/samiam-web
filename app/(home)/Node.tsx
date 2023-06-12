@@ -1,6 +1,6 @@
 'use client'
 
-import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
+import { CSSProperties, useCallback, useEffect, useState } from 'react'
 
 import { Node, Position } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -10,6 +10,7 @@ import useEvent from '@/lib/useEvent'
 import useNetworkStore from '@/lib/stores/network'
 import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
+import useSheetStore from '@/lib/stores/sheet'
 
 const NetworkNode = ({ node }: { node: Node }) => {
 	const { setNodePosition, snapNodeToGrid, removeNode, addEdge } =
@@ -32,12 +33,14 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		)
 	)
 	const { option } = useOptionStore(pick('option'))
+	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
 
+	const [startMouse, setStartMouse] = useState<Position | null>(null)
 	const [draggingMouse, setDraggingMouse] = useState<Position | null>(null)
 
 	const onMouseMove = useCallback(
 		(event: globalThis.MouseEvent) => {
-			if (!draggingMouse) return
+			if (!(startMouse && draggingMouse)) return
 
 			setNodePosition(node.id, {
 				x: node.x + (event.clientX - draggingMouse.x),
@@ -46,15 +49,38 @@ const NetworkNode = ({ node }: { node: Node }) => {
 
 			setDraggingMouse({ x: event.clientX, y: event.clientY })
 		},
-		[node.id, node.x, node.y, draggingMouse, setNodePosition, setDraggingMouse]
+		[
+			node.id,
+			node.x,
+			node.y,
+			startMouse,
+			draggingMouse,
+			setNodePosition,
+			setDraggingMouse
+		]
 	)
 
 	const onMouseUp = useCallback(() => {
-		if (!draggingMouse) return
+		if (!(startMouse && draggingMouse)) return
+
+		if (startMouse.x === draggingMouse.x && startMouse.y === draggingMouse.y) {
+			// Clicked, not dragged
+			setSheetContent(<div>Hello</div>)
+		}
 
 		snapNodeToGrid(node.id)
+
+		setStartMouse(null)
 		setDraggingMouse(null)
-	}, [draggingMouse, node.id, snapNodeToGrid, setDraggingMouse])
+	}, [
+		startMouse,
+		draggingMouse,
+		setSheetContent,
+		node.id,
+		snapNodeToGrid,
+		setStartMouse,
+		setDraggingMouse
+	])
 
 	const onNodeMouseDown = useCallback(
 		(event: globalThis.MouseEvent) => {
@@ -67,10 +93,19 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					break
 				default:
 					event.stopPropagation()
+
+					setStartMouse({ x: event.clientX, y: event.clientY })
 					setDraggingMouse({ x: event.clientX, y: event.clientY })
 			}
 		},
-		[option, node.id, setCurrentArrowFrom, removeNode, setDraggingMouse]
+		[
+			option,
+			node.id,
+			setCurrentArrowFrom,
+			removeNode,
+			setStartMouse,
+			setDraggingMouse
+		]
 	)
 
 	const onNodeMouseUp = useCallback(
