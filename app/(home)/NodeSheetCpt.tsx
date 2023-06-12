@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 
 import { Node } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -19,8 +19,6 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 		[network]
 	)
 
-	const parentsList = useMemo(() => {}, [])
-
 	return (
 		<table>
 			<tbody>
@@ -30,14 +28,14 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 					return (
 						<tr key={parent.id}>
 							<th>{parent.name}</th>
-							{parent.values.map(value => (
-								<th key={value}>{value}</th>
+							{parent.values.map((value, valueIndex) => (
+								<th key={valueIndex}>{value}</th>
 							))}
 						</tr>
 					)
 				})}
 				{node.values.map((value, valueIndex) => (
-					<tr key={value}>
+					<tr key={valueIndex}>
 						<th>{value}</th>
 						{node.cpt[valueIndex].map((cptValue, cptValueIndex) => (
 							<th key={cptValueIndex}>{cptValue}</th>

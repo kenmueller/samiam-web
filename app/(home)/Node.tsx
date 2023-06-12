@@ -177,15 +177,17 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<NodeName name={node.name} />
+			<NodeName id={node.id} name={node.name} />
 		</div>
 	)
 }
 
-const _NodeName = ({ name }: { name: string }) => (
+const _NodeName = ({ id, name }: { id: number; name: string }) => (
 	<p
 		className="whitespace-nowrap"
-		dangerouslySetInnerHTML={{ __html: renderTextWithMath(name) }}
+		dangerouslySetInnerHTML={{
+			__html: name ? renderTextWithMath(name) : `Node ${id}`
+		}}
 	/>
 )
 
