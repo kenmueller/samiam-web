@@ -14,6 +14,7 @@ export interface NetworkStore {
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
 	addNode: (position: Position) => void
+	setNodeName: (id: number, name: string) => void
 	setNodePosition: (id: number, position: Position) => void
 	snapNodeToGrid: (id: number) => void
 	removeNode: (id: number) => void
@@ -100,12 +101,23 @@ const useNetworkStore = create(
 
 			saveNetworkToStorage(get().network)
 		},
+		setNodeName: (id, name) => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				node.name = name
+			})
+
+			saveNetworkToStorage(get().network)
+		},
 		setNodePosition: (id, position) => {
 			set(state => {
 				const node = state.network.nodes.find(node => node.id === id)
 				if (!node) return
 
-				Object.assign(node, position)
+				node.x = position.x
+				node.y = position.y
 			})
 
 			saveNetworkToStorage(get().network)
