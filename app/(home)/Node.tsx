@@ -16,8 +16,20 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		useNetworkStore(
 			pick('setNodePosition', 'snapNodeToGrid', 'removeNode', 'addEdge')
 		)
-	const { center, currentArrowFrom, setCurrentArrowFrom } = useCanvasStore(
-		pick('center', 'currentArrowFrom', 'setCurrentArrowFrom')
+	const {
+		center,
+		currentArrowFrom,
+		setCurrentArrowFrom,
+		getNodeRef,
+		setNodeRef
+	} = useCanvasStore(
+		pick(
+			'center',
+			'currentArrowFrom',
+			'setCurrentArrowFrom',
+			'getNodeRef',
+			'setNodeRef'
+		)
 	)
 	const { option } = useOptionStore(pick('option'))
 
@@ -86,33 +98,38 @@ const NetworkNode = ({ node }: { node: Node }) => {
 	useEvent('body', 'mousemove', onMouseMove)
 	useEvent('body', 'mouseup', onMouseUp)
 
-	const ref = useRef<HTMLDivElement | null>(null)
+	const ref = getNodeRef(node.id)
 
 	useEffect(() => {
-		const node = ref.current
-		if (!node) return
+		if (!ref) return
 
-		node.addEventListener('mousedown', onNodeMouseDown)
+		ref.addEventListener('mousedown', onNodeMouseDown)
 
 		return () => {
-			node.removeEventListener('mousedown', onNodeMouseDown)
+			ref.removeEventListener('mousedown', onNodeMouseDown)
 		}
 	}, [ref, onNodeMouseDown])
 
 	useEffect(() => {
-		const node = ref.current
-		if (!node) return
+		if (!ref) return
 
-		node.addEventListener('mouseup', onNodeMouseUp)
+		ref.addEventListener('mouseup', onNodeMouseUp)
 
 		return () => {
-			node.removeEventListener('mouseup', onNodeMouseUp)
+			ref.removeEventListener('mouseup', onNodeMouseUp)
 		}
 	}, [ref, onNodeMouseUp])
 
+	const onRef = useCallback(
+		(ref: HTMLDivElement | null) => {
+			setNodeRef(node.id, ref)
+		},
+		[setNodeRef, node.id]
+	)
+
 	return (
 		<div
-			ref={ref}
+			ref={onRef}
 			className="absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 bg-sky-500 rounded-[100%] -translate-x-1/2 -translate-y-1/2"
 			style={
 				{
