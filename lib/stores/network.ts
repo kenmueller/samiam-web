@@ -5,6 +5,9 @@ import Network, { Position, Edge } from '@/lib/network'
 import getNextNodeId from '@/lib/network/getNextNodeId'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 
+const GRID_SPACING_X = 80
+const GRID_SPACING_Y = 50
+
 export interface NetworkStore {
 	network: Network
 	loadNetworkFromStorage: () => void
@@ -12,6 +15,7 @@ export interface NetworkStore {
 	saveNetworkToFile: () => Promise<void>
 	addNode: (position: Position) => void
 	setNodePosition: (id: number, position: Position) => void
+	snapNodeToGrid: (id: number) => void
 	removeNode: (id: number) => void
 	addEdge: (edge: Edge) => void
 	removeEdge: (edge: Edge) => void
@@ -84,12 +88,13 @@ const useNetworkStore = create(
 
 			saveAs(file, 'network.json')
 		},
-		addNode: (position: Position) => {
+		addNode: ({ x, y }: Position) => {
 			set(state => {
 				state.network.nodes.push({
 					id: getNextNodeId(state.network.nodes),
 					name: 'Node',
-					...position
+					x: Math.round(x / GRID_SPACING_X) * GRID_SPACING_X,
+					y: Math.round(y / GRID_SPACING_Y) * GRID_SPACING_Y
 				})
 			})
 
@@ -101,6 +106,17 @@ const useNetworkStore = create(
 				if (!node) return
 
 				Object.assign(node, position)
+			})
+
+			saveNetworkToStorage(get().network)
+		},
+		snapNodeToGrid: id => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				node.x = Math.round(node.x / GRID_SPACING_X) * GRID_SPACING_X
+				node.y = Math.round(node.y / GRID_SPACING_Y) * GRID_SPACING_Y
 			})
 
 			saveNetworkToStorage(get().network)

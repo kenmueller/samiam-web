@@ -12,9 +12,10 @@ import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 
 const NetworkNode = ({ node }: { node: Node }) => {
-	const { setNodePosition, removeNode, addEdge } = useNetworkStore(
-		pick('setNodePosition', 'removeNode', 'addEdge')
-	)
+	const { setNodePosition, snapNodeToGrid, removeNode, addEdge } =
+		useNetworkStore(
+			pick('setNodePosition', 'snapNodeToGrid', 'removeNode', 'addEdge')
+		)
 	const { center, currentArrowFrom, setCurrentArrowFrom } = useCanvasStore(
 		pick('center', 'currentArrowFrom', 'setCurrentArrowFrom')
 	)
@@ -37,8 +38,11 @@ const NetworkNode = ({ node }: { node: Node }) => {
 	)
 
 	const onMouseUp = useCallback(() => {
+		if (!draggingMouse) return
+
+		snapNodeToGrid(node.id)
 		setDraggingMouse(null)
-	}, [setDraggingMouse])
+	}, [draggingMouse, node.id, snapNodeToGrid, setDraggingMouse])
 
 	const onNodeMouseDown = useCallback(
 		(event: globalThis.MouseEvent) => {
@@ -119,7 +123,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<p className="whitespace-nowrap select-none">{node.name}</p>
+			<p className="whitespace-nowrap">{node.name}</p>
 		</div>
 	)
 }
