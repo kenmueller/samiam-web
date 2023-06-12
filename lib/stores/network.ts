@@ -90,13 +90,23 @@ const useNetworkStore = create(
 			saveAs(file, 'network.json')
 		},
 		addNode: ({ x, y }: Position) => {
+			const position: Position = {
+				x: Math.round(x / GRID_SPACING_X) * GRID_SPACING_X,
+				y: Math.round(y / GRID_SPACING_Y) * GRID_SPACING_Y
+			}
+
+			if (
+				get().network.nodes.some(
+					node => node.x === position.x && node.y === position.y
+				)
+			) {
+				// Node already exists at this position
+				return
+			}
+
 			set(state => {
-				state.network.nodes.push({
-					id: getNextNodeId(state.network.nodes),
-					name: 'Node',
-					x: Math.round(x / GRID_SPACING_X) * GRID_SPACING_X,
-					y: Math.round(y / GRID_SPACING_Y) * GRID_SPACING_Y
-				})
+				const id = getNextNodeId(state.network.nodes)
+				state.network.nodes.push({ id, name: `Node ${id}`, ...position })
 			})
 
 			saveNetworkToStorage(get().network)
