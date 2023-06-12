@@ -1,12 +1,17 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-import Network, { Position, Edge } from '@/lib/network'
+import Network, { Position } from '@/lib/network'
 import getNextNodeId from '@/lib/network/getNextNodeId'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 
 const GRID_SPACING_X = 80
 const GRID_SPACING_Y = 50
+
+export interface Edge {
+	from: number
+	to: number
+}
 
 export interface NetworkStore {
 	network: Network
@@ -24,10 +29,7 @@ export interface NetworkStore {
 
 const useNetworkStore = create(
 	immer<NetworkStore>((set, get) => ({
-		network: {
-			nodes: [],
-			edges: []
-		},
+		network: { nodes: [] },
 		loadNetworkFromStorage: () => {
 			const network = localStorage.getItem('network')
 			if (!network) return
@@ -106,7 +108,15 @@ const useNetworkStore = create(
 
 			set(state => {
 				const id = getNextNodeId(state.network.nodes)
-				state.network.nodes.push({ id, name: `Node ${id}`, ...position })
+
+				state.network.nodes.push({
+					id,
+					name: `Node ${id}`,
+					parents: [],
+					values: ['yes', 'no'],
+					cpt: [[0.5, 0.5]],
+					...position
+				})
 			})
 
 			saveNetworkToStorage(get().network)
@@ -148,9 +158,11 @@ const useNetworkStore = create(
 				const index = state.network.nodes.findIndex(node => node.id === id)
 				if (index < 0) return
 
-				state.network.nodes.splice(index, 1)
-				state.network.edges = state.network.edges.filter(
-					edge => !(edge.from === id || edge.to === id)
+				const node = state.network.nodes[index]
+
+				state.network.nodes = state.network.nodes.filter(
+					otherNode =>
+						!(node.id === otherNode.id || node.parents.includes(otherNode.id))
 				)
 			})
 
@@ -161,27 +173,29 @@ const useNetworkStore = create(
 				if (edge.from === edge.to)
 					throw new Error('Cannot connect node to itself')
 
-				if (
-					state.network.edges.some(
-						otherEdge =>
-							otherEdge.from === edge.from && otherEdge.to === edge.to
-					)
-				)
+				const fromNode = state.network.nodes.find(node => node.id === edge.from)
+				if (!fromNode) return
+
+				const toNode = state.network.nodes.find(node => node.id === edge.to)
+				if (!toNode) return
+
+				if (toNode.parents.includes(fromNode.id))
 					throw new Error('Edge already exists')
 
-				state.network.edges.push(edge)
+				toNode.parents.push(fromNode.id)
 			})
 
 			saveNetworkToStorage(get().network)
 		},
-		removeEdge: ({ from, to }) => {
+		removeEdge: edge => {
 			set(state => {
-				const index = state.network.edges.findIndex(
-					edge => edge.from === from && edge.to === to
-				)
-				if (index < 0) return
+				const toNode = state.network.nodes.find(node => node.id === edge.to)
+				if (!toNode) return
 
-				state.network.edges.splice(index, 1)
+				const fromNodeIndex = toNode.parents.findIndex(id => id === edge.from)
+				if (fromNodeIndex < 0) return
+
+				toNode.parents.splice(fromNodeIndex, 1)
 			})
 
 			saveNetworkToStorage(get().network)
