@@ -8,6 +8,7 @@ import {
 	faUpRightAndDownLeftFromCenter,
 	faDownLeftAndUpRightToCenter
 } from '@fortawesome/free-solid-svg-icons'
+import cx from 'classnames'
 
 import useSheetStore from '@/lib/stores/sheet'
 import pick from '@/lib/pick'
@@ -41,22 +42,29 @@ const SheetInner = () => {
 	)
 
 	return createPortal(
-		<div className="fixed top-0 right-0 bottom-0 w-60 bg-white z-10">
-			<div className="flex justify-end items-center gap-4">
-				<button onClick={toggleFullScreen}>
-					<FontAwesomeIcon
-						icon={
-							isFullScreen
-								? faDownLeftAndUpRightToCenter
-								: faUpRightAndDownLeftFromCenter
-						}
-					/>
-				</button>
-				<button onClick={close}>
-					<FontAwesomeIcon icon={faXmark} />
-				</button>
+		<div className="fixed inset-0 z-10 pointer-events-none">
+			<div
+				className={cx(
+					'absolute top-0 right-0 bottom-0 bg-white transition-all duration-200 pointer-events-auto shadow-xl',
+					isFullScreen ? 'left-0' : 'left-[calc(100%-600px)]'
+				)}
+			>
+				<div className="flex justify-end items-center">
+					<button className="text-lg px-2" onClick={toggleFullScreen}>
+						<FontAwesomeIcon
+							icon={
+								isFullScreen
+									? faDownLeftAndUpRightToCenter
+									: faUpRightAndDownLeftFromCenter
+							}
+						/>
+					</button>
+					<button className="text-2xl px-2" onClick={close}>
+						<FontAwesomeIcon icon={faXmark} />
+					</button>
+				</div>
+				{content}
 			</div>
-			{content}
 		</div>,
 		document.body
 	)
