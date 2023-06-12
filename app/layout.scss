@@ -5,7 +5,7 @@
 *,
 ::before,
 ::after {
-	@apply break-words;
+	@apply select-none touch-none break-words;
 	word-break: break-word;
 }
 

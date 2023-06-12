@@ -1,14 +1,10 @@
 import { Node } from '.'
 
 const getNextNodeId = (nodes: Node[]) => {
-	let nextId = 0
-
-	for (const node of nodes) {
-		if (node.id !== nextId) break
-		nextId++
+	for (let nextId = 0; ; nextId++) {
+		if (nodes.some(node => node.id === nextId)) continue
+		return nextId
 	}
-
-	return nextId
 }
 
 export default getNextNodeId
