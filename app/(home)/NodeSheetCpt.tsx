@@ -1,10 +1,29 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 import { Node } from '@/lib/network'
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
+
+import styles from './NodeSheetCpt.module.scss'
+
+const getColSpan = (
+	child: Node,
+	parent: Node,
+	getNode: (id: number) => Node
+) => {
+	let colSpan = 1
+
+	for (const otherParentId of child.parents) {
+		if (otherParentId === parent.id) break
+		colSpan *= getNode(otherParentId).values.length
+	}
+
+	return colSpan
+}
 
 const NodeSheetCpt = ({ node }: { node: Node }) => {
 	const { network } = useNetworkStore(pick('network'))
@@ -19,18 +38,35 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 		[network]
 	)
 
+	const reversedParents = useMemo(
+		() => [...node.parents].reverse(),
+		[node.parents]
+	)
+
+	const columns = (node.cpt[0] as number[] | undefined)?.length
+	if (!columns) throw new Error(`Empty CPT for node ${node.id}`)
+
 	return (
-		<table>
+		<table className={styles.table}>
 			<tbody>
-				{node.parents.map(parentId => {
+				{reversedParents.map(parentId => {
 					const parent = getNode(parentId)
+					const colSpan = getColSpan(node, parent, getNode)
+					const repeat = columns / (colSpan * parent.values.length)
 
 					return (
 						<tr key={parent.id}>
 							<th>{parent.name}</th>
-							{parent.values.map((value, valueIndex) => (
-								<th key={valueIndex}>{value}</th>
-							))}
+							{new Array(repeat)
+								.fill(undefined)
+								.map((_repeatValue, repeatIndex) =>
+									parent.values.map((value, valueIndex) => (
+										<th key={`${repeatIndex}-${valueIndex}`} colSpan={colSpan}>
+											{value}
+										</th>
+									))
+								)}
+							<th />
 						</tr>
 					)
 				})}
@@ -38,8 +74,13 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 					<tr key={valueIndex}>
 						<th>{value}</th>
 						{node.cpt[valueIndex].map((cptValue, cptValueIndex) => (
-							<th key={cptValueIndex}>{cptValue}</th>
+							<td key={cptValueIndex}>{cptValue}</td>
 						))}
+						<th>
+							<button>
+								<FontAwesomeIcon icon={faTrash} />
+							</button>
+						</th>
 					</tr>
 				))}
 			</tbody>

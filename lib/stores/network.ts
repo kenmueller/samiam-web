@@ -185,12 +185,13 @@ const useNetworkStore = create(
 				const index = state.network.nodes.findIndex(node => node.id === id)
 				if (index < 0) return
 
-				const node = state.network.nodes[index]
+				state.network.nodes.splice(index, 1)
 
-				state.network.nodes = state.network.nodes.filter(
-					otherNode =>
-						!(node.id === otherNode.id || node.parents.includes(otherNode.id))
-				)
+				for (const otherNode of state.network.nodes) {
+					otherNode.parents = otherNode.parents.filter(
+						parentId => parentId !== id
+					)
+				}
 			})
 
 			saveNetworkToStorage(get().network)
@@ -200,29 +201,33 @@ const useNetworkStore = create(
 				if (edge.from === edge.to)
 					throw new Error('Cannot connect node to itself')
 
-				const fromNode = state.network.nodes.find(node => node.id === edge.from)
-				if (!fromNode) return
+				const parent = state.network.nodes.find(node => node.id === edge.from)
+				if (!parent) return
 
-				const toNode = state.network.nodes.find(node => node.id === edge.to)
-				if (!toNode) return
+				const child = state.network.nodes.find(node => node.id === edge.to)
+				if (!child) return
 
-				if (toNode.parents.includes(fromNode.id))
+				if (child.parents.includes(parent.id))
 					throw new Error('Edge already exists')
 
-				toNode.parents.push(fromNode.id)
+				child.parents.push(parent.id)
+
+				child.cpt = child.cpt.map(row =>
+					new Array(parent.values.length).fill(row).flat()
+				)
 			})
 
 			saveNetworkToStorage(get().network)
 		},
 		removeEdge: edge => {
 			set(state => {
-				const toNode = state.network.nodes.find(node => node.id === edge.to)
-				if (!toNode) return
+				const child = state.network.nodes.find(node => node.id === edge.to)
+				if (!child) return
 
-				const fromNodeIndex = toNode.parents.findIndex(id => id === edge.from)
-				if (fromNodeIndex < 0) return
+				const parentIndex = child.parents.findIndex(id => id === edge.from)
+				if (parentIndex < 0) return
 
-				toNode.parents.splice(fromNodeIndex, 1)
+				child.parents.splice(parentIndex, 1)
 			})
 
 			saveNetworkToStorage(get().network)

@@ -1,0 +1,11 @@
+.table {
+	&,
+	th,
+	td {
+		@apply border border-gray-500 border-collapse;
+	}
+
+	th {
+		@apply bg-gray-200;
+	}
+}
