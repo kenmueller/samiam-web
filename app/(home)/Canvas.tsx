@@ -119,17 +119,19 @@ const Canvas = () => {
 							<path d="M 0 0 L 10 5 L 0 10 z" />
 						</marker>
 					</defs>
-					{network.edges.map(edge => (
-						<NetworkEdge
-							key={`${edge.from}-${edge.to}`}
-							arrowId={arrowId}
-							edge={edge}
-							position={{
-								from: network.nodes.find(node => node.id === edge.from),
-								to: network.nodes.find(node => node.id === edge.to)
-							}}
-						/>
-					))}
+					{network.nodes.map(childNode =>
+						childNode.parents.map(parentId => (
+							<NetworkEdge
+								key={`${parentId}-${childNode.id}`}
+								arrowId={arrowId}
+								edge={{ from: parentId, to: childNode.id }}
+								position={{
+									from: network.nodes.find(node => node.id === parentId),
+									to: childNode
+								}}
+							/>
+						))
+					)}
 					{!(currentArrowFrom === null || mouse === null) && (
 						<NetworkEdge
 							arrowId={arrowId}
