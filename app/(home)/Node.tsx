@@ -11,6 +11,7 @@ import useNetworkStore from '@/lib/stores/network'
 import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 import useSheetStore from '@/lib/stores/sheet'
+import NodeSheet from './NodeSheet'
 
 const NetworkNode = ({ node }: { node: Node }) => {
 	const { setNodePosition, snapNodeToGrid, removeNode, addEdge } =
@@ -65,7 +66,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 
 		if (startMouse.x === draggingMouse.x && startMouse.y === draggingMouse.y) {
 			// Clicked, not dragged
-			setSheetContent(<div>Hello</div>)
+			setSheetContent(<NodeSheet id={node.id} />)
 		}
 
 		snapNodeToGrid(node.id)
