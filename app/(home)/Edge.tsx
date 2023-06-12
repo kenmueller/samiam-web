@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef } from 'react'
+import cx from 'classnames'
 
 import { Edge, Position } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -103,6 +104,7 @@ const NetworkEdge = ({
 			/>
 			<line
 				ref={ref}
+				className={cx(option === 'remove' && 'cursor-pointer')}
 				x1={fromPoint.x}
 				y1={fromPoint.y}
 				x2={toPoint.x}

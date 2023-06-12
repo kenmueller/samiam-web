@@ -165,7 +165,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 	return (
 		<div
 			ref={onRef}
-			className="absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 bg-sky-500 rounded-[100%] -translate-x-1/2 -translate-y-1/2"
+			className="absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 bg-white border border-gray-500 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer"
 			style={
 				{
 					'--x': `${node.x}px`,

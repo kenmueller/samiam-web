@@ -35,7 +35,7 @@ const Option = ({ option }: { option: Option }) => {
 	return (
 		<button
 			className={cx(
-				'p-2 rounded-lg',
+				'px-3 py-2 rounded-lg',
 				selected && 'pointer-events-none bg-sky-500 bg-opacity-50'
 			)}
 			aria-current={selected || undefined}
