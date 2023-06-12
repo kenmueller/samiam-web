@@ -44,7 +44,11 @@ export const metadata = baseMetadata
 const RootLayout = ({ children }: { children: ReactNode }) => (
 	<html lang="en" dir="ltr" className="h-full scroll-smooth">
 		<body
-			className={cx(inter.className, sfMono.variable, 'h-full scroll-smooth')}
+			className={cx(
+				inter.className,
+				sfMono.variable,
+				'h-full scroll-smooth select-none touch-none'
+			)}
 		>
 			{children}
 			<Sheet />
