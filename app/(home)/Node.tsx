@@ -12,6 +12,7 @@ import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
+import renderTextWithMath from '@/lib/renderTextWithMath'
 
 const NetworkNode = ({ node }: { node: Node }) => {
 	const { setNodePosition, snapNodeToGrid, removeNode, addEdge } =
@@ -176,7 +177,10 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<p className="whitespace-nowrap">{node.name}</p>
+			<p
+				className="whitespace-nowrap"
+				dangerouslySetInnerHTML={{ __html: renderTextWithMath(node.name) }}
+			/>
 		</div>
 	)
 }
