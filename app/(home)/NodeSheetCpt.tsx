@@ -10,6 +10,7 @@ import useNetworkStore from '@/lib/stores/network'
 import NodeSheetCptValue from './NodeSheetCptValue'
 import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
+import NodeSheetValue from './NodeSheetValue'
 
 import styles from './NodeSheetCpt.module.scss'
 
@@ -29,9 +30,7 @@ const getRowSpan = (
 }
 
 const NodeSheetCpt = ({ node }: { node: Node }) => {
-	const { network, setNodeCptValue } = useNetworkStore(
-		pick('network', 'setNodeCptValue')
-	)
+	const { network } = useNetworkStore(pick('network'))
 	const { setContent } = useSheetStore(pick('setContent'))
 
 	const getNode = useCallback(
@@ -74,11 +73,13 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							</button>
 						</th>
 					))}
-					{node.values.map((value, valueIndex) => (
-						<th key={valueIndex}>{value}</th>
+					{node.values.map((_value, valueIndex) => (
+						<th key={valueIndex}>
+							<NodeSheetValue node={node} valueIndex={valueIndex} />
+						</th>
 					))}
 					<th>
-						<button className="text-sky-500">
+						<button className="w-full text-xl text-sky-500">
 							<FontAwesomeIcon icon={faPlus} />
 						</button>
 					</th>
@@ -114,7 +115,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 					))}
 					{node.cpt.map((_row, cptValueIndex) => (
 						<th key={cptValueIndex}>
-							<button className="text-red-500">
+							<button className="w-full text-xl text-red-500">
 								<FontAwesomeIcon icon={faTrash} />
 							</button>
 						</th>
