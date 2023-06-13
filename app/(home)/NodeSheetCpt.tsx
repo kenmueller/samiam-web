@@ -26,7 +26,9 @@ const getColSpan = (
 }
 
 const NodeSheetCpt = ({ node }: { node: Node }) => {
-	const { network } = useNetworkStore(pick('network'))
+	const { network, setNodeCptValue } = useNetworkStore(
+		pick('network', 'setNodeCptValue')
+	)
 
 	const getNode = useCallback(
 		(id: number) => {
@@ -73,8 +75,28 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 				{node.values.map((value, valueIndex) => (
 					<tr key={valueIndex}>
 						<th>{value}</th>
-						{node.cpt[valueIndex].map((cptValue, cptValueIndex) => (
-							<td key={cptValueIndex}>{cptValue}</td>
+						{node.cpt[valueIndex].map((cptValue, columnIndex) => (
+							<td key={columnIndex}>
+								<input
+									className="w-full px-2 py-1 outline-none"
+									type="number"
+									placeholder="CPT Value"
+									min={0}
+									max={1}
+									value={cptValue}
+									onChange={event => {
+										const newCptValue = Number.parseFloat(event.target.value)
+										if (Number.isNaN(newCptValue)) return
+
+										setNodeCptValue(
+											node.id,
+											valueIndex,
+											columnIndex,
+											newCptValue
+										)
+									}}
+								/>
+							</td>
 						))}
 						<th>
 							<button>
