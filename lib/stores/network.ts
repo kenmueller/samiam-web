@@ -23,6 +23,12 @@ export interface NetworkStore {
 	setNodeValue: (id: number, valueIndex: number, value: string) => void
 	removeNodeValue: (id: number, valueIndex: number) => void
 	addNodeValue: (id: number) => void
+	setNodeCptValue: (
+		id: number,
+		valueIndex: number,
+		columnIndex: number,
+		value: number
+	) => void
 	setNodePosition: (id: number, position: Position) => void
 	snapNodeToGrid: (id: number) => void
 	removeNode: (id: number) => void
@@ -156,6 +162,14 @@ const useNetworkStore = create(
 				if (!node) return
 
 				node.values.push(`Value ${node.values.length}`)
+			})
+		},
+		setNodeCptValue: (id, valueIndex, columnIndex, value) => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				node.cpt[valueIndex][columnIndex] = value
 			})
 		},
 		setNodePosition: (id, position) => {
