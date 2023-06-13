@@ -9,6 +9,7 @@ import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 
 import styles from './NodeSheetCpt.module.scss'
+import NodeSheetCptValue from './NodeSheetCptValue'
 
 const getColSpan = (
 	child: Node,
@@ -77,24 +78,10 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 						<th>{value}</th>
 						{node.cpt[valueIndex].map((cptValue, columnIndex) => (
 							<td key={columnIndex}>
-								<input
-									className="w-full px-2 py-1 outline-none"
-									type="number"
-									placeholder="CPT Value"
-									min={0}
-									max={1}
-									value={cptValue}
-									onChange={event => {
-										const newCptValue = Number.parseFloat(event.target.value)
-										if (Number.isNaN(newCptValue)) return
-
-										setNodeCptValue(
-											node.id,
-											valueIndex,
-											columnIndex,
-											newCptValue
-										)
-									}}
+								<NodeSheetCptValue
+									node={node}
+									valueIndex={valueIndex}
+									columnIndex={columnIndex}
 								/>
 							</td>
 						))}
