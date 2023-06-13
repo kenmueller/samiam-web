@@ -1,8 +1,9 @@
 'use client'
 
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+
 import { Node } from '@/lib/network'
 import useNetworkStore from '@/lib/stores/network'
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 
 const NodeSheetCptValue = ({
 	node,
@@ -48,7 +49,7 @@ const NodeSheetCptValue = ({
 
 	return (
 		<input
-			className="w-full px-2 py-1 outline-none"
+			className="w-full px-2 py-1 outline-none bg-transparent"
 			placeholder={cptValue.toString()}
 			value={_cptValue}
 			onChange={_onCptValueChange}
