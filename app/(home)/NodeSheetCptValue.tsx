@@ -7,17 +7,17 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 const NodeSheetCptValue = ({
 	node,
 	valueIndex,
-	columnIndex
+	cptValueIndex
 }: {
 	node: Node
 	valueIndex: number
-	columnIndex: number
+	cptValueIndex: number
 }) => {
 	const { cptValue, setNodeCptValue } = useNetworkStore(state => ({
 		cptValue:
 			state.network.nodes.find(otherNode => otherNode.id === node.id)?.cpt[
 				valueIndex
-			][columnIndex] ?? null,
+			][cptValueIndex] ?? null,
 		setNodeCptValue: state.setNodeCptValue
 	}))
 
@@ -41,9 +41,9 @@ const NodeSheetCptValue = ({
 			const newCptValue = Number.parseFloat(_newCptValue)
 
 			if (!Number.isNaN(newCptValue))
-				setNodeCptValue(node.id, valueIndex, columnIndex, newCptValue)
+				setNodeCptValue(node.id, valueIndex, cptValueIndex, newCptValue)
 		},
-		[_setCptValue, setNodeCptValue, node.id, valueIndex, columnIndex]
+		[_setCptValue, setNodeCptValue, node.id, valueIndex, cptValueIndex]
 	)
 
 	return (
