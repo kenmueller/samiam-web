@@ -12,6 +12,10 @@ const katexToString = (math: string, displayMode: boolean) =>
 const renderTextWithMath = (text: string) => {
 	text = text.replace(/<([^\s>]+)/g, '&lt;$1')
 
+	text = text.replace(/\$(.*?)\$/gs, (_substring, math: string) =>
+		katexToString(math, false)
+	)
+
 	text = text.replace(/\\\((.*?)\\\)/gs, (_substring, math: string) =>
 		katexToString(math, false)
 	)
