@@ -46,7 +46,7 @@ const SheetInner = () => {
 			<div
 				className={cx(
 					'absolute top-0 right-0 bottom-0 bg-white transition-all duration-200 pointer-events-auto shadow-xl select-text touch-auto grid grid-rows-[auto_1fr]',
-					isFullScreen ? 'left-0' : 'left-[calc(100%-600px)]'
+					isFullScreen ? 'left-0' : 'left-[calc(min(50%,100%-800px))]'
 				)}
 			>
 				<div className="flex justify-end items-center">

@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import cx from 'classnames'
 
 import { Node } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -58,72 +59,77 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 	)
 
 	return (
-		<table className={styles.table}>
-			<tbody>
-				<tr>
-					{parents.map(({ parent }) => (
-						<th key={parent.id}>
-							<button
-								className="hover:underline"
-								onClick={() => {
-									setContent(<NodeSheet id={parent.id} />)
-								}}
-							>
-								{parent.name}
+		<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
+			<table
+				className={cx(styles.table, 'w-full table-fixed')}
+				style={{ transform: 'rotateX(180deg)' }}
+			>
+				<tbody>
+					<tr>
+						{parents.map(({ parent }) => (
+							<th key={parent.id} className="w-[150px]">
+								<button
+									className="hover:underline"
+									onClick={() => {
+										setContent(<NodeSheet id={parent.id} />)
+									}}
+								>
+									{parent.name}
+								</button>
+							</th>
+						))}
+						{node.values.map((_value, valueIndex) => (
+							<th key={valueIndex} className="w-[150px]">
+								<NodeSheetValue node={node} valueIndex={valueIndex} />
+							</th>
+						))}
+						<th className="w-[40px]">
+							<button className="w-full text-xl text-sky-500">
+								<FontAwesomeIcon icon={faPlus} />
 							</button>
 						</th>
-					))}
-					{node.values.map((_value, valueIndex) => (
-						<th key={valueIndex}>
-							<NodeSheetValue node={node} valueIndex={valueIndex} />
-						</th>
-					))}
-					<th>
-						<button className="w-full text-xl text-sky-500">
-							<FontAwesomeIcon icon={faPlus} />
-						</button>
-					</th>
-				</tr>
-				{new Array(rows).fill(undefined).map((_row, cptValueIndex) => (
-					<tr key={cptValueIndex}>
-						{parents.map(({ parent, rowSpan }) => {
-							const valueIndex =
-								(cptValueIndex / rowSpan) % parent.values.length
-							if (!Number.isInteger(valueIndex)) return null
+					</tr>
+					{new Array(rows).fill(undefined).map((_row, cptValueIndex) => (
+						<tr key={cptValueIndex}>
+							{parents.map(({ parent, rowSpan }) => {
+								const valueIndex =
+									(cptValueIndex / rowSpan) % parent.values.length
+								if (!Number.isInteger(valueIndex)) return null
 
-							return (
-								<th key={parent.id} rowSpan={rowSpan}>
-									{parent.values[valueIndex]}
-								</th>
-							)
-						})}
-						{node.values.map((_value, valueIndex) => (
-							<td key={valueIndex}>
-								<NodeSheetCptValue
-									node={node}
-									valueIndex={valueIndex}
-									cptValueIndex={cptValueIndex}
-								/>
-							</td>
+								return (
+									<th key={parent.id} rowSpan={rowSpan}>
+										{parent.values[valueIndex]}
+									</th>
+								)
+							})}
+							{node.values.map((_value, valueIndex) => (
+								<td key={valueIndex}>
+									<NodeSheetCptValue
+										node={node}
+										valueIndex={valueIndex}
+										cptValueIndex={cptValueIndex}
+									/>
+								</td>
+							))}
+							<th />
+						</tr>
+					))}
+					<tr>
+						{parents.map((_parent, parentIndex) => (
+							<th key={parentIndex} />
+						))}
+						{node.cpt.map((_row, cptValueIndex) => (
+							<th key={cptValueIndex}>
+								<button className="w-full text-xl text-red-500">
+									<FontAwesomeIcon icon={faTrash} />
+								</button>
+							</th>
 						))}
 						<th />
 					</tr>
-				))}
-				<tr>
-					{parents.map((_parent, parentIndex) => (
-						<th key={parentIndex} />
-					))}
-					{node.cpt.map((_row, cptValueIndex) => (
-						<th key={cptValueIndex}>
-							<button className="w-full text-xl text-red-500">
-								<FontAwesomeIcon icon={faTrash} />
-							</button>
-						</th>
-					))}
-					<th />
-				</tr>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	)
 }
 
