@@ -7,6 +7,7 @@ import useNetworkStore from '@/lib/stores/network'
 import useSheetStore from '@/lib/stores/sheet'
 import { Node } from '@/lib/network'
 import NodeSheetName from './NodeSheetName'
+import NodeSheetAssert from './NodeSheetAssert'
 import NodeSheetCpt from './NodeSheetCpt'
 
 const NodeSheet = ({ id }: { id: number }) => {
@@ -27,6 +28,7 @@ const NodeSheet = ({ id }: { id: number }) => {
 const NodeSheetWithNode = ({ node }: { node: Node }) => (
 	<div className="flex flex-col items-stretch gap-4">
 		<NodeSheetName node={node} />
+		<NodeSheetAssert node={node} />
 		<NodeSheetCpt node={node} />
 	</div>
 )
