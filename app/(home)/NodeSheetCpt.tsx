@@ -61,86 +61,89 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 	)
 
 	return (
-		<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
-			<table
-				className={cx(styles.table, 'w-full table-fixed')}
-				style={{ transform: 'rotateX(180deg)' }}
-			>
-				<tbody>
-					<tr>
-						{parents.map(({ parent }) => (
-							<th key={parent.id} className="w-[150px]">
+		<div className="flex flex-col gap-2">
+			<h3>CPT</h3>
+			<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
+				<table
+					className={cx(styles.table, 'w-full table-fixed')}
+					style={{ transform: 'rotateX(180deg)' }}
+				>
+					<tbody>
+						<tr>
+							{parents.map(({ parent }) => (
+								<th key={parent.id} className="w-[150px]">
+									<button
+										className="hover:underline"
+										onClick={() => {
+											setContent(<NodeSheet id={parent.id} />)
+										}}
+									>
+										{parent.name}
+									</button>
+								</th>
+							))}
+							{node.values.map((_value, valueIndex) => (
+								<th key={valueIndex} className="w-[150px]">
+									<NodeSheetValue node={node} valueIndex={valueIndex} />
+								</th>
+							))}
+							<th className="w-[40px]">
 								<button
-									className="hover:underline"
+									className="w-full text-xl text-sky-500"
 									onClick={() => {
-										setContent(<NodeSheet id={parent.id} />)
+										addNodeValue(node.id)
 									}}
 								>
-									{parent.name}
+									<FontAwesomeIcon icon={faPlus} />
 								</button>
 							</th>
-						))}
-						{node.values.map((_value, valueIndex) => (
-							<th key={valueIndex} className="w-[150px]">
-								<NodeSheetValue node={node} valueIndex={valueIndex} />
-							</th>
-						))}
-						<th className="w-[40px]">
-							<button
-								className="w-full text-xl text-sky-500"
-								onClick={() => {
-									addNodeValue(node.id)
-								}}
-							>
-								<FontAwesomeIcon icon={faPlus} />
-							</button>
-						</th>
-					</tr>
-					{new Array(rows).fill(undefined).map((_row, cptValueIndex) => (
-						<tr key={cptValueIndex}>
-							{parents.map(({ parent, rowSpan }) => {
-								const valueIndex =
-									(cptValueIndex / rowSpan) % parent.values.length
-								if (!Number.isInteger(valueIndex)) return null
+						</tr>
+						{new Array(rows).fill(undefined).map((_row, cptValueIndex) => (
+							<tr key={cptValueIndex}>
+								{parents.map(({ parent, rowSpan }) => {
+									const valueIndex =
+										(cptValueIndex / rowSpan) % parent.values.length
+									if (!Number.isInteger(valueIndex)) return null
 
-								return (
-									<th key={parent.id} rowSpan={rowSpan}>
-										{parent.values[valueIndex]}
-									</th>
-								)
-							})}
-							{node.values.map((_value, valueIndex) => (
-								<td key={valueIndex}>
-									<NodeSheetCptValue
-										node={node}
-										valueIndex={valueIndex}
-										cptValueIndex={cptValueIndex}
-									/>
-								</td>
+									return (
+										<th key={parent.id} rowSpan={rowSpan}>
+											{parent.values[valueIndex]}
+										</th>
+									)
+								})}
+								{node.values.map((_value, valueIndex) => (
+									<td key={valueIndex}>
+										<NodeSheetCptValue
+											node={node}
+											valueIndex={valueIndex}
+											cptValueIndex={cptValueIndex}
+										/>
+									</td>
+								))}
+								<th />
+							</tr>
+						))}
+						<tr>
+							{parents.map((_parent, parentIndex) => (
+								<th key={parentIndex} />
+							))}
+							{node.cpt.map((_row, valueIndex) => (
+								<th key={valueIndex}>
+									<button
+										className="w-full text-xl text-red-500"
+										onClick={() => {
+											removeNodeValue(node.id, valueIndex)
+										}}
+									>
+										<FontAwesomeIcon icon={faTrash} />
+									</button>
+								</th>
 							))}
 							<th />
 						</tr>
-					))}
-					<tr>
-						{parents.map((_parent, parentIndex) => (
-							<th key={parentIndex} />
-						))}
-						{node.cpt.map((_row, valueIndex) => (
-							<th key={valueIndex}>
-								<button
-									className="w-full text-xl text-red-500"
-									onClick={() => {
-										removeNodeValue(node.id, valueIndex)
-									}}
-								>
-									<FontAwesomeIcon icon={faTrash} />
-								</button>
-							</th>
-						))}
-						<th />
-					</tr>
-				</tbody>
-			</table>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	)
 }

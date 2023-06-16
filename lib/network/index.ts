@@ -8,6 +8,7 @@ export interface Node extends Position {
 	name: string
 	parents: number[]
 	values: string[]
+	assertedValue?: number
 	cpt: number[][]
 }
 

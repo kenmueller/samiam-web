@@ -177,18 +177,36 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<NodeName id={node.id} name={node.name} />
+			<NodeName
+				id={node.id}
+				name={node.name}
+				extra={
+					typeof node.assertedValue === 'number'
+						? ` = ${node.values[node.assertedValue]}`
+						: undefined
+				}
+			/>
 		</div>
 	)
 }
 
-const _NodeName = ({ id, name }: { id: number; name: string }) => (
-	<p
-		className="whitespace-nowrap"
-		dangerouslySetInnerHTML={{
-			__html: name ? renderTextWithMath(name) : `Node ${id}`
-		}}
-	/>
+const _NodeName = ({
+	id,
+	name,
+	extra
+}: {
+	id: number
+	name: string
+	extra?: string
+}) => (
+	<p className="whitespace-nowrap">
+		<span
+			dangerouslySetInnerHTML={{
+				__html: name ? renderTextWithMath(name) : `Node ${id}`
+			}}
+		/>
+		{extra && <span>{extra}</span>}
+	</p>
 )
 
 const NodeName = memo(_NodeName)

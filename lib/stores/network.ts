@@ -34,6 +34,7 @@ export interface NetworkStore {
 	removeNode: (id: number) => void
 	addEdge: (edge: Edge) => void
 	removeEdge: (edge: Edge) => void
+	setAssertedValue: (id: number, valueIndex: number | null) => void
 }
 
 const useNetworkStore = create(
@@ -254,6 +255,16 @@ const useNetworkStore = create(
 				if (parentIndex < 0) return
 
 				child.parents.splice(parentIndex, 1)
+			})
+
+			saveNetworkToStorage(get().network)
+		},
+		setAssertedValue: (id, valueIndex) => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				node.assertedValue = valueIndex ?? undefined
 			})
 
 			saveNetworkToStorage(get().network)

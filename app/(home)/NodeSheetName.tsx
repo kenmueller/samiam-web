@@ -17,12 +17,15 @@ const NodeSheetName = ({ node }: { node: Node }) => {
 	)
 
 	return (
-		<input
-			className="px-3 py-2 border border-gray-500 rounded-lg outline-none"
-			placeholder={`Node ${node.id}`}
-			value={node.name}
-			onChange={onNameChange}
-		/>
+		<div className="flex flex-col gap-2">
+			<h3>Name</h3>
+			<input
+				className="px-3 py-2 border border-gray-500 rounded-lg outline-none"
+				placeholder={`Node ${node.id}`}
+				value={node.name}
+				onChange={onNameChange}
+			/>
+		</div>
 	)
 }
 
