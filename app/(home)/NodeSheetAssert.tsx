@@ -12,7 +12,7 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 	return (
 		<div className="flex flex-col gap-2">
 			<h3>Assert Evidence</h3>
-			<div className="flex items-center gap-2">
+			<div className="flex items-center gap-2 flex-wrap">
 				{node.values.map((value, valueIndex) => (
 					<button
 						key={valueIndex}
