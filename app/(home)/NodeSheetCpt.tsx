@@ -31,7 +31,9 @@ const getRowSpan = (
 }
 
 const NodeSheetCpt = ({ node }: { node: Node }) => {
-	const { network } = useNetworkStore(pick('network'))
+	const { network, addNodeValue, removeNodeValue } = useNetworkStore(
+		pick('network', 'addNodeValue', 'removeNodeValue')
+	)
 	const { setContent } = useSheetStore(pick('setContent'))
 
 	const getNode = useCallback(
@@ -84,7 +86,12 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							</th>
 						))}
 						<th className="w-[40px]">
-							<button className="w-full text-xl text-sky-500">
+							<button
+								className="w-full text-xl text-sky-500"
+								onClick={() => {
+									addNodeValue(node.id)
+								}}
+							>
 								<FontAwesomeIcon icon={faPlus} />
 							</button>
 						</th>
@@ -118,9 +125,14 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 						{parents.map((_parent, parentIndex) => (
 							<th key={parentIndex} />
 						))}
-						{node.cpt.map((_row, cptValueIndex) => (
-							<th key={cptValueIndex}>
-								<button className="w-full text-xl text-red-500">
+						{node.cpt.map((_row, valueIndex) => (
+							<th key={valueIndex}>
+								<button
+									className="w-full text-xl text-red-500"
+									onClick={() => {
+										removeNodeValue(node.id, valueIndex)
+									}}
+								>
 									<FontAwesomeIcon icon={faTrash} />
 								</button>
 							</th>

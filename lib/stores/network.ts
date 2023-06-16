@@ -21,8 +21,8 @@ export interface NetworkStore {
 	addNode: (position: Position) => void
 	setNodeName: (id: number, name: string) => void
 	setNodeValue: (id: number, valueIndex: number, value: string) => void
-	removeNodeValue: (id: number, valueIndex: number) => void
 	addNodeValue: (id: number) => void
+	removeNodeValue: (id: number, valueIndex: number) => void
 	setNodeCptValue: (
 		id: number,
 		valueIndex: number,
@@ -147,6 +147,22 @@ const useNetworkStore = create(
 
 				node.values[valueIndex] = value
 			})
+
+			saveNetworkToStorage(get().network)
+		},
+		addNodeValue: id => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				const cptValues = (node.cpt[0] as number[] | undefined)?.length
+				if (cptValues === undefined) throw new Error('CPT is empty')
+
+				node.values.push(`value${node.values.length}`)
+				node.cpt.push(new Array(cptValues).fill(0))
+			})
+
+			saveNetworkToStorage(get().network)
 		},
 		removeNodeValue: (id, valueIndex) => {
 			set(state => {
@@ -155,14 +171,8 @@ const useNetworkStore = create(
 
 				node.values.splice(valueIndex, 1)
 			})
-		},
-		addNodeValue: id => {
-			set(state => {
-				const node = state.network.nodes.find(node => node.id === id)
-				if (!node) return
 
-				node.values.push(`Value ${node.values.length}`)
-			})
+			saveNetworkToStorage(get().network)
 		},
 		setNodeCptValue: (id, valueIndex, columnIndex, value) => {
 			set(state => {
@@ -171,6 +181,8 @@ const useNetworkStore = create(
 
 				node.cpt[valueIndex][columnIndex] = value
 			})
+
+			saveNetworkToStorage(get().network)
 		},
 		setNodePosition: (id, position) => {
 			set(state => {
