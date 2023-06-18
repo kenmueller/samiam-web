@@ -21,11 +21,13 @@ export interface EdgePosition {
 const NetworkEdge = ({
 	arrowId,
 	edge,
-	position
+	position,
+	intervened = false
 }: {
 	arrowId: string
 	edge?: Edge
 	position: EdgePosition
+	intervened?: boolean
 }) => {
 	const view = useView()
 	const { center, getNodeRef } = useCanvasStore(pick('center', 'getNodeRef'))
@@ -101,6 +103,7 @@ const NetworkEdge = ({
 				y2={toPoint.y}
 				stroke="black"
 				strokeWidth={2}
+				opacity={intervened ? 0.25 : 1}
 				markerEnd={`url(#${arrowId})`}
 			/>
 			<line

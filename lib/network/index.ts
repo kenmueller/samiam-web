@@ -3,11 +3,14 @@ export interface Position {
 	y: number
 }
 
+export type AssertionType = 'observation' | 'intervention'
+
 export interface Node extends Position {
 	id: number
 	name: string
 	parents: number[]
 	values: string[]
+	assertionType?: AssertionType
 	assertedValue?: number
 	cpt: number[][]
 }

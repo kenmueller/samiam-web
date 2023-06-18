@@ -1,6 +1,7 @@
 'use client'
 
 import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
+import cx from 'classnames'
 
 import { Node, Position } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -167,7 +168,18 @@ const NetworkNode = ({ node }: { node: Node }) => {
 	return (
 		<div
 			ref={onRef}
-			className="absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 bg-white border border-gray-500 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+			className={cx(
+				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer',
+				(node.assertionType === undefined ||
+					node.assertedValue === undefined) &&
+					'bg-white border border-gray-500',
+				node.assertionType === 'observation' &&
+					node.assertedValue !== undefined &&
+					'font-bold bg-yellow-500 bg-opacity-50 border-2 border-yellow-500',
+				node.assertionType === 'intervention' &&
+					node.assertedValue !== undefined &&
+					'font-bold bg-sky-500 bg-opacity-50 border-2 border-sky-500'
+			)}
 			style={
 				{
 					'--x': `${node.x}px`,
@@ -181,7 +193,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				id={node.id}
 				name={node.name}
 				extra={
-					typeof node.assertedValue === 'number'
+					node.assertionType && node.assertedValue !== undefined
 						? ` = ${node.values[node.assertedValue]}`
 						: undefined
 				}
