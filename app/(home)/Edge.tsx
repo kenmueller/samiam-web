@@ -54,8 +54,8 @@ const NetworkEdge = ({
 	const fromPoint =
 		from && fromNode && typeof angle === 'number'
 			? {
-					x: from.x + (fromNode.clientWidth / 2) * Math.cos(angle),
-					y: from.y + (fromNode.clientHeight / 2) * Math.sin(angle)
+					x: from.x + (fromNode.offsetWidth / 2) * Math.cos(angle),
+					y: from.y + (fromNode.offsetHeight / 2) * Math.sin(angle)
 			  }
 			: from
 
@@ -64,10 +64,10 @@ const NetworkEdge = ({
 			? {
 					x:
 						to.x +
-						(toNode.clientWidth / 2 + padding) * Math.cos(angle + Math.PI),
+						(toNode.offsetWidth / 2 + padding) * Math.cos(angle + Math.PI),
 					y:
 						to.y +
-						(toNode.clientHeight / 2 + padding) * Math.sin(angle + Math.PI)
+						(toNode.offsetHeight / 2 + padding) * Math.sin(angle + Math.PI)
 			  }
 			: to
 
