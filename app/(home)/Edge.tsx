@@ -97,6 +97,7 @@ const NetworkEdge = ({
 	return (
 		<>
 			<line
+				className="transition-opacity ease-linear"
 				x1={fromPoint.x}
 				y1={fromPoint.y}
 				x2={toPoint.x}

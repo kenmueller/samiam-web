@@ -27,7 +27,7 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 					<button
 						key={assertionType}
 						className={cx(
-							'px-3 py-1.5 border rounded-md',
+							'px-3 py-1.5 border rounded-md transition-colors ease-linear',
 							node.assertionType === assertionType
 								? selectedStyle
 								: 'border-gray-500'
@@ -54,7 +54,7 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 					<button
 						key={valueIndex}
 						className={cx(
-							'px-3 py-1.5 border rounded-md',
+							'px-3 py-1.5 border rounded-md transition-colors ease-linear',
 							node.assertedValue === valueIndex
 								? selectedStyle
 								: 'border-gray-500'
