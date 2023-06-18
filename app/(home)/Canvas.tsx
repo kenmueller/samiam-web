@@ -20,11 +20,14 @@ import useMouse from '@/lib/useMouse'
 import useCanvasStore from '@/lib/stores/canvas'
 import useView from '@/lib/useView'
 import NetworkEdge from './Edge'
+import { addNode } from '@/lib/network/actions'
 
 const Canvas = () => {
 	const arrowId = useId()
 
-	const { network, addNode } = useNetworkStore(pick('network', 'addNode'))
+	const { network, applyAction } = useNetworkStore(
+		pick('network', 'applyAction')
+	)
 	const { center, setCenter, currentArrowFrom, setCurrentArrowFrom } =
 		useCanvasStore(
 			pick('center', 'setCenter', 'currentArrowFrom', 'setCurrentArrowFrom')
@@ -43,11 +46,11 @@ const Canvas = () => {
 					setDraggingMouse({ x: event.clientX, y: event.clientY })
 					break
 				case 'add-node':
-					if (mouse) addNode(mouse)
+					if (mouse) applyAction(addNode(mouse))
 					break
 			}
 		},
-		[option, addNode, mouse, setDraggingMouse]
+		[option, applyAction, mouse, setDraggingMouse]
 	)
 
 	const onMouseMove = useCallback(
@@ -101,7 +104,7 @@ const Canvas = () => {
 				className="pointer-events-none absolute bg-black bg-opacity-10 left-[calc(50%+var(--x))] top-0 bottom-0 w-[1px] -translate-x-1/2"
 				style={{ '--x': `${center.x}px` } as CSSProperties}
 			/>
-			{network.nodes.map(node => (
+			{Object.values(network.nodes).map(node => (
 				<NetworkNode key={node.id} node={node} />
 			))}
 			{view && (
@@ -119,14 +122,14 @@ const Canvas = () => {
 							<path d="M 0 0 L 10 5 L 0 10 z" />
 						</marker>
 					</defs>
-					{network.nodes.map(childNode =>
+					{Object.values(network.nodes).map(childNode =>
 						childNode.parents.map(parentId => (
 							<NetworkEdge
 								key={`${parentId}-${childNode.id}`}
 								arrowId={arrowId}
 								edge={{ from: parentId, to: childNode.id }}
 								position={{
-									from: network.nodes.find(node => node.id === parentId),
+									from: network.nodes[parentId.toString()],
 									to: childNode
 								}}
 								intervened={
@@ -140,7 +143,7 @@ const Canvas = () => {
 						<NetworkEdge
 							arrowId={arrowId}
 							position={{
-								from: network.nodes.find(node => node.id === currentArrowFrom),
+								from: network.nodes[currentArrowFrom.toString()],
 								to: mouse
 							}}
 						/>

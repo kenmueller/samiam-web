@@ -13,7 +13,7 @@ import NodeSheetCpt from './NodeSheetCpt'
 const NodeSheet = ({ id }: { id: number }) => {
 	const { close } = useSheetStore(pick('close'))
 	const { node } = useNetworkStore(state => ({
-		node: state.network.nodes.find(node => node.id === id) ?? null
+		node: (state.network.nodes[id.toString()] as Node | undefined) ?? null
 	}))
 
 	const nodeExists = !!node

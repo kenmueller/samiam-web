@@ -4,6 +4,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 
 import { Node } from '@/lib/network'
 import useNetworkStore from '@/lib/stores/network'
+import { setNodeCptValue } from '@/lib/network/actions'
+import pick from '@/lib/pick'
 
 const NodeSheetCptValue = ({
 	node,
@@ -14,15 +16,10 @@ const NodeSheetCptValue = ({
 	valueIndex: number
 	cptValueIndex: number
 }) => {
-	const { cptValue, setNodeCptValue } = useNetworkStore(state => ({
-		cptValue:
-			state.network.nodes.find(otherNode => otherNode.id === node.id)?.cpt[
-				valueIndex
-			][cptValueIndex] ?? null,
-		setNodeCptValue: state.setNodeCptValue
-	}))
-
+	const cptValue = node.cpt[valueIndex][cptValueIndex]
 	if (typeof cptValue !== 'number') throw new Error(`CPT value not found`)
+
+	const { applyAction } = useNetworkStore(pick('applyAction'))
 
 	const [_cptValue, _setCptValue] = useState(cptValue?.toString())
 
@@ -42,9 +39,11 @@ const NodeSheetCptValue = ({
 			const newCptValue = Number.parseFloat(_newCptValue)
 
 			if (!Number.isNaN(newCptValue))
-				setNodeCptValue(node.id, valueIndex, cptValueIndex, newCptValue)
+				applyAction(
+					setNodeCptValue(node.id, valueIndex, cptValueIndex, newCptValue)
+				)
 		},
-		[_setCptValue, setNodeCptValue, node.id, valueIndex, cptValueIndex]
+		[_setCptValue, applyAction, node.id, valueIndex, cptValueIndex]
 	)
 
 	return (

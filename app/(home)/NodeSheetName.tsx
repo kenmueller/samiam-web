@@ -5,15 +5,16 @@ import { ChangeEvent, useCallback } from 'react'
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import { Node } from '@/lib/network'
+import { setNodeName } from '@/lib/network/actions'
 
 const NodeSheetName = ({ node }: { node: Node }) => {
-	const { setNodeName } = useNetworkStore(pick('setNodeName'))
+	const { applyAction } = useNetworkStore(pick('applyAction'))
 
 	const onNameChange = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setNodeName(node.id, event.target.value)
+			applyAction(setNodeName(node.id, event.target.value))
 		},
-		[node.id, setNodeName]
+		[node.id, applyAction]
 	)
 
 	return (

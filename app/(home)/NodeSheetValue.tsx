@@ -4,6 +4,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 
 import { Node } from '@/lib/network'
 import useNetworkStore from '@/lib/stores/network'
+import pick from '@/lib/pick'
+import { setNodeValue } from '@/lib/network/actions'
 
 const NodeSheetValue = ({
 	node,
@@ -12,21 +14,16 @@ const NodeSheetValue = ({
 	node: Node
 	valueIndex: number
 }) => {
-	const { value, setNodeValue } = useNetworkStore(state => ({
-		value:
-			state.network.nodes.find(otherNode => otherNode.id === node.id)?.values[
-				valueIndex
-			] ?? null,
-		setNodeValue: state.setNodeValue
-	}))
-
+	const value = node.values[valueIndex]
 	if (typeof value !== 'string') throw new Error('Node value not found')
+
+	const { applyAction } = useNetworkStore(pick('applyAction'))
 
 	const onNodeValueChange = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setNodeValue(node.id, valueIndex, event.target.value)
+			applyAction(setNodeValue(node.id, valueIndex, event.target.value))
 		},
-		[setNodeValue, node.id, valueIndex]
+		[applyAction, node.id, valueIndex]
 	)
 
 	return (

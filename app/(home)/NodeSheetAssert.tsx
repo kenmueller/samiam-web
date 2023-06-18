@@ -5,11 +5,10 @@ import cx from 'classnames'
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import { Node } from '@/lib/network'
+import { setAssertedValue, setAssertionType } from '@/lib/network/actions'
 
 const NodeSheetAssert = ({ node }: { node: Node }) => {
-	const { setAssertionType, setAssertedValue } = useNetworkStore(
-		pick('setAssertionType', 'setAssertedValue')
-	)
+	const { applyAction } = useNetworkStore(pick('applyAction'))
 
 	const selectedStyle =
 		node.assertionType === 'observation'
@@ -33,9 +32,11 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 								: 'border-gray-500'
 						)}
 						onClick={() => {
-							setAssertionType(
-								node.id,
-								node.assertionType === assertionType ? null : assertionType
+							applyAction(
+								setAssertionType(
+									node.id,
+									node.assertionType === assertionType ? null : assertionType
+								)
 							)
 						}}
 					>
@@ -60,9 +61,11 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 								: 'border-gray-500'
 						)}
 						onClick={() => {
-							setAssertedValue(
-								node.id,
-								node.assertedValue === valueIndex ? null : valueIndex
+							applyAction(
+								setAssertedValue(
+									node.id,
+									node.assertedValue === valueIndex ? null : valueIndex
+								)
 							)
 						}}
 					>
