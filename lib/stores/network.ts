@@ -2,16 +2,8 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
 import Network, { Position, AssertionType } from '@/lib/network'
-import getNextNodeId from '@/lib/network/getNextNodeId'
+import getNextNodeId from '@/lib/network/actions'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
-
-const GRID_SPACING_X = 80
-const GRID_SPACING_Y = 50
-
-export interface Edge {
-	from: number
-	to: number
-}
 
 export interface NetworkStore {
 	network: Network
