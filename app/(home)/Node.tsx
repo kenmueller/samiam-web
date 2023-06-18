@@ -169,7 +169,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		<div
 			ref={onRef}
 			className={cx(
-				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer',
+				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
 				(node.assertionType === undefined ||
 					node.assertedValue === undefined) &&
 					'bg-white border border-gray-500',
