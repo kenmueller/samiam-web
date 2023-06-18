@@ -14,12 +14,15 @@ import errorFromUnknown from '@/lib/error/fromUnknown'
 import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
 import renderTextWithMath from '@/lib/renderTextWithMath'
+import {
+	addEdge,
+	removeNode,
+	setNodePosition,
+	snapNodeToGrid
+} from '@/lib/network/actions'
 
 const NetworkNode = ({ node }: { node: Node }) => {
-	const { setNodePosition, snapNodeToGrid, removeNode, addEdge } =
-		useNetworkStore(
-			pick('setNodePosition', 'snapNodeToGrid', 'removeNode', 'addEdge')
-		)
+	const { applyAction } = useNetworkStore(pick('applyAction'))
 	const {
 		center,
 		currentArrowFrom,
@@ -45,10 +48,12 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		(event: globalThis.MouseEvent) => {
 			if (!(startMouse && draggingMouse)) return
 
-			setNodePosition(node.id, {
-				x: node.x + (event.clientX - draggingMouse.x),
-				y: node.y - (event.clientY - draggingMouse.y)
-			})
+			applyAction(
+				setNodePosition(node.id, {
+					x: node.x + (event.clientX - draggingMouse.x),
+					y: node.y - (event.clientY - draggingMouse.y)
+				})
+			)
 
 			setDraggingMouse({ x: event.clientX, y: event.clientY })
 		},
@@ -58,7 +63,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			node.y,
 			startMouse,
 			draggingMouse,
-			setNodePosition,
+			applyAction,
 			setDraggingMouse
 		]
 	)
@@ -71,7 +76,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			setSheetContent(<NodeSheet id={node.id} />)
 		}
 
-		snapNodeToGrid(node.id)
+		applyAction(snapNodeToGrid(node.id))
 
 		setStartMouse(null)
 		setDraggingMouse(null)
@@ -80,7 +85,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		draggingMouse,
 		setSheetContent,
 		node.id,
-		snapNodeToGrid,
+		applyAction,
 		setStartMouse,
 		setDraggingMouse
 	])
@@ -92,7 +97,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					setCurrentArrowFrom(node.id)
 					break
 				case 'remove':
-					removeNode(node.id)
+					applyAction(removeNode(node.id))
 					break
 				default:
 					event.stopPropagation()
@@ -105,7 +110,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			option,
 			node.id,
 			setCurrentArrowFrom,
-			removeNode,
+			applyAction,
 			setStartMouse,
 			setDraggingMouse
 		]
@@ -120,7 +125,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					event.stopPropagation()
 
 					try {
-						addEdge({ from: currentArrowFrom, to: node.id })
+						applyAction(addEdge({ from: currentArrowFrom, to: node.id }))
 					} catch (unknownError) {
 						alertError(errorFromUnknown(unknownError))
 					}
@@ -130,7 +135,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					break
 			}
 		},
-		[option, currentArrowFrom, addEdge, node.id, setCurrentArrowFrom]
+		[option, currentArrowFrom, applyAction, node.id, setCurrentArrowFrom]
 	)
 
 	useEvent('body', 'mousemove', onMouseMove)

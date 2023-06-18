@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
-import { Edge } from '@/lib/stores/network'
+import { Edge } from '@/lib/network/actions'
 import { Position } from '@/lib/network'
 import pick from '@/lib/pick'
 import useCanvasStore from '@/lib/stores/canvas'
 import useOptionStore from '@/lib/stores/option'
 import useView from '@/lib/useView'
 import useNetworkStore from '@/lib/stores/network'
+import { removeEdge } from '@/lib/network/actions'
 
 const padding = 5
 
@@ -32,7 +33,7 @@ const NetworkEdge = ({
 	const view = useView()
 	const { center, getNodeRef } = useCanvasStore(pick('center', 'getNodeRef'))
 	const { option } = useOptionStore(pick('option'))
-	const { removeEdge } = useNetworkStore(pick('removeEdge'))
+	const { applyAction } = useNetworkStore(pick('applyAction'))
 
 	const from = view &&
 		position.from && {
@@ -76,10 +77,10 @@ const NetworkEdge = ({
 	const onLineMouseDown = useCallback(() => {
 		switch (option) {
 			case 'remove':
-				if (edge) removeEdge(edge)
+				if (edge) applyAction(removeEdge(edge))
 				break
 		}
-	}, [option, edge, removeEdge])
+	}, [option, edge, applyAction])
 
 	useEffect(() => {
 		const line = ref.current

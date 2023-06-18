@@ -14,6 +14,7 @@ import NodeSheet from './NodeSheet'
 import NodeSheetValue from './NodeSheetValue'
 
 import styles from './NodeSheetCpt.module.scss'
+import { addNodeValue, removeNodeValue } from '@/lib/network/actions'
 
 const getRowSpan = (
 	child: Node,
@@ -31,14 +32,14 @@ const getRowSpan = (
 }
 
 const NodeSheetCpt = ({ node }: { node: Node }) => {
-	const { network, addNodeValue, removeNodeValue } = useNetworkStore(
-		pick('network', 'addNodeValue', 'removeNodeValue')
+	const { network, applyAction } = useNetworkStore(
+		pick('network', 'applyAction')
 	)
 	const { setContent } = useSheetStore(pick('setContent'))
 
 	const getNode = useCallback(
 		(id: number) => {
-			const node = network.nodes.find(node => node.id === id)
+			const node = network.nodes[id.toString()]
 			if (!node) throw new Error(`Node ${id} not found`)
 
 			return node
@@ -91,7 +92,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 								<button
 									className="w-full text-xl text-sky-500"
 									onClick={() => {
-										addNodeValue(node.id)
+										applyAction(addNodeValue(node.id))
 									}}
 								>
 									<FontAwesomeIcon icon={faPlus} />
@@ -132,7 +133,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 									<button
 										className="w-full text-xl text-red-500"
 										onClick={() => {
-											removeNodeValue(node.id, valueIndex)
+											applyAction(removeNodeValue(node.id, valueIndex))
 										}}
 									>
 										<FontAwesomeIcon icon={faTrash} />
