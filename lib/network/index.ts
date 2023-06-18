@@ -9,6 +9,7 @@ export interface Node extends Position {
 	id: number
 	name: string
 	parents: number[]
+	children: number[]
 	values: string[]
 	assertionType?: AssertionType
 	assertedValue?: number
@@ -16,5 +17,5 @@ export interface Node extends Position {
 }
 
 export default interface Network {
-	nodes: Node[]
+	nodes: Record<string, Node>
 }
