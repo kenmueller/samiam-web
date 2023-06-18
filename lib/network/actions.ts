@@ -2,6 +2,8 @@ import { Draft } from 'immer'
 
 import Network, { Position } from '.'
 
+export type NetworkAction = (network: Draft<Network>) => void
+
 const GRID_SPACING_X = 80
 const GRID_SPACING_Y = 50
 
@@ -18,8 +20,8 @@ const getNextNodeId = (network: Network) => {
 }
 
 export const addNode =
-	({ x, y }: Position) =>
-	(network: Draft<Network>) => {
+	({ x, y }: Position): NetworkAction =>
+	network => {
 		const position: Position = {
 			x: Math.round(x / GRID_SPACING_X) * GRID_SPACING_X,
 			y: Math.round(y / GRID_SPACING_Y) * GRID_SPACING_Y
