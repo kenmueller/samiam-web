@@ -23,6 +23,7 @@ Features:
   - MPE
   - MAP
   - Sensitivity analysis
+- Interventional causal queries
 - Reading/writing network files in the cloud
 - Reading/writing network files locally
 - Repository of example Bayesian networks
@@ -31,8 +32,16 @@ Features:
 
 Complete port of [SamIam](https://github.com/uclareasoning/SamIam) with the addition of:
 
-- Interventional causal queries
 - Multiple variable prior and posterior marginals
+- Reorder node parents
+- Reorder node values
+- Share
+  - View-only
+  - With link
+  - Social media
+  - Export to LaTeX/TikZ
+- Ellipse and small circle node views
+- DAG construction from text or voice with LLM
 
 ## Version 3
 
@@ -40,3 +49,5 @@ Features:
 
 - Counterfactual causal queries
 - Server side inference
+- Collaboration
+- BN construction from text or voice with LLM
