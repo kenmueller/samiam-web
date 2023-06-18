@@ -129,6 +129,10 @@ const Canvas = () => {
 									from: network.nodes.find(node => node.id === parentId),
 									to: childNode
 								}}
+								intervened={
+									childNode.assertionType === 'intervention' &&
+									childNode.assertedValue !== undefined
+								}
 							/>
 						))
 					)}

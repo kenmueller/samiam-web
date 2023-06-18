@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-import Network, { Position } from '@/lib/network'
+import Network, { Position, AssertionType } from '@/lib/network'
 import getNextNodeId from '@/lib/network/getNextNodeId'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 
@@ -34,6 +34,7 @@ export interface NetworkStore {
 	removeNode: (id: number) => void
 	addEdge: (edge: Edge) => void
 	removeEdge: (edge: Edge) => void
+	setAssertionType: (id: number, type: AssertionType | null) => void
 	setAssertedValue: (id: number, valueIndex: number | null) => void
 }
 
@@ -255,6 +256,17 @@ const useNetworkStore = create(
 				if (parentIndex < 0) return
 
 				child.parents.splice(parentIndex, 1)
+			})
+
+			saveNetworkToStorage(get().network)
+		},
+
+		setAssertionType: (id, type) => {
+			set(state => {
+				const node = state.network.nodes.find(node => node.id === id)
+				if (!node) return
+
+				node.assertionType = type ?? undefined
 			})
 
 			saveNetworkToStorage(get().network)
