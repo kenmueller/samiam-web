@@ -72,7 +72,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 					<tbody>
 						<tr>
 							{parents.map(({ parent }) => (
-								<th key={parent.id} className="w-[150px]">
+								<th key={parent.id} className="min-w-[50px] max-w-[150px] px-3">
 									<button
 										className="hover:underline"
 										onClick={() => {
@@ -107,7 +107,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 									if (!Number.isInteger(valueIndex)) return null
 
 									return (
-										<th key={parent.id} rowSpan={rowSpan}>
+										<th key={parent.id} className="px-3" rowSpan={rowSpan}>
 											{parent.values[valueIndex]}
 										</th>
 									)
