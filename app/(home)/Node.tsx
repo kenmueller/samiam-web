@@ -180,10 +180,10 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					'bg-white border border-gray-500',
 				node.assertionType === 'observation' &&
 					node.assertedValue !== undefined &&
-					'font-bold bg-yellow-500 bg-opacity-50 border-2 border-yellow-500',
+					'font-bold bg-[#f5d996] border-2 border-yellow-500',
 				node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined &&
-					'font-bold bg-sky-500 bg-opacity-50 border-2 border-sky-500'
+					'font-bold bg-[#99d3f4] border-2 border-sky-500'
 			)}
 			style={
 				{
