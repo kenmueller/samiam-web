@@ -180,10 +180,10 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					'bg-white border border-gray-500',
 				node.assertionType === 'observation' &&
 					node.assertedValue !== undefined &&
-					'font-bold bg-[#f5d996] border-2 border-yellow-500',
+					'bg-[#f5d996] border-2 border-yellow-500',
 				node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined &&
-					'font-bold bg-[#99d3f4] border-2 border-sky-500'
+					'bg-[#99d3f4] border-2 border-sky-500'
 			)}
 			style={
 				{
@@ -194,36 +194,30 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<NodeName
-				id={node.id}
-				name={node.name}
-				extra={
-					node.assertionType && node.assertedValue !== undefined
-						? ` = ${node.values[node.assertedValue]}`
-						: undefined
-				}
-			/>
+			<p className="whitespace-nowrap">
+				{node.assertionType === 'intervention' &&
+					node.assertedValue !== undefined && (
+						<span className="italic">do(</span>
+					)}
+				<NodeName id={node.id} name={node.name} />
+				{node.assertionType !== undefined &&
+					node.assertedValue !== undefined && (
+						<span> = {node.values[node.assertedValue]}</span>
+					)}
+				{node.assertionType === 'intervention' &&
+					node.assertedValue !== undefined && <span className="italic">)</span>}
+			</p>
 		</div>
 	)
 }
 
-const _NodeName = ({
-	id,
-	name,
-	extra
-}: {
-	id: number
-	name: string
-	extra?: string
-}) => (
-	<p className="whitespace-nowrap">
-		<span
-			dangerouslySetInnerHTML={{
-				__html: name ? renderTextWithMath(name) : `Node ${id}`
-			}}
-		/>
-		{extra && <span>{extra}</span>}
-	</p>
+const _NodeName = ({ id, name }: { id: number; name: string }) => (
+	<span
+		className="font-bold"
+		dangerouslySetInnerHTML={{
+			__html: name ? renderTextWithMath(name) : `Node ${id}`
+		}}
+	/>
 )
 
 const NodeName = memo(_NodeName)

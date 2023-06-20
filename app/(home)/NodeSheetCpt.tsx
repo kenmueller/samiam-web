@@ -12,9 +12,9 @@ import NodeSheetCptValue from './NodeSheetCptValue'
 import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
 import NodeSheetValue from './NodeSheetValue'
+import { addNodeValue, removeNodeValue } from '@/lib/network/actions'
 
 import styles from './NodeSheetCpt.module.scss'
-import { addNodeValue, removeNodeValue } from '@/lib/network/actions'
 
 const getRowSpan = (
 	child: Node,
@@ -66,13 +66,13 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 			<h3>CPT</h3>
 			<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
 				<table
-					className={cx(styles.table, 'w-full table-fixed')}
+					className={cx(styles.table, 'table-fixed border-collapse')}
 					style={{ transform: 'rotateX(180deg)' }}
 				>
-					<tbody>
+					<thead>
 						<tr>
 							{parents.map(({ parent }) => (
-								<th key={parent.id} className="min-w-[50px] max-w-[150px] px-3">
+								<th key={parent.id} className="px-3">
 									<button
 										className="hover:underline"
 										onClick={() => {
@@ -84,13 +84,13 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 								</th>
 							))}
 							{node.values.map((_value, valueIndex) => (
-								<th key={valueIndex} className="w-[150px]">
+								<th key={valueIndex}>
 									<NodeSheetValue node={node} valueIndex={valueIndex} />
 								</th>
 							))}
-							<th className="w-[40px]">
+							<th>
 								<button
-									className="w-full text-xl text-sky-500"
+									className="w-full px-3 text-xl text-sky-500"
 									onClick={() => {
 										applyAction(addNodeValue(node.id))
 									}}
@@ -99,15 +99,25 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 								</button>
 							</th>
 						</tr>
+					</thead>
+					<tbody>
 						{new Array(rows).fill(undefined).map((_row, cptValueIndex) => (
 							<tr key={cptValueIndex}>
-								{parents.map(({ parent, rowSpan }) => {
+								{parents.map(({ parent, rowSpan }, parentIndex) => {
 									const valueIndex =
 										(cptValueIndex / rowSpan) % parent.values.length
 									if (!Number.isInteger(valueIndex)) return null
 
 									return (
-										<th key={parent.id} className="px-3" rowSpan={rowSpan}>
+										<th
+											key={parent.id}
+											className={cx(
+												'px-3',
+												parentIndex === parents.length - 1 &&
+													'whitespace-nowrap'
+											)}
+											rowSpan={rowSpan}
+										>
 											{parent.values[valueIndex]}
 										</th>
 									)
