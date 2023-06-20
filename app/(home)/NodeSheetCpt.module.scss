@@ -1,8 +1,12 @@
 .table {
-	&,
+	* {
+		overflow-wrap: normal;
+		word-break: normal;
+	}
+
 	th,
 	td {
-		@apply border border-gray-500 border-collapse;
+		@apply border border-gray-500 overflow-hidden text-ellipsis max-w-[115px];
 	}
 
 	th {

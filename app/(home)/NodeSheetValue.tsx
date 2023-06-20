@@ -28,7 +28,7 @@ const NodeSheetValue = ({
 
 	return (
 		<input
-			className="w-full px-2 py-1 text-center outline-none bg-transparent"
+			className="w-full min-w-[100px] px-2 py-1 text-center outline-none bg-transparent"
 			placeholder="Unnamed"
 			value={value}
 			onChange={onNodeValueChange}
