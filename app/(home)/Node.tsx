@@ -197,15 +197,19 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			<p className="whitespace-nowrap">
 				{node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined && (
-						<span className="italic">do(</span>
+						<>
+							<span className="italic">do</span>
+							<span>(</span>
+						</>
 					)}
 				<NodeName id={node.id} name={node.name} />
 				{node.assertionType !== undefined &&
 					node.assertedValue !== undefined && (
-						<span> = {node.values[node.assertedValue]}</span>
+						<>
+							<span> = {node.values[node.assertedValue]}</span>
+							<span>)</span>
+						</>
 					)}
-				{node.assertionType === 'intervention' &&
-					node.assertedValue !== undefined && <span className="italic">)</span>}
 			</p>
 		</div>
 	)
