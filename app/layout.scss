@@ -81,3 +81,8 @@ button:disabled {
 [aria-label][data-balloon-pos]::after {
 	@apply leading-5;
 }
+
+th,
+td {
+	padding: 0;
+}
