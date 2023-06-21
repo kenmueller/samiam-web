@@ -1,6 +1,7 @@
 'use client'
 
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import clamp from 'lodash/clamp'
 
 import { Node } from '@/lib/network'
 import useNetworkStore from '@/lib/stores/network'
@@ -48,7 +49,10 @@ const NodeSheetCptValue = ({
 
 	return (
 		<input
-			className="w-full px-2 py-1 outline-none bg-transparent"
+			className="w-full px-2 py-1 outline-none"
+			style={{
+				background: `rgb(96, ${128 + clamp(cptValue, 0, 1) * 127}, 96)`
+			}}
 			placeholder={cptValue.toString()}
 			value={_cptValue}
 			onChange={_onCptValueChange}
