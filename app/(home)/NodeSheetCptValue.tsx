@@ -49,9 +49,9 @@ const NodeSheetCptValue = ({
 
 	return (
 		<input
-			className="w-full px-2 py-1 outline-none"
+			className="w-full px-2 py-1 outline-none transition-colors ease-linear"
 			style={{
-				background: `rgb(96, ${128 + clamp(cptValue, 0, 1) * 127}, 96)`
+				background: `rgb(128, ${128 + clamp(cptValue, 0, 1) * 127}, 128)`
 			}}
 			placeholder={cptValue.toString()}
 			value={_cptValue}
