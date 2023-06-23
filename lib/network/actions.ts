@@ -18,6 +18,12 @@ export interface Edge {
 	to: number
 }
 
+// temporary, should go into samiam-lib
+const transpose = (array: number[][]) =>
+	Array.from({ length: array[0].length }, (_row, i) =>
+		Array.from({ length: array.length }, (_col, j) => array[j][i])
+	)
+
 const getNextNodeId = (network: Network) => {
 	for (let nextId = 0; ; nextId++) {
 		if (nextId.toString() in network.nodes) continue
@@ -54,7 +60,7 @@ export const addNode =
 			parents: [],
 			children: [],
 			values: [...node.values], //['yes', 'no'],
-			cpt: cloneDeep(node.cpt), //[[0.5], [0.5]],
+			cpt: transpose(node.cpt), //[[0.5], [0.5]],
 			...position
 		}
 	}
