@@ -105,12 +105,12 @@ const NetworkEdge = ({
 
 	const [, setUpdateKey] = useState<Record<string, never>>({})
 
-	const edgeFrom = edge?.from
-	const edgeTo = edge?.to
+	const edgeFromName = edge?.from.name
+	const edgeToName = edge?.to.name
 
 	useEffect(() => {
 		setUpdateKey({})
-	}, [edgeFrom, edgeTo, setUpdateKey])
+	}, [edgeFromName, edgeToName, setUpdateKey])
 
 	if (!(fromPoint && toPoint)) return null
 
