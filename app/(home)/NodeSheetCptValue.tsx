@@ -41,7 +41,12 @@ const NodeSheetCptValue = ({
 
 			if (!Number.isNaN(newCptValue))
 				applyAction(
-					setNodeCptValue(node.id, valueIndex, cptValueIndex, newCptValue)
+					setNodeCptValue(
+						node.id,
+						valueIndex,
+						cptValueIndex,
+						clamp(newCptValue, 0, 1)
+					)
 				)
 		},
 		[_setCptValue, applyAction, node.id, valueIndex, cptValueIndex]
