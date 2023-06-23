@@ -58,6 +58,8 @@ const NodeSheetCptValue = ({
 			style={{
 				background: `rgb(128, ${128 + clamp(cptValue, 0, 1) * 127}, 128)`
 			}}
+			type="number"
+			step={0.01}
 			placeholder={cptValue.toString()}
 			value={_cptValue}
 			onChange={_onCptValueChange}
