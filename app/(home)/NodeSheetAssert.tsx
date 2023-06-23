@@ -1,11 +1,18 @@
 'use client'
 
 import cx from 'classnames'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useCallback } from 'react'
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import { Node } from '@/lib/network'
-import { setAssertedValue, setAssertionType } from '@/lib/network/actions'
+import {
+	addNodeValue,
+	setAssertedValue,
+	setAssertionType
+} from '@/lib/network/actions'
 
 const NodeSheetAssert = ({ node }: { node: Node }) => {
 	const { applyAction } = useNetworkStore(pick('applyAction'))
@@ -16,6 +23,13 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 			: node.assertionType === 'intervention'
 			? 'bg-sky-500 bg-opacity-50 border-sky-500'
 			: (undefined as never)
+
+	const onAddValue = useCallback(() => {
+		const value = prompt('New Value')
+		if (!value) return
+
+		applyAction(addNodeValue(node.id, value))
+	}, [applyAction, node.id])
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -72,6 +86,15 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 						{value}
 					</button>
 				))}
+				<button
+					className={cx(
+						'flex items-center gap-2 px-3 py-1.5 border border-gray-500 rounded-md transition-colors ease-linear'
+					)}
+					onClick={onAddValue}
+				>
+					<FontAwesomeIcon icon={faPlus} />
+					New Value
+				</button>
 			</div>
 		</div>
 	)
