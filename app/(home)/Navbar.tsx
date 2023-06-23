@@ -8,10 +8,19 @@ import errorFromUnknown from '@/lib/error/fromUnknown'
 import pick from '@/lib/pick'
 
 const Navbar = () => {
-	const { loadNetworkFromStorage, loadNetworkFromFile, saveNetworkToFile } =
-		useNetworkStore(
-			pick('loadNetworkFromStorage', 'loadNetworkFromFile', 'saveNetworkToFile')
+	const {
+		loadNetworkFromStorage,
+		loadNetworkFromFile,
+		saveNetworkToFile,
+		clearNetworkFromStorage
+	} = useNetworkStore(
+		pick(
+			'loadNetworkFromStorage',
+			'loadNetworkFromFile',
+			'saveNetworkToFile',
+			'clearNetworkFromStorage'
 		)
+	)
 
 	const openNetwork = useCallback(async () => {
 		try {
@@ -29,6 +38,15 @@ const Navbar = () => {
 		}
 	}, [saveNetworkToFile])
 
+	const clearNetwork = useCallback(() => {
+		try {
+			if (!confirm('Are you sure you want to clear the network?')) return
+			clearNetworkFromStorage()
+		} catch (unknownError) {
+			alertError(errorFromUnknown(unknownError))
+		}
+	}, [clearNetworkFromStorage])
+
 	useEffect(() => {
 		loadNetworkFromStorage()
 	}, [loadNetworkFromStorage])
@@ -42,6 +60,9 @@ const Navbar = () => {
 				</button>
 				<button className="text-sky-500" onClick={exportNetwork}>
 					Export
+				</button>
+				<button className="text-sky-500" onClick={clearNetwork}>
+					Clear
 				</button>
 			</div>
 		</nav>

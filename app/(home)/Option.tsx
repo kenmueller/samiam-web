@@ -8,17 +8,23 @@ import {
 	faCircle,
 	faArrowRight,
 	faTrash,
-	IconDefinition
+	IconDefinition,
+	faHand
 } from '@fortawesome/free-solid-svg-icons'
 
 import useOptionStore, { Option } from '@/lib/stores/option'
 import pick from '@/lib/pick'
+import useEvent from '@/lib/useEvent'
 
-const OPTION_ICONS: Record<Option, IconDefinition> = {
-	pointer: faHandPointUp,
-	'add-node': faCircle,
-	'add-edge': faArrowRight,
-	remove: faTrash
+const OPTION_DEFINITIONS: Record<
+	Option,
+	{ className?: string; icon: IconDefinition; keys: string[] }
+> = {
+	select: { icon: faHandPointUp, keys: ['1', 'a', 'j'] },
+	move: { icon: faHand, keys: ['2', 's', 'k'] },
+	'add-node': { icon: faCircle, keys: ['3', 'd', 'l'] },
+	'add-edge': { icon: faArrowRight, keys: ['4', 'f', ';'] },
+	remove: { className: 'text-red-500', icon: faTrash, keys: ['5', 'g', "'"] }
 }
 
 const Option = ({ option }: { option: Option }) => {
@@ -27,21 +33,41 @@ const Option = ({ option }: { option: Option }) => {
 	)
 
 	const selected = option === currentOption
+	const { className, icon, keys } = OPTION_DEFINITIONS[option]
 
 	const updateOption = useCallback(() => {
 		setOption(option)
 	}, [option, setOption])
 
+	const onKeyDown = useCallback(
+		(event: globalThis.KeyboardEvent) => {
+			if (
+				document.activeElement instanceof HTMLInputElement ||
+				document.activeElement instanceof HTMLTextAreaElement
+			)
+				return
+
+			if (!keys.includes(event.key)) return
+
+			event.preventDefault()
+			updateOption()
+		},
+		[keys, updateOption]
+	)
+
+	useEvent('window', 'keydown', onKeyDown)
+
 	return (
 		<button
 			className={cx(
-				'px-3 py-2 rounded-lg',
-				selected && 'pointer-events-none bg-sky-500 bg-opacity-50'
+				'px-3 py-2 rounded-lg transition-colors ease-linear',
+				selected && 'pointer-events-none bg-sky-500 bg-opacity-50',
+				className
 			)}
 			aria-current={selected || undefined}
 			onClick={updateOption}
 		>
-			<FontAwesomeIcon icon={OPTION_ICONS[option]} />
+			<FontAwesomeIcon icon={icon} />
 		</button>
 	)
 }

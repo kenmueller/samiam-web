@@ -65,14 +65,14 @@ export const setNodeValue =
 	}
 
 export const addNodeValue =
-	(id: number): NetworkAction =>
+	(id: number, name?: string): NetworkAction =>
 	network => {
 		const node = network.nodes[id.toString()]
 
 		const cptValues = (node.cpt[0] as number[] | undefined)?.length
 		if (cptValues === undefined) throw new Error('CPT is empty')
 
-		node.values.push(`value${node.values.length}`)
+		node.values.push(name ?? `value${node.values.length}`)
 		node.cpt.push(new Array(cptValues).fill(0))
 	}
 
@@ -90,7 +90,13 @@ export const setNodeCptValue =
 		value: number
 	): NetworkAction =>
 	network => {
-		network.nodes[id.toString()].cpt[valueIndex][columnIndex] = value
+		const node = network.nodes[id.toString()]
+
+		node.cpt[valueIndex][columnIndex] = value
+
+		if (node.values.length === 2)
+			// Set the other value to 1 - value
+			node.cpt[1 - valueIndex][columnIndex] = 1 - value
 	}
 
 export const setNodePosition =
