@@ -2,7 +2,9 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { castDraft } from 'immer'
 
-import { Position } from '@/lib/network'
+import { Bounds, Position } from '@/lib/network'
+import useNetworkStore from './network'
+import isInBounds from '../isInBounds'
 
 export interface CanvasStore {
 	center: Position
@@ -15,6 +17,10 @@ export interface CanvasStore {
 	nodeRefs: Record<string, HTMLElement>
 	getNodeRef: (id: number) => HTMLElement | null
 	setNodeRef: (id: number, node: HTMLElement | null) => void
+
+	selectedNodes: number[]
+	selectNodesInBounds: (bounds: Bounds) => void
+	unselectNodes: () => void
 }
 
 const useCanvasStore = create(
@@ -42,6 +48,26 @@ const useCanvasStore = create(
 				} else {
 					delete state.nodeRefs[id]
 				}
+			})
+		},
+
+		selectedNodes: [],
+		selectNodesInBounds: bounds => {
+			const nodes = Object.values(useNetworkStore.getState().network.nodes)
+			console.log(bounds)
+			set(state => {
+				state.selectedNodes = nodes
+					.filter(
+						node => (
+							console.log(isInBounds(node, bounds)), isInBounds(node, bounds)
+						)
+					)
+					.map(node => node.id)
+			})
+		},
+		unselectNodes: () => {
+			set(state => {
+				state.selectedNodes = []
 			})
 		}
 	}))

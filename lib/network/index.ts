@@ -3,6 +3,11 @@ export interface Position {
 	y: number
 }
 
+export interface Bounds {
+	from: Position
+	to: Position
+}
+
 export type AssertionType = 'observation' | 'intervention'
 
 export interface Node extends Position {
