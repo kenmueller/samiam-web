@@ -10,6 +10,7 @@ export interface NetworkStore {
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
+	clearNetworkFromStorage: () => void
 	applyAction: (action: NetworkAction) => void
 }
 
@@ -76,6 +77,13 @@ const useNetworkStore = create(
 			})
 
 			saveAs(file, 'network.json')
+		},
+		clearNetworkFromStorage: () => {
+			set(state => {
+				state.network = { nodes: {} }
+			})
+
+			saveNetworkToStorage(get().network)
 		},
 		applyAction: action => {
 			set(state => {
