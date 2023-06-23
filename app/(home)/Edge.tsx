@@ -1,10 +1,10 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 
 import { Edge } from '@/lib/network/actions'
-import { Position } from '@/lib/network'
+import { Node, Position } from '@/lib/network'
 import pick from '@/lib/pick'
 import useCanvasStore from '@/lib/stores/canvas'
 import useOptionStore from '@/lib/stores/option'
@@ -14,26 +14,34 @@ import { removeEdge } from '@/lib/network/actions'
 
 const padding = 5
 
+export interface EdgeNode {
+	from: Node
+	to: Node
+}
+
 export interface EdgePosition {
-	from: Position | undefined
-	to: Position | undefined
+	from: Position
+	to: Position
 }
 
 const NetworkEdge = ({
 	arrowId,
 	edge,
-	position,
+	position: _position,
 	intervened = false
 }: {
 	arrowId: string
-	edge?: Edge
-	position: EdgePosition
+	edge?: EdgeNode
+	position?: EdgePosition
 	intervened?: boolean
 }) => {
 	const view = useView()
 	const { center, getNodeRef } = useCanvasStore(pick('center', 'getNodeRef'))
 	const { option } = useOptionStore(pick('option'))
 	const { applyAction } = useNetworkStore(pick('applyAction'))
+
+	const position = _position ?? edge
+	if (!position) throw new Error('Edge position not found')
 
 	const from = view &&
 		position.from && {
@@ -49,8 +57,8 @@ const NetworkEdge = ({
 
 	const angle = from && to && Math.atan2(to.y - from.y, to.x - from.x)
 
-	const fromNode = edge && getNodeRef(edge.from)
-	const toNode = edge && getNodeRef(edge.to)
+	const fromNode = edge && getNodeRef(edge.from?.id)
+	const toNode = edge && getNodeRef(edge.to?.id)
 
 	const fromPoint =
 		from && fromNode && typeof angle === 'number'
@@ -77,7 +85,9 @@ const NetworkEdge = ({
 	const onLineMouseDown = useCallback(() => {
 		switch (option) {
 			case 'remove':
-				if (edge) applyAction(removeEdge(edge))
+				if (edge)
+					applyAction(removeEdge({ from: edge.from.id, to: edge.to.id }))
+
 				break
 		}
 	}, [option, edge, applyAction])
@@ -92,6 +102,15 @@ const NetworkEdge = ({
 			line.removeEventListener('mousedown', onLineMouseDown)
 		}
 	}, [ref, onLineMouseDown])
+
+	const [, setUpdateKey] = useState<Record<string, never>>({})
+
+	const edgeFrom = edge?.from
+	const edgeTo = edge?.to
+
+	useEffect(() => {
+		setUpdateKey({})
+	}, [edgeFrom, edgeTo, setUpdateKey])
 
 	if (!(fromPoint && toPoint)) return null
 
