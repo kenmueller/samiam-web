@@ -22,8 +22,8 @@ export interface CanvasStore {
 	selectedNodes: number[]
 	selectNodesInBounds: (bounds: Bounds) => void
 	unselectNodes: () => void
-	copySelectedNodes: () => void
-	pasteCopiedNodes: () => void
+	copySelectedNodes: () => Promise<void> | false
+	pasteCopiedNodes: (copiedText: string) => boolean
 }
 
 const useCanvasStore = create(
@@ -69,26 +69,28 @@ const useCanvasStore = create(
 				state.selectedNodes = []
 			})
 		},
-		copySelectedNodes: async () => {
-			const { network } = useNetworkStore.getState()
+		copySelectedNodes: () => {
 			const { selectedNodes } = get()
+			if (!selectedNodes.length) return false
+
+			const { network } = useNetworkStore.getState()
 
 			const copiedNodes = selectedNodes.map(id => network.nodes[id.toString()])
 
-			await navigator.clipboard.writeText(
+			return navigator.clipboard.writeText(
 				`samiam:${JSON.stringify(copiedNodes)}`
 			)
 		},
-		pasteCopiedNodes: async () => {
-			const copiedText = await navigator.clipboard.readText()
-
+		pasteCopiedNodes: (copiedText: string) => {
 			const copiedValue = copiedText.match(/^samiam:(.*)$/)?.[1]
-			if (!copiedValue) return
+			if (!copiedValue) return false
 
 			const copiedNodes: Node[] = JSON.parse(copiedValue)
 			const { applyAction } = useNetworkStore.getState()
 
 			for (const node of copiedNodes) applyAction(copyNode(node))
+
+			return true
 		}
 	}))
 )

@@ -24,6 +24,8 @@ import NetworkEdge from './Edge'
 import { addNode } from '@/lib/network/actions'
 import normalizeBounds from '@/lib/normalizeBounds'
 import useChangeEffect from '@/lib/useNewEffect'
+import alertError from '@/lib/error/alert'
+import errorFromUnknown from '@/lib/error/fromUnknown'
 
 const Canvas = () => {
 	const arrowId = useId()
@@ -37,7 +39,9 @@ const Canvas = () => {
 		currentArrowFrom,
 		setCurrentArrowFrom,
 		selectNodesInBounds,
-		unselectNodes
+		unselectNodes,
+		copySelectedNodes,
+		pasteCopiedNodes
 	} = useCanvasStore(
 		pick(
 			'center',
@@ -45,7 +49,9 @@ const Canvas = () => {
 			'currentArrowFrom',
 			'setCurrentArrowFrom',
 			'selectNodesInBounds',
-			'unselectNodes'
+			'unselectNodes',
+			'copySelectedNodes',
+			'pasteCopiedNodes'
 		)
 	)
 	const { option } = useOptionStore(pick('option'))
@@ -156,6 +162,42 @@ const Canvas = () => {
 			root.removeEventListener('mousedown', onRootMouseDown)
 		}
 	}, [ref, onRootMouseDown])
+
+	const onCopy = useCallback(
+		async (event: globalThis.ClipboardEvent) => {
+			try {
+				const result = copySelectedNodes()
+				if (!result) return
+
+				event.preventDefault()
+				await result
+			} catch (unknownError) {
+				alertError(errorFromUnknown(unknownError))
+			}
+		},
+		[copySelectedNodes]
+	)
+
+	useEvent('window', 'copy', onCopy)
+
+	const onPaste = useCallback(
+		async (event: globalThis.ClipboardEvent) => {
+			try {
+				const copiedText = event.clipboardData?.getData('text/plain')
+				if (!copiedText) return
+
+				const result = pasteCopiedNodes(copiedText)
+				if (!result) return
+
+				event.preventDefault()
+			} catch (unknownError) {
+				alertError(errorFromUnknown(unknownError))
+			}
+		},
+		[pasteCopiedNodes]
+	)
+
+	useEvent('window', 'paste', onPaste)
 
 	useChangeEffect(() => {
 		unselectNodes()
