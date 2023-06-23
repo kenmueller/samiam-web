@@ -250,8 +250,7 @@ const Canvas = () => {
 							<NetworkEdge
 								key={`${parentId}-${childNode.id}`}
 								arrowId={arrowId}
-								edge={{ from: parentId, to: childNode.id }}
-								position={{
+								edge={{
 									from: network.nodes[parentId.toString()],
 									to: childNode
 								}}
