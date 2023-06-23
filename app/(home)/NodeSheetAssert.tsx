@@ -83,7 +83,7 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 					</button>
 				))}
 				<button
-					className="flex justify-center items-center gap-2 w-[37.33px] h-[37.33px] text-sky-500 border border-sky-500 rounded-md"
+					className="flex justify-center items-center gap-2 w-[37.33px] h-[37.33px] bg-[rosybrown] border border-gray-500 rounded-md"
 					onClick={onAddValue}
 				>
 					<FontAwesomeIcon icon={faPlus} />
