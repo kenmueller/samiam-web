@@ -60,11 +60,12 @@ const Option = ({ option }: { option: Option }) => {
 	return (
 		<button
 			className={cx(
-				'px-3 py-2 rounded-lg transition-colors ease-linear',
+				'relative px-3 py-2 rounded-lg transition-colors ease-linear after:content-[attr(data-key)] after:absolute after:right-[2.5px] after:bottom-[1.5px] after:text-xs',
 				selected && 'pointer-events-none bg-sky-500 bg-opacity-50',
 				className
 			)}
 			aria-current={selected || undefined}
+			data-key={keys[0]}
 			onClick={updateOption}
 		>
 			<FontAwesomeIcon icon={icon} />
