@@ -85,7 +85,13 @@ export const setNodeCptValue =
 		value: number
 	): NetworkAction =>
 	network => {
-		network.nodes[id.toString()].cpt[valueIndex][columnIndex] = value
+		const node = network.nodes[id.toString()]
+
+		node.cpt[valueIndex][columnIndex] = value
+
+		if (node.values.length === 2)
+			// Set the other value to 1 - value
+			node.cpt[1 - valueIndex][columnIndex] = 1 - value
 	}
 
 export const setNodePosition =
