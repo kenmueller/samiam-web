@@ -60,6 +60,8 @@ const NodeSheetCptValue = ({
 			}}
 			type="number"
 			step={0.01}
+			min={0}
+			max={1}
 			placeholder={cptValue.toString()}
 			value={_cptValue}
 			onChange={_onCptValueChange}
