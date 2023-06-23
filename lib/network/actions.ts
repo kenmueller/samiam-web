@@ -1,9 +1,9 @@
 import { Draft } from 'immer'
 import BeliefNetwork from 'samiam/lib/belief-network'
-import Node from 'samiam/lib/node'
+import BeliefNetworkNode from 'samiam/lib/node'
 import Evidence from 'samiam/lib/evidence'
 
-import Network, { AssertionType, Position } from '.'
+import Network, { AssertionType, Position, Node } from '.'
 import cloneDeep from 'lodash/cloneDeep'
 
 export type NetworkAction = (network: Draft<Network>) => void
@@ -42,10 +42,11 @@ export const addNode =
 
 		const id = getNextNodeId(network)
 
-		const node = Node.withUniformDistribution(`Node ${id}`, beliefNetwork, [
-			'yes',
-			'no'
-		])
+		const node = BeliefNetworkNode.withUniformDistribution(
+			`Node ${id}`,
+			beliefNetwork,
+			['yes', 'no']
+		)
 		beliefNetwork.addNode(node)
 		network.nodes[id.toString()] = {
 			id,
@@ -57,6 +58,10 @@ export const addNode =
 			...position
 		}
 	}
+
+export const copyNode =
+	(node: Node): NetworkAction =>
+	network => {}
 
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
