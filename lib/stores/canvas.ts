@@ -2,9 +2,10 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { castDraft } from 'immer'
 
-import { Bounds, Position } from '@/lib/network'
+import { Bounds, Node, Position } from '@/lib/network'
 import useNetworkStore from './network'
 import isInBounds from '../isInBounds'
+import { copyNode } from '../network/actions'
 
 export interface CanvasStore {
 	center: Position
@@ -21,6 +22,8 @@ export interface CanvasStore {
 	selectedNodes: number[]
 	selectNodesInBounds: (bounds: Bounds) => void
 	unselectNodes: () => void
+	copySelectedNodes: () => void
+	pasteCopiedNodes: () => void
 }
 
 const useCanvasStore = create(
@@ -54,14 +57,10 @@ const useCanvasStore = create(
 		selectedNodes: [],
 		selectNodesInBounds: bounds => {
 			const nodes = Object.values(useNetworkStore.getState().network.nodes)
-			console.log(bounds)
+
 			set(state => {
 				state.selectedNodes = nodes
-					.filter(
-						node => (
-							console.log(isInBounds(node, bounds)), isInBounds(node, bounds)
-						)
-					)
+					.filter(node => isInBounds(node, bounds))
 					.map(node => node.id)
 			})
 		},
@@ -69,6 +68,27 @@ const useCanvasStore = create(
 			set(state => {
 				state.selectedNodes = []
 			})
+		},
+		copySelectedNodes: async () => {
+			const { network } = useNetworkStore.getState()
+			const { selectedNodes } = get()
+
+			const copiedNodes = selectedNodes.map(id => network.nodes[id.toString()])
+
+			await navigator.clipboard.writeText(
+				`samiam:${JSON.stringify(copiedNodes)}`
+			)
+		},
+		pasteCopiedNodes: async () => {
+			const copiedText = await navigator.clipboard.readText()
+
+			const copiedValue = copiedText.match(/^samiam:(.*)$/)?.[1]
+			if (!copiedValue) return
+
+			const copiedNodes: Node[] = JSON.parse(copiedValue)
+			const { applyAction } = useNetworkStore.getState()
+
+			for (const node of copiedNodes) applyAction(copyNode(node))
 		}
 	}))
 )

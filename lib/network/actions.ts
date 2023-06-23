@@ -1,9 +1,9 @@
 import { Draft } from 'immer'
 import BeliefNetwork from 'samiam/lib/belief-network'
-import Node from 'samiam/lib/node'
+import BeliefNetworkNode from 'samiam/lib/node'
 import Evidence from 'samiam/lib/evidence'
 
-import Network, { AssertionType, Position } from '.'
+import Network, { AssertionType, Position, Node } from '.'
 
 export type NetworkAction = (network: Draft<Network>) => void
 
@@ -51,6 +51,10 @@ export const addNode =
 			...position
 		}
 	}
+
+export const copyNode =
+	(node: Node): NetworkAction =>
+	network => {}
 
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
