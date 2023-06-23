@@ -4,6 +4,7 @@ import Node from 'samiam/lib/node'
 import Evidence from 'samiam/lib/evidence'
 
 import Network, { AssertionType, Position } from '.'
+import cloneDeep from 'lodash/cloneDeep'
 
 export type NetworkAction = (network: Draft<Network>) => void
 
@@ -41,13 +42,18 @@ export const addNode =
 
 		const id = getNextNodeId(network)
 
+		const node = Node.withUniformDistribution(`Node ${id}`, beliefNetwork, [
+			'yes',
+			'no'
+		])
+		beliefNetwork.addNode(node)
 		network.nodes[id.toString()] = {
 			id,
-			name: `Node ${id}`,
+			name: node.name, //`Node ${id}`,
 			parents: [],
 			children: [],
-			values: ['yes', 'no'],
-			cpt: [[0.5], [0.5]],
+			values: [...node.values], //['yes', 'no'],
+			cpt: cloneDeep(node.cpt), //[[0.5], [0.5]],
 			...position
 		}
 	}
