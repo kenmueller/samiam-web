@@ -90,7 +90,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							))}
 							<th>
 								<button
-									className="w-full px-3 text-xl text-sky-500"
+									className="w-full px-3 text-xl text-[rosybrown]"
 									onClick={() => {
 										applyAction(addNodeValue(node.id))
 									}}
