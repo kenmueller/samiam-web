@@ -23,6 +23,7 @@ import useView from '@/lib/useView'
 import NetworkEdge from './Edge'
 import { addNode } from '@/lib/network/actions'
 import normalizeBounds from '@/lib/normalizeBounds'
+import useChangeEffect from '@/lib/useNewEffect'
 
 const Canvas = () => {
 	const arrowId = useId()
@@ -58,7 +59,16 @@ const Canvas = () => {
 	const onRootMouseDown = useCallback(
 		(event: globalThis.MouseEvent) => {
 			switch (option) {
-				case 'select':
+				case 'select': {
+					const newMouse: Position = { x: event.clientX, y: event.clientY }
+
+					unselectNodes()
+
+					setStartMouse(newMouse)
+					setCurrentMouse(newMouse)
+
+					break
+				}
 				case 'move': {
 					const newMouse: Position = { x: event.clientX, y: event.clientY }
 
@@ -72,7 +82,7 @@ const Canvas = () => {
 					break
 			}
 		},
-		[option, applyAction, mouse, setCurrentMouse]
+		[option, unselectNodes, applyAction, mouse, setCurrentMouse]
 	)
 
 	const onMouseMove = useCallback(
@@ -147,7 +157,7 @@ const Canvas = () => {
 		}
 	}, [ref, onRootMouseDown])
 
-	useEffect(() => {
+	useChangeEffect(() => {
 		unselectNodes()
 	}, [option, unselectNodes])
 
