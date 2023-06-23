@@ -28,16 +28,16 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		currentArrowFrom,
 		setCurrentArrowFrom,
 		getNodeRef,
-		setNodeRef
-	} = useCanvasStore(
-		pick(
-			'center',
-			'currentArrowFrom',
-			'setCurrentArrowFrom',
-			'getNodeRef',
-			'setNodeRef'
-		)
-	)
+		setNodeRef,
+		isSelected
+	} = useCanvasStore(state => ({
+		center: state.center,
+		currentArrowFrom: state.currentArrowFrom,
+		setCurrentArrowFrom: state.setCurrentArrowFrom,
+		getNodeRef: state.getNodeRef,
+		setNodeRef: state.setNodeRef,
+		isSelected: state.selectedNodes.includes(node.id)
+	}))
 	const { option } = useOptionStore(pick('option'))
 	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
 
@@ -124,10 +124,14 @@ const NetworkNode = ({ node }: { node: Node }) => {
 
 					event.stopPropagation()
 
-					try {
-						applyAction(addEdge({ from: currentArrowFrom, to: node.id }))
-					} catch (unknownError) {
-						alertError(errorFromUnknown(unknownError))
+					if (currentArrowFrom === node.id) {
+						setSheetContent(<NodeSheet id={node.id} />)
+					} else {
+						try {
+							applyAction(addEdge({ from: currentArrowFrom, to: node.id }))
+						} catch (unknownError) {
+							alertError(errorFromUnknown(unknownError))
+						}
 					}
 
 					setCurrentArrowFrom(null)
@@ -135,7 +139,14 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					break
 			}
 		},
-		[option, currentArrowFrom, applyAction, node.id, setCurrentArrowFrom]
+		[
+			option,
+			currentArrowFrom,
+			applyAction,
+			node.id,
+			setCurrentArrowFrom,
+			setSheetContent
+		]
 	)
 
 	useEvent('body', 'mousemove', onMouseMove)
@@ -183,7 +194,9 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					'bg-[#f5d996] border-2 border-yellow-500',
 				node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined &&
-					'bg-[#99d3f4] border-2 border-sky-500'
+					'bg-[#99d3f4] border-2 border-sky-500',
+				isSelected &&
+					'after:absolute after:inset-[-3px] after:border-2 after:border-dashed after:border-black'
 			)}
 			style={
 				{

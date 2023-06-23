@@ -1,11 +1,18 @@
 'use client'
 
 import cx from 'classnames'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { useCallback } from 'react'
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import { Node } from '@/lib/network'
-import { setAssertedValue, setAssertionType } from '@/lib/network/actions'
+import {
+	addNodeValue,
+	setAssertedValue,
+	setAssertionType
+} from '@/lib/network/actions'
 
 const NodeSheetAssert = ({ node }: { node: Node }) => {
 	const { applyAction } = useNetworkStore(pick('applyAction'))
@@ -16,6 +23,13 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 			: node.assertionType === 'intervention'
 			? 'bg-sky-500 bg-opacity-50 border-sky-500'
 			: (undefined as never)
+
+	const onAddValue = useCallback(() => {
+		const value = prompt('New Value')
+		if (!value) return
+
+		applyAction(addNodeValue(node.id, value))
+	}, [applyAction, node.id])
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -45,17 +59,13 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 				))}
 			</div>
 			<h4>Value</h4>
-			<div
-				className={cx(
-					'flex items-center gap-2 flex-wrap',
-					node.assertionType === undefined && 'opacity-50 pointer-events-none'
-				)}
-			>
+			<div className={cx('flex items-center gap-2 flex-wrap')}>
 				{node.values.map((value, valueIndex) => (
 					<button
 						key={valueIndex}
+						disabled={node.assertionType === undefined}
 						className={cx(
-							'px-3 py-1.5 border rounded-md transition-colors ease-linear',
+							'px-3 py-1.5 border rounded-md transition-colors ease-linear disabled:opacity-50',
 							node.assertedValue === valueIndex
 								? selectedStyle
 								: 'border-gray-500'
@@ -72,6 +82,12 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 						{value}
 					</button>
 				))}
+				<button
+					className="flex justify-center items-center gap-2 w-[37.33px] h-[37.33px] text-sky-500 border border-sky-500 rounded-md"
+					onClick={onAddValue}
+				>
+					<FontAwesomeIcon icon={faPlus} />
+				</button>
 			</div>
 		</div>
 	)

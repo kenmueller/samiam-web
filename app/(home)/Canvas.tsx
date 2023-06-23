@@ -2,13 +2,14 @@
 
 import {
 	CSSProperties,
-	MouseEvent,
 	useCallback,
 	useEffect,
 	useId,
+	useMemo,
 	useRef,
 	useState
 } from 'react'
+import cx from 'classnames'
 
 import useNetworkStore from '@/lib/stores/network'
 import useOptionStore from '@/lib/stores/option'
@@ -21,6 +22,8 @@ import useCanvasStore from '@/lib/stores/canvas'
 import useView from '@/lib/useView'
 import NetworkEdge from './Edge'
 import { addNode } from '@/lib/network/actions'
+import normalizeBounds from '@/lib/normalizeBounds'
+import useChangeEffect from '@/lib/useNewEffect'
 
 const Canvas = () => {
 	const arrowId = useId()
@@ -28,55 +31,115 @@ const Canvas = () => {
 	const { network, applyAction } = useNetworkStore(
 		pick('network', 'applyAction')
 	)
-	const { center, setCenter, currentArrowFrom, setCurrentArrowFrom } =
-		useCanvasStore(
-			pick('center', 'setCenter', 'currentArrowFrom', 'setCurrentArrowFrom')
+	const {
+		center,
+		setCenter,
+		currentArrowFrom,
+		setCurrentArrowFrom,
+		selectNodesInBounds,
+		unselectNodes
+	} = useCanvasStore(
+		pick(
+			'center',
+			'setCenter',
+			'currentArrowFrom',
+			'setCurrentArrowFrom',
+			'selectNodesInBounds',
+			'unselectNodes'
 		)
+	)
 	const { option } = useOptionStore(pick('option'))
 
 	const mouse = useMouse()
 	const view = useView()
 
-	const [draggingMouse, setDraggingMouse] = useState<Position | null>(null)
+	const [startMouse, setStartMouse] = useState<Position | null>(null)
+	const [currentMouse, setCurrentMouse] = useState<Position | null>(null)
 
 	const onRootMouseDown = useCallback(
 		(event: globalThis.MouseEvent) => {
 			switch (option) {
-				case 'pointer':
-					setDraggingMouse({ x: event.clientX, y: event.clientY })
+				case 'select': {
+					const newMouse: Position = { x: event.clientX, y: event.clientY }
+
+					unselectNodes()
+
+					setStartMouse(newMouse)
+					setCurrentMouse(newMouse)
+
 					break
+				}
+				case 'move': {
+					const newMouse: Position = { x: event.clientX, y: event.clientY }
+
+					setStartMouse(newMouse)
+					setCurrentMouse(newMouse)
+
+					break
+				}
 				case 'add-node':
 					if (mouse) applyAction(addNode(mouse))
 					break
 			}
 		},
-		[option, applyAction, mouse, setDraggingMouse]
+		[option, unselectNodes, applyAction, mouse, setCurrentMouse]
 	)
 
 	const onMouseMove = useCallback(
 		(event: globalThis.MouseEvent) => {
-			if (!draggingMouse) return
+			if (!(startMouse && currentMouse)) return
 
-			setCenter({
-				x: center.x + (event.clientX - draggingMouse.x),
-				y: center.y - (event.clientY - draggingMouse.y)
-			})
+			const newMouse: Position = { x: event.clientX, y: event.clientY }
 
-			setDraggingMouse({ x: event.clientX, y: event.clientY })
+			switch (option) {
+				case 'select':
+					selectNodesInBounds(
+						normalizeBounds({
+							from: {
+								x: startMouse.x - window.innerWidth / 2 - center.x,
+								y: -startMouse.y + window.innerHeight / 2 - center.y
+							},
+							to: {
+								x: newMouse.x - window.innerWidth / 2 - center.x,
+								y: -newMouse.y + window.innerHeight / 2 - center.y
+							}
+						})
+					)
+					break
+				case 'move':
+					setCenter({
+						x: center.x + (newMouse.x - currentMouse.x),
+						y: center.y - (newMouse.y - currentMouse.y)
+					})
+					break
+			}
+
+			setCurrentMouse(newMouse)
 		},
-		[center, draggingMouse, setCenter, setDraggingMouse]
+		[
+			option,
+			center,
+			startMouse,
+			currentMouse,
+			selectNodesInBounds,
+			setCenter,
+			setCurrentMouse
+		]
 	)
 
 	const onMouseUp = useCallback(() => {
 		switch (option) {
-			case 'pointer':
-				setDraggingMouse(null)
+			case 'select':
+			case 'move':
+				setStartMouse(null)
+				setCurrentMouse(null)
 				break
+
 			case 'add-edge':
 				setCurrentArrowFrom(null)
 				break
 		}
-	}, [option, setDraggingMouse, setCurrentArrowFrom])
+	}, [option, setCurrentMouse, setCurrentArrowFrom])
 
 	useEvent('body', 'mousemove', onMouseMove)
 	useEvent('body', 'mouseup', onMouseUp)
@@ -94,8 +157,26 @@ const Canvas = () => {
 		}
 	}, [ref, onRootMouseDown])
 
+	useChangeEffect(() => {
+		unselectNodes()
+	}, [option, unselectNodes])
+
+	const selectionBounds = useMemo(
+		() =>
+			startMouse &&
+			currentMouse &&
+			normalizeBounds({ from: startMouse, to: currentMouse }),
+		[startMouse, currentMouse]
+	)
+
 	return (
-		<main ref={ref} className="absolute inset-0 overflow-hidden z-0">
+		<main
+			ref={ref}
+			className={cx(
+				'absolute inset-0 overflow-hidden z-0',
+				option === 'move' && 'cursor-grab'
+			)}
+		>
 			<span
 				className="pointer-events-none absolute bg-black bg-opacity-10 left-0 right-0 top-[calc(50%-var(--y))] h-[1px] -translate-y-1/2"
 				style={{ '--y': `${center.y}px` } as CSSProperties}
@@ -149,6 +230,19 @@ const Canvas = () => {
 						/>
 					)}
 				</svg>
+			)}
+			{option === 'select' && selectionBounds && (
+				<span
+					className="absolute left-[var(--from-x)] top-[var(--from-y)] w-[calc(var(--to-x)-var(--from-x))] h-[calc(var(--to-y)-var(--from-y))] bg-sky-500 bg-opacity-20 border-2 border-sky-500"
+					style={
+						{
+							'--from-x': `${selectionBounds.from.x}px`,
+							'--from-y': `${selectionBounds.from.y}px`,
+							'--to-x': `${selectionBounds.to.x}px`,
+							'--to-y': `${selectionBounds.to.y}px`
+						} as CSSProperties
+					}
+				/>
 			)}
 		</main>
 	)
