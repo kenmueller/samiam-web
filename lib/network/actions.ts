@@ -54,7 +54,16 @@ export const addNode =
 
 export const copyNode =
 	(node: Node): NetworkAction =>
-	network => {}
+	network => {
+		const id = getNextNodeId(network)
+
+		network.nodes[id.toString()] = {
+			...node,
+			id,
+			x: node.x + GRID_SPACING_X,
+			y: node.y - GRID_SPACING_Y
+		}
+	}
 
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
