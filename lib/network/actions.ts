@@ -4,6 +4,7 @@ import BeliefNetworkNode from 'samiam/lib/node'
 import Evidence from 'samiam/lib/evidence'
 
 import Network, { AssertionType, Position, Node } from '.'
+import cloneDeep from 'lodash/cloneDeep'
 
 export type NetworkAction = (network: Draft<Network>) => void
 
@@ -16,6 +17,12 @@ export interface Edge {
 	from: number
 	to: number
 }
+
+// temporary, should go into samiam-lib
+const transpose = (array: number[][]) =>
+	Array.from({ length: array[0].length }, (_row, i) =>
+		Array.from({ length: array.length }, (_col, j) => array[j][i])
+	)
 
 const getNextNodeId = (network: Network) => {
 	for (let nextId = 0; ; nextId++) {
@@ -41,13 +48,19 @@ export const addNode =
 
 		const id = getNextNodeId(network)
 
+		const node = BeliefNetworkNode.withUniformDistribution(
+			`Node ${id}`,
+			beliefNetwork,
+			['yes', 'no']
+		)
+		beliefNetwork.addNode(node)
 		network.nodes[id.toString()] = {
 			id,
-			name: `Node ${id}`,
+			name: node.name, //`Node ${id}`,
 			parents: [],
 			children: [],
-			values: ['yes', 'no'],
-			cpt: [[0.5], [0.5]],
+			values: [...node.values], //['yes', 'no'],
+			cpt: transpose(node.cpt), //[[0.5], [0.5]],
 			...position
 		}
 	}
