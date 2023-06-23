@@ -124,10 +124,14 @@ const NetworkNode = ({ node }: { node: Node }) => {
 
 					event.stopPropagation()
 
-					try {
-						applyAction(addEdge({ from: currentArrowFrom, to: node.id }))
-					} catch (unknownError) {
-						alertError(errorFromUnknown(unknownError))
+					if (currentArrowFrom === node.id) {
+						setSheetContent(<NodeSheet id={node.id} />)
+					} else {
+						try {
+							applyAction(addEdge({ from: currentArrowFrom, to: node.id }))
+						} catch (unknownError) {
+							alertError(errorFromUnknown(unknownError))
+						}
 					}
 
 					setCurrentArrowFrom(null)
@@ -135,7 +139,14 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					break
 			}
 		},
-		[option, currentArrowFrom, applyAction, node.id, setCurrentArrowFrom]
+		[
+			option,
+			currentArrowFrom,
+			applyAction,
+			node.id,
+			setCurrentArrowFrom,
+			setSheetContent
+		]
 	)
 
 	useEvent('body', 'mousemove', onMouseMove)
