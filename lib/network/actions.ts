@@ -1,8 +1,13 @@
 import { Draft } from 'immer'
+import BeliefNetwork from 'samiam/lib/belief-network'
+import Node from 'samiam/lib/node'
+import Evidence from 'samiam/lib/evidence'
 
 import Network, { AssertionType, Position } from '.'
 
 export type NetworkAction = (network: Draft<Network>) => void
+
+const beliefNetwork = new BeliefNetwork()
 
 const GRID_SPACING_X = 80
 const GRID_SPACING_Y = 50
