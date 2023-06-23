@@ -8,14 +8,16 @@ import {
 	faCircle,
 	faArrowRight,
 	faTrash,
-	IconDefinition
+	IconDefinition,
+	faHand
 } from '@fortawesome/free-solid-svg-icons'
 
 import useOptionStore, { Option } from '@/lib/stores/option'
 import pick from '@/lib/pick'
 
 const OPTION_ICONS: Record<Option, IconDefinition> = {
-	pointer: faHandPointUp,
+	select: faHandPointUp,
+	move: faHand,
 	'add-node': faCircle,
 	'add-edge': faArrowRight,
 	remove: faTrash
