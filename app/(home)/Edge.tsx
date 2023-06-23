@@ -105,12 +105,26 @@ const NetworkEdge = ({
 
 	const [, setUpdateKey] = useState<Record<string, never>>({})
 
-	const edgeFromName = edge?.from.name
-	const edgeToName = edge?.to.name
+	const fromName =
+		edge &&
+		`${edge.from.name}${
+			edge.from.assertionType !== undefined &&
+			edge.from.assertedValue !== undefined
+				? ` = ${edge.from.values[edge.from.assertedValue]}`
+				: ''
+		}`
+
+	const toName =
+		edge &&
+		`${edge.to.name}${
+			edge.to.assertionType !== undefined && edge.to.assertedValue !== undefined
+				? ` = ${edge.to.values[edge.to.assertedValue]}`
+				: ''
+		}`
 
 	useEffect(() => {
 		setUpdateKey({})
-	}, [edgeFromName, edgeToName, setUpdateKey])
+	}, [fromName, toName, setUpdateKey])
 
 	if (!(fromPoint && toPoint)) return null
 
