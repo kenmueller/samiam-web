@@ -11,8 +11,8 @@ export type NetworkAction = (
 	beliefNetwork: BeliefNetworkWithNodeMap
 ) => void
 
-const GRID_SPACING_X = 80
-const GRID_SPACING_Y = 50
+export const GRID_SPACING_X = 80
+export const GRID_SPACING_Y = 50
 
 export interface Edge {
 	from: number
