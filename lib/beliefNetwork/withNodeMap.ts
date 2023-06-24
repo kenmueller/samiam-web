@@ -1,6 +1,8 @@
 import BeliefNetwork from 'samiam/lib/belief-network'
-import BeliefNetworkNode from 'samiam/lib/node'
+import BeliefNetworkNode, { Id as BeliefNetworkNodeId } from 'samiam/lib/node'
 
-export default class BeliefNetworkWithNodeMap extends BeliefNetwork {
-	nodeMap = new Map<number, BeliefNetworkNode>()
+export default class BeliefNetworkWithNodeMap<
+	BeliefNetworkNodeLike extends BeliefNetworkNode = BeliefNetworkNode
+> extends BeliefNetwork<BeliefNetworkNodeLike> {
+	nodeMap = new Map<BeliefNetworkNodeId, BeliefNetworkNodeLike>()
 }
