@@ -1,16 +1,15 @@
 import { Draft } from 'immer'
-import BeliefNetwork from 'samiam/lib/belief-network'
 import BeliefNetworkNode from 'samiam/lib/node'
 import * as util from 'samiam/lib/util'
 import Evidence from 'samiam/lib/evidence'
 
 import Network, { AssertionType, Position, Node } from '.'
-import cloneDeep from 'lodash/cloneDeep'
+import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 
-export type NetworkAction = (network: Draft<Network>) => void
-
-const beliefNetwork = new BeliefNetwork()
-const beliefNetworkNodes = new Map<number, BeliefNetworkNode>()
+export type NetworkAction = (
+	network: Draft<Network>,
+	beliefNetwork: BeliefNetworkWithNodeMap
+) => void
 
 const GRID_SPACING_X = 80
 const GRID_SPACING_Y = 50
@@ -27,9 +26,17 @@ const getNextNodeId = (network: Network) => {
 	}
 }
 
+export const initializeBeliefNetwork = (network: Network) => {
+	const beliefNetwork = new BeliefNetworkWithNodeMap()
+
+	// Edit beliefNetwork
+
+	return beliefNetwork
+}
+
 export const addNode =
 	({ x, y }: Position): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const position: Position = {
 			x: Math.round(x / GRID_SPACING_X) * GRID_SPACING_X,
 			y: Math.round(y / GRID_SPACING_Y) * GRID_SPACING_Y
@@ -50,7 +57,7 @@ export const addNode =
 			['yes', 'no']
 		)
 		beliefNetwork.addNode(node)
-		beliefNetworkNodes.set(id, node)
+		beliefNetwork.nodeMap.set(id, node)
 		network.nodes[id.toString()] = {
 			id,
 			name: node.name, //`Node ${id}`,
@@ -64,7 +71,7 @@ export const addNode =
 
 export const copyNode =
 	(node: Node): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const id = getNextNodeId(network)
 
 		network.nodes[id.toString()] = {
@@ -77,20 +84,20 @@ export const copyNode =
 
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
-	network => {
-		beliefNetworkNodes.get(id)?.rename(name)
+	(network, beliefNetwork) => {
+		beliefNetwork.nodeMap.get(id)?.rename(name)
 		network.nodes[id.toString()].name = name
 	}
 
 export const setNodeValue =
 	(id: number, valueIndex: number, value: string): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		network.nodes[id.toString()].values[valueIndex] = value
 	}
 
 export const addNodeValue =
 	(id: number, name?: string): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
 
 		const cptValues = (node.cpt[0] as number[] | undefined)?.length
@@ -102,7 +109,7 @@ export const addNodeValue =
 
 export const removeNodeValue =
 	(id: number, valueIndex: number): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		network.nodes[id.toString()].values.splice(valueIndex, 1)
 	}
 
@@ -113,7 +120,7 @@ export const setNodeCptValue =
 		columnIndex: number,
 		value: number
 	): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
 
 		node.cpt[valueIndex][columnIndex] = value
@@ -125,7 +132,7 @@ export const setNodeCptValue =
 
 export const setNodePosition =
 	(id: number, position: Position): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
 
 		node.x = position.x
@@ -134,7 +141,7 @@ export const setNodePosition =
 
 export const snapNodeToGrid =
 	(id: number): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
 
 		node.x = Math.round(node.x / GRID_SPACING_X) * GRID_SPACING_X
@@ -143,7 +150,7 @@ export const snapNodeToGrid =
 
 export const removeNode =
 	(id: number): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		delete network.nodes[id.toString()]
 
 		for (const otherNode of Object.values(network.nodes))
@@ -152,7 +159,7 @@ export const removeNode =
 
 export const addEdge =
 	(edge: Edge): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		if (edge.from === edge.to) throw new Error('Cannot connect node to itself')
 
 		const parent = network.nodes[edge.from.toString()]
@@ -170,19 +177,19 @@ export const addEdge =
 
 export const removeEdge =
 	(edge: Edge): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		const child = network.nodes[edge.to.toString()]
 		child.parents = child.parents.filter(parentId => parentId !== edge.from)
 	}
 
 export const setAssertionType =
 	(id: number, type: AssertionType | null): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		network.nodes[id.toString()].assertionType = type ?? undefined
 	}
 
 export const setAssertedValue =
 	(id: number, valueIndex: number | null): NetworkAction =>
-	network => {
+	(network, beliefNetwork) => {
 		network.nodes[id.toString()].assertedValue = valueIndex ?? undefined
 	}
