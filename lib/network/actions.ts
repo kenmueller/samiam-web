@@ -1,6 +1,7 @@
 import { Draft } from 'immer'
 import BeliefNetwork from 'samiam/lib/belief-network'
 import BeliefNetworkNode from 'samiam/lib/node'
+import * as util from 'samiam/lib/util'
 import Evidence from 'samiam/lib/evidence'
 
 import Network, { AssertionType, Position, Node } from '.'
@@ -9,6 +10,7 @@ import cloneDeep from 'lodash/cloneDeep'
 export type NetworkAction = (network: Draft<Network>) => void
 
 const beliefNetwork = new BeliefNetwork()
+const beliefNetworkNodes = new Map<number, BeliefNetworkNode>()
 
 const GRID_SPACING_X = 80
 const GRID_SPACING_Y = 50
@@ -17,12 +19,6 @@ export interface Edge {
 	from: number
 	to: number
 }
-
-// temporary, should go into samiam-lib
-const transpose = (array: number[][]) =>
-	Array.from({ length: array[0].length }, (_row, i) =>
-		Array.from({ length: array.length }, (_col, j) => array[j][i])
-	)
 
 const getNextNodeId = (network: Network) => {
 	for (let nextId = 0; ; nextId++) {
@@ -54,13 +50,14 @@ export const addNode =
 			['yes', 'no']
 		)
 		beliefNetwork.addNode(node)
+		beliefNetworkNodes.set(id, node)
 		network.nodes[id.toString()] = {
 			id,
 			name: node.name, //`Node ${id}`,
 			parents: [],
 			children: [],
 			values: [...node.values], //['yes', 'no'],
-			cpt: transpose(node.cpt), //[[0.5], [0.5]],
+			cpt: util.transpose(node.cpt), //[[0.5], [0.5]],
 			...position
 		}
 	}
@@ -81,6 +78,7 @@ export const copyNode =
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
 	network => {
+		beliefNetworkNodes.get(id)?.rename(name)
 		network.nodes[id.toString()].name = name
 	}
 
