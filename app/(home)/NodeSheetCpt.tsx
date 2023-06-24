@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import cx from 'classnames'
+import { toast } from 'react-toastify'
 
 import { Node } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -13,6 +14,8 @@ import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
 import NodeSheetValue from './NodeSheetValue'
 import { addNodeValue, removeNodeValue } from '@/lib/network/actions'
+import alertError from '@/lib/error/alert'
+import errorFromUnknown from '@/lib/error/fromUnknown'
 
 import styles from './NodeSheetCpt.module.scss'
 
@@ -32,8 +35,8 @@ const getRowSpan = (
 }
 
 const NodeSheetCpt = ({ node }: { node: Node }) => {
-	const { network, applyAction } = useNetworkStore(
-		pick('network', 'applyAction')
+	const { network, beliefNetwork, applyAction } = useNetworkStore(
+		pick('network', 'beliefNetwork', 'applyAction')
 	)
 	const { setContent } = useSheetStore(pick('setContent'))
 
@@ -61,9 +64,27 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 		[getNode, node]
 	)
 
+	const exportToLatex = useCallback(async () => {
+		try {
+			const beliefNetworkNode = beliefNetwork.nodeMap.get(node.id)
+
+			if (!beliefNetworkNode)
+				throw new Error('Belief network node does not exist')
+
+			await navigator.clipboard.writeText(beliefNetworkNode.getCptLatex())
+
+			toast.success('Copied CPT LaTeX to clipboard')
+		} catch (unknownError) {
+			alertError(errorFromUnknown(unknownError))
+		}
+	}, [beliefNetwork, node.id])
+
 	return (
 		<div className="flex flex-col gap-2">
-			<h3>CPT</h3>
+			<div>
+				<h3>CPT</h3>
+				<button onClick={exportToLatex}>Export to LaTeX</button>
+			</div>
 			<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
 				<table
 					className={cx(styles.table, 'table-fixed border-collapse')}
