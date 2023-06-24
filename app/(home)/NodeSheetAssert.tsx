@@ -19,9 +19,9 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 
 	const selectedStyle =
 		node.assertionType === 'observation'
-			? 'bg-yellow-500 bg-opacity-50 border-yellow-500'
+			? 'bg-gold-100 bg-opacity-50 border-gold-500'
 			: node.assertionType === 'intervention'
-			? 'bg-sky-500 bg-opacity-50 border-sky-500'
+			? 'bg-uranian bg-opacity-50 border-uranian-400'
 			: (undefined as never)
 
 	const onAddValue = useCallback(() => {
@@ -43,7 +43,7 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 							'px-3 py-1.5 border rounded-md transition-colors ease-linear',
 							node.assertionType === assertionType
 								? selectedStyle
-								: 'border-gray-500'
+								: 'border-charcoal-400'
 						)}
 						onClick={() => {
 							applyAction(
@@ -83,7 +83,7 @@ const NodeSheetAssert = ({ node }: { node: Node }) => {
 					</button>
 				))}
 				<button
-					className="flex justify-center items-center gap-2 w-[37.33px] h-[37.33px] bg-[rosybrown] border border-gray-500 rounded-md"
+					className="flex justify-center items-center gap-2 w-[37.33px] h-[37.33px] bg-charcoal-50 border border-gray-500 rounded-md"
 					onClick={onAddValue}
 				>
 					<FontAwesomeIcon icon={faPlus} />

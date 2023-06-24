@@ -116,7 +116,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							))}
 							<th>
 								<button
-									className="w-full px-3 text-xl text-[rosybrown]"
+									className="w-full px-3 text-xl text-charcoal-200"
 									onClick={() => {
 										applyAction(addNodeValue(node.id))
 									}}
@@ -167,7 +167,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							{node.cpt.map((_row, valueIndex) => (
 								<th key={valueIndex}>
 									<button
-										className="w-full text-xl text-red-500"
+										className="w-full text-xl text-raspberry"
 										onClick={() => {
 											applyAction(removeNodeValue(node.id, valueIndex))
 										}}

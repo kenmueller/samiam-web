@@ -53,3 +53,4 @@ Features:
 - Server side inference
 - Collaboration
 - BN construction from text or voice with LLM
+- Export R code
