@@ -5,6 +5,7 @@ import Network from '@/lib/network'
 import { NetworkAction, initializeBeliefNetwork } from '@/lib/network/actions'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
+import networkToLatex from '../network/toLatex'
 
 export interface NetworkStore {
 	network: Network
@@ -12,6 +13,7 @@ export interface NetworkStore {
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
+	getNetworkAsLatex: () => string
 	clearNetworkFromStorage: () => void
 	applyAction: (action: NetworkAction) => void
 }
@@ -85,6 +87,7 @@ const useNetworkStore = create(
 
 			saveAs(file, 'network.json')
 		},
+		getNetworkAsLatex: () => networkToLatex(get().network),
 		clearNetworkFromStorage: () => {
 			set(state => {
 				state.network = EMPTY_NETWORK

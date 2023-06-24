@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect } from 'react'
+import { toast } from 'react-toastify'
 
 import useNetworkStore from '@/lib/stores/network'
 import alertError from '@/lib/error/alert'
@@ -12,12 +13,14 @@ const Navbar = () => {
 		loadNetworkFromStorage,
 		loadNetworkFromFile,
 		saveNetworkToFile,
+		getNetworkAsLatex,
 		clearNetworkFromStorage
 	} = useNetworkStore(
 		pick(
 			'loadNetworkFromStorage',
 			'loadNetworkFromFile',
 			'saveNetworkToFile',
+			'getNetworkAsLatex',
 			'clearNetworkFromStorage'
 		)
 	)
@@ -30,13 +33,22 @@ const Navbar = () => {
 		}
 	}, [loadNetworkFromFile])
 
-	const exportNetwork = useCallback(async () => {
+	const exportNetworkAsFile = useCallback(async () => {
 		try {
 			await saveNetworkToFile()
 		} catch (unknownError) {
 			alertError(errorFromUnknown(unknownError))
 		}
 	}, [saveNetworkToFile])
+
+	const exportNetworkAsLatex = useCallback(async () => {
+		try {
+			await navigator.clipboard.writeText(getNetworkAsLatex())
+			toast.success('LaTeX code copied to clipboard')
+		} catch (unknownError) {
+			alertError(errorFromUnknown(unknownError))
+		}
+	}, [getNetworkAsLatex])
 
 	const clearNetwork = useCallback(() => {
 		try {
@@ -55,13 +67,28 @@ const Navbar = () => {
 		<nav className="absolute top-4 left-4 right-4 flex items-center gap-4 px-4 py-2 bg-white border-2 rounded-xl z-10">
 			<h1>SamIam</h1>
 			<div className="flex items-center gap-4 translate-y-[2px]">
-				<button className="text-sky-500" onClick={openNetwork}>
+				<button
+					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
+					onClick={openNetwork}
+				>
 					Open
 				</button>
-				<button className="text-sky-500" onClick={exportNetwork}>
-					Export
+				<button
+					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
+					onClick={exportNetworkAsFile}
+				>
+					Export as File
 				</button>
-				<button className="text-sky-500" onClick={clearNetwork}>
+				<button
+					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
+					onClick={exportNetworkAsLatex}
+				>
+					Export as LaTeX
+				</button>
+				<button
+					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
+					onClick={clearNetwork}
+				>
 					Clear
 				</button>
 			</div>
