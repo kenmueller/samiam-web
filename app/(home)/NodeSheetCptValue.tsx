@@ -51,12 +51,16 @@ const NodeSheetCptValue = ({
 		},
 		[_setCptValue, applyAction, node.id, valueIndex, cptValueIndex]
 	)
-
+	const prob = clamp(cptValue, 0, 1)
+	const zero = [9, 174, 106]
+	const one = [217, 253, 238]
+	const diff = one.map((x, i) => x - zero[i])
 	return (
 		<input
 			className="w-full px-2 py-1 outline-none transition-colors ease-linear"
 			style={{
-				background: `rgb(128, ${128 + clamp(cptValue, 0, 1) * 127}, 128)`
+				// from 179, 250, 221 (aquamarine) to 15, 230, 140 (spring green)
+				background: `rgb(${zero.map((z, i) => z + diff[i] * prob)})`
 			}}
 			type="number"
 			step={0.01}

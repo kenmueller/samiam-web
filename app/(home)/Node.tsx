@@ -188,13 +188,13 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
 				(node.assertionType === undefined ||
 					node.assertedValue === undefined) &&
-					'bg-white border border-gray-500',
+					'bg-white border bg-opacity-50 border-charcoal-400',
 				node.assertionType === 'observation' &&
 					node.assertedValue !== undefined &&
-					'bg-[#f5d996] border-2 border-yellow-500',
+					'bg-gold-100 border-2 bg-opacity-50 border-gold-500',
 				node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined &&
-					'bg-[#99d3f4] border-2 border-sky-500',
+					'bg-uranian border-2 bg-opacity-50 border-uranian-400',
 				isSelected &&
 					'after:absolute after:inset-[-3px] after:border-2 after:border-dashed after:border-black'
 			)}
