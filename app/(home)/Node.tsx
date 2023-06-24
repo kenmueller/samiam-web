@@ -218,11 +218,10 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				<NodeName id={node.id} name={node.name} />
 				{node.assertionType !== undefined &&
 					node.assertedValue !== undefined && (
-						<>
-							<span> = {node.values[node.assertedValue]}</span>
-							<span>)</span>
-						</>
+						<span> = {node.values[node.assertedValue]}</span>
 					)}
+				{node.assertionType === 'intervention' &&
+					node.assertedValue !== undefined && <span>)</span>}
 			</p>
 		</div>
 	)
