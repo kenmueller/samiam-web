@@ -80,10 +80,15 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 	}, [beliefNetwork, node.id])
 
 	return (
-		<div className="flex flex-col gap-2">
-			<div>
+		<div className="flex flex-col gap-2 max-w-max">
+			<div className="flex justify-between items-center gap-4">
 				<h3>CPT</h3>
-				<button onClick={exportToLatex}>Export to LaTeX</button>
+				<button
+					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
+					onClick={exportToLatex}
+				>
+					Export to LaTeX
+				</button>
 			</div>
 			<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
 				<table
