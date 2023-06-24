@@ -2,11 +2,13 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
 import Network from '@/lib/network'
-import { NetworkAction } from '@/lib/network/actions'
+import { NetworkAction, initializeBeliefNetwork } from '@/lib/network/actions'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
+import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 
 export interface NetworkStore {
 	network: Network
+	beliefNetwork: BeliefNetworkWithNodeMap
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
@@ -14,15 +16,19 @@ export interface NetworkStore {
 	applyAction: (action: NetworkAction) => void
 }
 
+const EMPTY_NETWORK: Network = { nodes: {} }
+
 const useNetworkStore = create(
 	immer<NetworkStore>((set, get) => ({
-		network: { nodes: {} },
+		network: EMPTY_NETWORK,
+		beliefNetwork: initializeBeliefNetwork(EMPTY_NETWORK),
 		loadNetworkFromStorage: () => {
-			const network = localStorage.getItem('network')
-			if (!network) return
+			const networkString = localStorage.getItem('network')
+			if (!networkString) return
 
 			set(state => {
-				state.network = JSON.parse(network) as Network
+				state.network = JSON.parse(networkString) as Network
+				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})
 		},
 		loadNetworkFromFile: async () => {
@@ -65,6 +71,7 @@ const useNetworkStore = create(
 
 			set(state => {
 				state.network = network
+				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})
 
 			saveNetworkToStorage(network)
@@ -80,14 +87,17 @@ const useNetworkStore = create(
 		},
 		clearNetworkFromStorage: () => {
 			set(state => {
-				state.network = { nodes: {} }
+				state.network = EMPTY_NETWORK
+				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})
 
 			saveNetworkToStorage(get().network)
 		},
 		applyAction: action => {
+			const { beliefNetwork } = get()
+
 			set(state => {
-				action(state.network)
+				action(state.network, beliefNetwork)
 			})
 
 			saveNetworkToStorage(get().network)
