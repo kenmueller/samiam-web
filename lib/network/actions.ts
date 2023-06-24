@@ -120,7 +120,7 @@ export const setNodeCptValue =
 
 		if (node.values.length === 2)
 			// Set the other value to 1 - value
-			node.cpt[1 - valueIndex][columnIndex] = 1 - value
+			node.cpt[1 - valueIndex][columnIndex] = util.probComplement(value)
 	}
 
 export const setNodePosition =

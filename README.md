@@ -17,6 +17,8 @@ Tentative roadmap:
 Features:
 
 - DAG editor
+  - Export LaTeX DAG
+  - Export LaTeX CPT
 - Shenoy-Shafer algorithm
   - Probability of evidence
   - Single variable prior and posterior marginals
@@ -39,7 +41,6 @@ Complete port of [SamIam](https://github.com/uclareasoning/SamIam) with the addi
   - View-only
   - With link
   - Social media
-  - Export to LaTeX/TikZ
 - Ellipse and small circle node views
 - DAG construction from text or voice with LLM
 
