@@ -66,7 +66,6 @@ const NodeSheetCptValue = ({
 			<input
 				className="w-full px-2 py-1 outline-none transition-colors ease-linear min-w-[1em] row-start-1 col-start-2"
 				style={{
-					// from 179, 250, 221 (aquamarine) to 15, 230, 140 (spring green)
 					background: `rgb(${zero.map((z, i) => z + diff[i] * prob)})`
 				}}
 				type="number"
