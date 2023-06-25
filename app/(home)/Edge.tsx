@@ -116,11 +116,11 @@ const NetworkEdge = ({
 
 	const toName =
 		edge &&
-		`${edge.to.name}${
+		`${edge.to.assertionType === 'intervention' ? 'do(' : ''}${edge.to.name}${
 			edge.to.assertionType !== undefined && edge.to.assertedValue !== undefined
 				? ` = ${edge.to.values[edge.to.assertedValue]}`
 				: ''
-		}`
+		}${edge.to.assertionType === 'intervention' ? ')' : ''}`
 
 	useEffect(() => {
 		setUpdateKey({})
