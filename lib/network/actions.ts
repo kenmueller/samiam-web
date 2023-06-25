@@ -29,7 +29,28 @@ const getNextNodeId = (network: Network) => {
 export const initializeBeliefNetwork = (network: Network) => {
 	const beliefNetwork = new BeliefNetworkWithNodeMap()
 
-	// Edit beliefNetwork
+	// add nodes
+	for (const node of Object.values(network.nodes))
+		beliefNetwork.nodeMap.set(
+			node.id,
+			BeliefNetworkNode.withIdUniformDistribution(
+				node.id,
+				node.name,
+				beliefNetwork,
+				node.values
+			)
+		)
+
+	// add their parents
+	for (const node of Object.values(network.nodes))
+		for (const parentId of node.parents) {
+			const parent = beliefNetwork.nodeMap.get(parentId)
+			if (parent) beliefNetwork.nodeMap.get(node.id)?.addParent(parent)
+		}
+
+	// add CPTs
+	for (const node of Object.values(network.nodes))
+		beliefNetwork.nodeMap.get(node.id)?.setCpt(util.transpose(node.cpt))
 
 	return beliefNetwork
 }

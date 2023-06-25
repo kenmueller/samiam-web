@@ -8,6 +8,10 @@ import useNetworkStore from '@/lib/stores/network'
 import { setNodeCptValue } from '@/lib/network/actions'
 import pick from '@/lib/pick'
 
+const zero = [9, 174, 106]
+const one = [217, 253, 238]
+const diff = one.map((x, i) => x - zero[i])
+
 const NodeSheetCptValue = ({
 	node,
 	valueIndex,
@@ -51,10 +55,9 @@ const NodeSheetCptValue = ({
 		},
 		[_setCptValue, applyAction, node.id, valueIndex, cptValueIndex]
 	)
+
 	const prob = clamp(cptValue, 0, 1)
-	const zero = [9, 174, 106]
-	const one = [217, 253, 238]
-	const diff = one.map((x, i) => x - zero[i])
+
 	return (
 		<input
 			className="w-full px-2 py-1 outline-none transition-colors ease-linear"
