@@ -101,7 +101,7 @@ const Navbar = () => {
 											className="w-full text-left"
 											onClick={exportNetworkAsFile}
 										>
-											Export as File
+											JSON
 										</button>
 									</DropdownMenuItem>
 									<DropdownMenuItem>
@@ -109,7 +109,7 @@ const Navbar = () => {
 											className="w-full text-left"
 											onClick={exportNetworkAsLatex}
 										>
-											Export as LaTeX
+											LaTeX DAG
 										</button>
 									</DropdownMenuItem>
 								</DropdownMenuSubContent>

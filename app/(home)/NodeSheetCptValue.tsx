@@ -60,14 +60,17 @@ const NodeSheetCptValue = ({
 
 	return (
 		<div
-			className="inline-grid after:min-w-[1em] after:row-start-1 after:col-start-2 after:px-2 after:pr-6 after:py-1 after:content-[attr(data-value)'\0020'] after:invisible after:whitespace-nowrap"
-			data-value={_cptValue}
+			className="relative"
+			style={{
+				background: `rgb(${zero.map((z, i) => z + diff[i] * prob)})`
+			}}
 		>
+			<span className="px-4 invisible" aria-hidden>
+				{_cptValue}
+			</span>
 			<input
-				className="w-full px-2 py-1 outline-none transition-colors ease-linear min-w-[1em] row-start-1 col-start-2"
-				style={{
-					background: `rgb(${zero.map((z, i) => z + diff[i] * prob)})`
-				}}
+				// className="w-full px-2 py-1 outline-none transition-colors ease-linear absolute left-0"
+				className="w-full px-2 py-0 bg-transparent outline-none transition-colors ease-linear absolute left-0 inset-0"
 				type="number"
 				step={0.01}
 				min={0}

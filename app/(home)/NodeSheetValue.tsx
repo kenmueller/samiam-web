@@ -27,17 +27,18 @@ const NodeSheetValue = ({
 	)
 
 	return (
-		<div
-			className="inline-grid after:min-w-[1em] after:row-start-1 after:col-start-2 after:px-2 after:pr-6 after:py-1 after:content-[attr(data-value)'\0020'] after:invisible after:whitespace-nowrap"
-			data-value={value}
-		>
+		<span className="relative">
+			<span className="px-4 invisible" aria-hidden>
+				{value}
+			</span>
 			<input
-				className="w-full px-2 py-1 text-center outline-none bg-transparent min-w-[1em] row-start-1 col-start-2"
+				// className="w-full px-2 py-1 text-center outline-none bg-transparent absolute left-0 inset-0"
+				className="bg-gray-200 w-full px-2 py-0 text-center outline-none absolute left-0 inset-0"
 				placeholder="Unnamed"
 				value={value}
 				onChange={onNodeValueChange}
 			/>
-		</div>
+		</span>
 	)
 }
 

@@ -94,6 +94,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 				<table
 					className={cx(styles.table, 'table-fixed border-collapse')}
 					style={{ transform: 'rotateX(180deg)' }}
+					cellPadding={0}
 				>
 					<thead>
 						<tr>
