@@ -43,14 +43,14 @@ export const initializeBeliefNetwork = (network: Network) => {
 
 	// add their parents
 	for (const node of Object.values(network.nodes))
-		for (const parentId of node.parents) {
-			const parent = beliefNetwork.nodeMap.get(parentId)
-			if (parent) beliefNetwork.nodeMap.get(node.id)?.addParent(parent)
-		}
+		for (const parentId of node.parents)
+			beliefNetwork.nodeMap
+				.get(node.id)!
+				.addParent(beliefNetwork.nodeMap.get(parentId)!)
 
 	// add CPTs
 	for (const node of Object.values(network.nodes))
-		beliefNetwork.nodeMap.get(node.id)?.setCpt(util.transpose(node.cpt))
+		beliefNetwork.nodeMap.get(node.id)!.setCpt(util.transpose(node.cpt))
 
 	return beliefNetwork
 }
@@ -72,7 +72,8 @@ export const addNode =
 
 		const id = getNextNodeId(network)
 
-		const node = BeliefNetworkNode.withUniformDistribution(
+		const node = BeliefNetworkNode.withIdUniformDistribution(
+			id,
 			`Node ${id}`,
 			beliefNetwork,
 			['yes', 'no']
@@ -95,6 +96,8 @@ export const copyNode =
 	(network, beliefNetwork) => {
 		const id = getNextNodeId(network)
 
+		beliefNetwork.nodeMap.set(id, beliefNetwork.nodeMap.get(node.id)!.clone(id))
+
 		network.nodes[id.toString()] = {
 			...node,
 			id,
@@ -106,13 +109,14 @@ export const copyNode =
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
 	(network, beliefNetwork) => {
-		beliefNetwork.nodeMap.get(id)?.rename(name)
+		beliefNetwork.nodeMap.get(id)!.rename(name)
 		network.nodes[id.toString()].name = name
 	}
 
 export const setNodeValue =
 	(id: number, valueIndex: number, value: string): NetworkAction =>
 	(network, beliefNetwork) => {
+		beliefNetwork.nodeMap.get(id)!.setValue(valueIndex, value)
 		network.nodes[id.toString()].values[valueIndex] = value
 	}
 
@@ -120,18 +124,26 @@ export const addNodeValue =
 	(id: number, name?: string): NetworkAction =>
 	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
+		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
 
-		const cptValues = (node.cpt[0] as number[] | undefined)?.length
-		if (cptValues === undefined) throw new Error('CPT is empty')
+		const valueName = name ?? `value${node.values.length}`
 
-		node.values.push(name ?? `value${node.values.length}`)
-		node.cpt.push(new Array(cptValues).fill(0))
+		beliefNetworkNode.addValue(valueName)
+
+		node.values.push(valueName)
+		node.cpt = util.transpose(beliefNetworkNode.cpt)
 	}
 
 export const removeNodeValue =
 	(id: number, valueIndex: number): NetworkAction =>
 	(network, beliefNetwork) => {
+		const node = network.nodes[id.toString()]
+		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
+
+		beliefNetworkNode.removeValueIndex(valueIndex)
+
 		network.nodes[id.toString()].values.splice(valueIndex, 1)
+		node.cpt = util.transpose(beliefNetworkNode.cpt)
 	}
 
 export const setNodeCptValue =
@@ -143,12 +155,22 @@ export const setNodeCptValue =
 	): NetworkAction =>
 	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
+		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
 
-		node.cpt[valueIndex][columnIndex] = value
+		beliefNetworkNode.setConditionalProbabilityCell(
+			columnIndex,
+			valueIndex,
+			value
+		)
 
 		if (node.values.length === 2)
-			// Set the other value to 1 - value
-			node.cpt[1 - valueIndex][columnIndex] = util.probComplement(value)
+			beliefNetworkNode.setConditionalProbabilityCell(
+				columnIndex,
+				1 - valueIndex,
+				value
+			)
+
+		node.cpt = util.transpose(beliefNetworkNode.cpt)
 	}
 
 export const setNodePosition =
@@ -172,35 +194,59 @@ export const snapNodeToGrid =
 export const removeNode =
 	(id: number): NetworkAction =>
 	(network, beliefNetwork) => {
+		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
+
+		beliefNetworkNode.remove()
+
 		delete network.nodes[id.toString()]
 
-		for (const otherNode of Object.values(network.nodes))
-			otherNode.parents = otherNode.parents.filter(parentId => parentId !== id)
+		for (const node of Object.values(network.nodes)) {
+			node.parents = node.parents.filter(parentId => parentId !== id)
+			node.children = node.children.filter(childId => childId !== id)
+		}
 	}
 
 export const addEdge =
 	(edge: Edge): NetworkAction =>
 	(network, beliefNetwork) => {
-		if (edge.from === edge.to) throw new Error('Cannot connect node to itself')
-
 		const parent = network.nodes[edge.from.toString()]
 		const child = network.nodes[edge.to.toString()]
 
-		if (child.parents.includes(parent.id))
-			throw new Error('Edge already exists')
+		const parentBeliefNetworkNode = beliefNetwork.nodeMap.get(parent.id)!
+		const childBeliefNetworkNode = beliefNetwork.nodeMap.get(child.id)!
 
-		child.parents.push(parent.id)
+		childBeliefNetworkNode.addParent(parentBeliefNetworkNode)
 
-		child.cpt = child.cpt.map(row =>
-			new Array(parent.values.length).fill(row).flat()
+		parent.children = Array.from(parentBeliefNetworkNode.children).map(
+			node => node.id as number
 		)
+
+		child.parents = Array.from(childBeliefNetworkNode.parents).map(
+			node => node.id as number
+		)
+
+		child.cpt = util.transpose(childBeliefNetworkNode.cpt)
 	}
 
 export const removeEdge =
 	(edge: Edge): NetworkAction =>
 	(network, beliefNetwork) => {
+		const parent = network.nodes[edge.from.toString()]
 		const child = network.nodes[edge.to.toString()]
-		child.parents = child.parents.filter(parentId => parentId !== edge.from)
+
+		const parentBeliefNetworkNode = beliefNetwork.nodeMap.get(parent.id)!
+		const childBeliefNetworkNode = beliefNetwork.nodeMap.get(child.id)!
+
+		childBeliefNetworkNode.removeParent(parentBeliefNetworkNode)
+
+		parent.children = Array.from(parentBeliefNetworkNode.children).map(
+			node => node.id as number
+		)
+		child.parents = Array.from(childBeliefNetworkNode.parents).map(
+			node => node.id as number
+		)
+
+		child.cpt = util.transpose(childBeliefNetworkNode.cpt)
 	}
 
 export const setAssertionType =
