@@ -49,8 +49,14 @@ export const initializeBeliefNetwork = (network: Network) => {
 				.addParent(beliefNetwork.nodeMap.get(parentId)!)
 
 	// add CPTs
-	for (const node of Object.values(network.nodes))
-		beliefNetwork.nodeMap.get(node.id)!.setCpt(util.transpose(node.cpt))
+	for (const node of Object.values(network.nodes)) {
+		try {
+			beliefNetwork.nodeMap.get(node.id)!.setCpt(util.transpose(node.cpt))
+		} catch (er) {
+			console.log(node.id)
+			throw er
+		}
+	}
 
 	return beliefNetwork
 }
@@ -200,9 +206,18 @@ export const removeNode =
 
 		delete network.nodes[id.toString()]
 
-		for (const node of Object.values(network.nodes)) {
-			node.parents = node.parents.filter(parentId => parentId !== id)
-			node.children = node.children.filter(childId => childId !== id)
+		for (const otherNode of Object.values(network.nodes)) {
+			const otherBeliefNetworkNode = beliefNetwork.nodeMap.get(otherNode.id)!
+
+			otherNode.parents = Array.from(otherBeliefNetworkNode.parents).map(
+				node => node.id as number
+			)
+
+			otherNode.children = Array.from(otherBeliefNetworkNode.children).map(
+				node => node.id as number
+			)
+
+			otherNode.cpt = util.transpose(otherBeliefNetworkNode.cpt)
 		}
 	}
 
