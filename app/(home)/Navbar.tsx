@@ -8,10 +8,8 @@ import {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
@@ -23,6 +21,11 @@ import errorFromUnknown from '@/lib/error/fromUnknown'
 import pick from '@/lib/pick'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
+import useSheetStore from '@/lib/stores/sheet'
+import ProbabilityOfEvidenceSheet from './ProbabilityOfEvidenceSheet'
+import MpeSheet from './MpeSheet'
+import MapSheet from './MapSheet'
+import renderTextWithMath from '@/lib/renderTextWithMath'
 
 const Navbar = () => {
 	const {
@@ -40,6 +43,7 @@ const Navbar = () => {
 			'clearNetworkFromStorage'
 		)
 	)
+	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
 
 	const openNetwork = useCallback(async () => {
 		try {
@@ -60,7 +64,7 @@ const Navbar = () => {
 	const exportNetworkAsLatex = useCallback(async () => {
 		try {
 			await navigator.clipboard.writeText(getNetworkAsLatex())
-			toast.success('LaTeX code copied to clipboard')
+			toast.success('Copied LaTeX DAG to clipboard')
 		} catch (unknownError) {
 			alertError(errorFromUnknown(unknownError))
 		}
@@ -74,6 +78,18 @@ const Navbar = () => {
 			alertError(errorFromUnknown(unknownError))
 		}
 	}, [clearNetworkFromStorage])
+
+	const viewProbabilityOfEvidence = useCallback(() => {
+		setSheetContent(<ProbabilityOfEvidenceSheet />)
+	}, [setSheetContent])
+
+	const viewMpe = useCallback(() => {
+		setSheetContent(<MpeSheet />)
+	}, [setSheetContent])
+
+	const viewMap = useCallback(() => {
+		setSheetContent(<MapSheet />)
+	}, [setSheetContent])
 
 	useEffect(() => {
 		loadNetworkFromStorage()
@@ -108,9 +124,10 @@ const Navbar = () => {
 										<button
 											className="w-full text-left"
 											onClick={exportNetworkAsLatex}
-										>
-											LaTeX DAG
-										</button>
+											dangerouslySetInnerHTML={{
+												__html: renderTextWithMath('$\\LaTeX$ DAG')
+											}}
+										/>
 									</DropdownMenuItem>
 								</DropdownMenuSubContent>
 							</DropdownMenuPortal>
@@ -120,6 +137,35 @@ const Navbar = () => {
 								Clear
 							</button>
 						</DropdownMenuItem>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
+						<DropdownMenuSub>
+							<DropdownMenuSubTrigger>Query</DropdownMenuSubTrigger>
+							<DropdownMenuPortal>
+								<DropdownMenuSubContent>
+									<DropdownMenuItem>
+										<button
+											className="w-full text-left"
+											onClick={viewProbabilityOfEvidence}
+											dangerouslySetInnerHTML={{
+												__html: renderTextWithMath('$P(\\text{evidence})$')
+											}}
+										/>
+									</DropdownMenuItem>
+									<DropdownMenuItem>
+										<button className="w-full text-left" onClick={viewMpe}>
+											MPE
+										</button>
+									</DropdownMenuItem>
+									<DropdownMenuItem>
+										<button className="w-full text-left" onClick={viewMap}>
+											MAP
+										</button>
+									</DropdownMenuItem>
+								</DropdownMenuSubContent>
+							</DropdownMenuPortal>
+						</DropdownMenuSub>
 					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>

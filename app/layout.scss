@@ -1,3 +1,88 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*,
+::before,
+::after {
+	@apply break-words;
+	word-break: break-word;
+}
+
+* {
+	&::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+
+	&::-webkit-scrollbar-track {
+		@apply bg-black bg-opacity-10;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		@apply bg-black bg-opacity-30;
+	}
+
+	&::-webkit-scrollbar-thumb:hover {
+		@apply bg-black bg-opacity-40;
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: bolder;
+}
+
+h1 {
+	@apply text-3xl;
+}
+
+h2 {
+	@apply text-2xl;
+}
+
+h3 {
+	@apply text-xl;
+}
+
+h4 {
+	@apply text-base;
+}
+
+h5 {
+	@apply text-sm;
+}
+
+h6 {
+	@apply text-xs;
+}
+
+input,
+textarea {
+	@apply block;
+}
+
+pre {
+	@apply whitespace-pre-wrap;
+}
+
+code {
+	font-family: var(--font-sf-mono);
+}
+
+button:disabled {
+	@apply pointer-events-none;
+}
+
+[aria-label][data-balloon-pos]::after {
+	@apply leading-5;
+}
+
+th,
+td {
+	padding: 0;
+}

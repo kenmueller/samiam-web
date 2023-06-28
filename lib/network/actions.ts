@@ -82,17 +82,19 @@ export const addNode =
 			id,
 			`Node ${id}`,
 			beliefNetwork,
-			['yes', 'no']
+			['Yes', 'No']
 		)
+
 		beliefNetwork.addNode(node)
 		beliefNetwork.nodeMap.set(id, node)
+
 		network.nodes[id.toString()] = {
 			id,
-			name: node.name, //`Node ${id}`,
+			name: node.name,
 			parents: [],
 			children: [],
-			values: [...node.values], //['yes', 'no'],
-			cpt: util.transpose(node.cpt), //[[0.5], [0.5]],
+			values: [...node.values],
+			cpt: util.transpose(node.cpt),
 			...position
 		}
 	}
@@ -132,7 +134,7 @@ export const addNodeValue =
 		const node = network.nodes[id.toString()]
 		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
 
-		const valueName = name ?? `value${node.values.length}`
+		const valueName = name ?? `Value ${node.values.length}`
 
 		beliefNetworkNode.addValue(valueName)
 
