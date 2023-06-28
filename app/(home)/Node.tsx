@@ -20,6 +20,7 @@ import {
 	setNodePosition,
 	snapNodeToGrid
 } from '@/lib/network/actions'
+import NodeName from './NodeName'
 
 const NetworkNode = ({ node }: { node: Node }) => {
 	const { applyAction } = useNetworkStore(pick('applyAction'))
@@ -226,16 +227,5 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		</div>
 	)
 }
-
-const _NodeName = ({ id, name }: { id: number; name: string }) => (
-	<span
-		className="font-bold"
-		dangerouslySetInnerHTML={{
-			__html: name ? renderTextWithMath(name) : `Node ${id}`
-		}}
-	/>
-)
-
-const NodeName = memo(_NodeName)
 
 export default NetworkNode
