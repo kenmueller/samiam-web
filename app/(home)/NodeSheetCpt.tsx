@@ -18,6 +18,7 @@ import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 
 import styles from './NodeSheetCpt.module.scss'
+import renderTextWithMath from '@/lib/renderTextWithMath'
 
 const getRowSpan = (
 	child: Node,
@@ -73,7 +74,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 
 			await navigator.clipboard.writeText(beliefNetworkNode.getCptLatex())
 
-			toast.success('Copied CPT LaTeX to clipboard')
+			toast.success('Copied LaTeX CPT to clipboard')
 		} catch (unknownError) {
 			alertError(errorFromUnknown(unknownError))
 		}
@@ -86,9 +87,10 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 				<button
 					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
 					onClick={exportToLatex}
-				>
-					Export to LaTeX
-				</button>
+					dangerouslySetInnerHTML={{
+						__html: renderTextWithMath('Export to $\\LaTeX$')
+					}}
+				/>
 			</div>
 			<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
 				<table

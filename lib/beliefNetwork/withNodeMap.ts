@@ -5,4 +5,7 @@ export default class BeliefNetworkWithNodeMap<
 	BeliefNetworkNodeLike extends BeliefNetworkNode = BeliefNetworkNode
 > extends BeliefNetwork<BeliefNetworkNodeLike> {
 	nodeMap = new Map<BeliefNetworkNodeId, BeliefNetworkNodeLike>()
+
+	mpe = (...args: unknown[]) => Math.random()
+	map = (...args: unknown[]) => Math.random()
 }
