@@ -170,7 +170,8 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							{node.cpt.map((_row, valueIndex) => (
 								<th key={valueIndex}>
 									<button
-										className="w-full text-xl text-raspberry"
+										className="w-full text-xl text-raspberry disabled:opacity-50"
+										disabled={node.values.length <= 1}
 										onClick={() => {
 											applyAction(removeNodeValue(node.id, valueIndex))
 										}}
