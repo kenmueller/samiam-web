@@ -26,6 +26,8 @@ import normalizeBounds from '@/lib/normalizeBounds'
 import useChangeEffect from '@/lib/useNewEffect'
 import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
+import useSheetStore from '@/lib/stores/sheet'
+import NodeSheet from './NodeSheet'
 
 const Canvas = () => {
 	const arrowId = useId()
@@ -55,6 +57,7 @@ const Canvas = () => {
 		)
 	)
 	const { option } = useOptionStore(pick('option'))
+	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
 
 	const mouse = useMouse()
 	const view = useView()
@@ -83,12 +86,24 @@ const Canvas = () => {
 
 					break
 				}
-				case 'add-node':
-					if (mouse) applyAction(addNode(mouse))
+				case 'add-node': {
+					if (!mouse) break
+
+					const node = applyAction(addNode(mouse))
+					setSheetContent(<NodeSheet id={node.id} />)
+
 					break
+				}
 			}
 		},
-		[option, unselectNodes, applyAction, mouse, setCurrentMouse]
+		[
+			option,
+			unselectNodes,
+			applyAction,
+			mouse,
+			setCurrentMouse,
+			setSheetContent
+		]
 	)
 
 	const onMouseMove = useCallback(

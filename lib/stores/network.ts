@@ -15,7 +15,7 @@ export interface NetworkStore {
 	saveNetworkToFile: () => Promise<void>
 	getNetworkAsLatex: () => string
 	clearNetworkFromStorage: () => void
-	applyAction: (action: NetworkAction) => void
+	applyAction: <ReturnType>(action: NetworkAction<ReturnType>) => ReturnType
 }
 
 const EMPTY_NETWORK: Network = { nodes: {} }
@@ -96,14 +96,18 @@ const useNetworkStore = create(
 
 			saveNetworkToStorage(get().network)
 		},
-		applyAction: action => {
+		applyAction: <ReturnType>(action: NetworkAction<ReturnType>) => {
+			let returnValue: ReturnType
+
 			const { beliefNetwork } = get()
 
 			set(state => {
-				action(state.network, beliefNetwork)
+				returnValue = action(state.network, beliefNetwork)
 			})
 
 			saveNetworkToStorage(get().network)
+
+			return returnValue!
 		}
 	}))
 )
