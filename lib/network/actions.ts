@@ -6,10 +6,10 @@ import Evidence from 'samiam/lib/evidence'
 import Network, { AssertionType, Position, Node } from '.'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 
-export type NetworkAction = (
+export type NetworkAction<ReturnType = void> = (
 	network: Draft<Network>,
 	beliefNetwork: BeliefNetworkWithNodeMap
-) => void
+) => ReturnType
 
 export const GRID_SPACING_X = 80
 export const GRID_SPACING_Y = 50
@@ -62,7 +62,7 @@ export const initializeBeliefNetwork = (network: Network) => {
 }
 
 export const addNode =
-	({ x, y }: Position): NetworkAction =>
+	({ x, y }: Position): NetworkAction<Node> =>
 	(network, beliefNetwork) => {
 		const position: Position = {
 			x: Math.round(x / GRID_SPACING_X) * GRID_SPACING_X,
@@ -78,25 +78,29 @@ export const addNode =
 
 		const id = getNextNodeId(network)
 
-		const node = BeliefNetworkNode.withIdUniformDistribution(
+		const beliefNetworkNode = BeliefNetworkNode.withIdUniformDistribution(
 			id,
 			`Node ${id}`,
 			beliefNetwork,
 			['Yes', 'No']
 		)
 
-		beliefNetwork.addNode(node)
-		beliefNetwork.nodeMap.set(id, node)
+		beliefNetwork.addNode(beliefNetworkNode)
+		beliefNetwork.nodeMap.set(id, beliefNetworkNode)
 
-		network.nodes[id.toString()] = {
+		const node: Node = {
 			id,
-			name: node.name,
+			name: beliefNetworkNode.name,
 			parents: [],
 			children: [],
-			values: [...node.values],
-			cpt: util.transpose(node.cpt),
+			values: [...beliefNetworkNode.values],
+			cpt: util.transpose(beliefNetworkNode.cpt),
 			...position
 		}
+
+		network.nodes[id.toString()] = node
+
+		return node
 	}
 
 export const copyNode =
