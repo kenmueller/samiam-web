@@ -1,12 +1,12 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Evidence from 'samiam/lib/evidence'
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import MapSheetNode from './MapSheetNode'
 import renderTextWithMath from '@/lib/renderTextWithMath'
+import getEvidence from '@/lib/network/getEvidence'
 
 const MapSheet = () => {
 	const { network, beliefNetwork } = useNetworkStore(
@@ -16,34 +16,7 @@ const MapSheet = () => {
 	const [selectedNodes, setSelectedNodes] = useState<number[]>([])
 
 	const evidence = useMemo(
-		() =>
-			Object.values(network.nodes).reduce<Evidence>(
-				(evidence, node) => {
-					if (
-						node.assertionType === 'observation' &&
-						node.assertedValue !== undefined
-					)
-						evidence.observations.push({
-							node: beliefNetwork.nodeMap.get(node.id)!,
-							value: node.assertedValue
-						})
-
-					if (
-						node.assertionType === 'intervention' &&
-						node.assertedValue !== undefined
-					)
-						evidence.interventions.push({
-							node: beliefNetwork.nodeMap.get(node.id)!,
-							value: node.assertedValue
-						})
-
-					return evidence
-				},
-				{
-					observations: [],
-					interventions: []
-				}
-			),
+		() => getEvidence(network, beliefNetwork),
 		[network, beliefNetwork]
 	)
 
@@ -64,14 +37,14 @@ const MapSheet = () => {
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MAP}, \\text{evidence}_{\\text{obs}}|\\text{evidence}_{\\text{int}}) = ${map.jointProbability}$`
+							`$P(\\text{MAP}, \\text{e}_{\\text{obs}}|\\text{e}_{\\text{int}}) = ${map.jointProbability}$`
 						)
 					}}
 				/>
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MAP}|\\text{evidence}_{\\text{obs}}, \\text{evidence}_{\\text{int}}) = ${map.condProbability}$`
+							`$P(\\text{MAP}|\\text{e}_{\\text{obs}}, \\text{e}_{\\text{int}}) = ${map.condProbability}$`
 						)
 					}}
 				/>
