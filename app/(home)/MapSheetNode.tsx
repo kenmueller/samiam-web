@@ -1,33 +1,20 @@
 'use client'
 
 import { ChangeEvent, useCallback, useId } from 'react'
-import cx from 'classnames'
-import Instantiation from 'samiam/lib/instantiation'
 
-import { Node } from '@/lib/network'
 import NodeName from './NodeName'
+import { MapNode } from './MapSheet'
 
 const MapSheetNode = ({
-	node,
-	instantiations,
+	mapNode,
 	selected,
 	setSelected
 }: {
-	node: Node
-	instantiations: Instantiation[]
+	mapNode: MapNode
 	selected: boolean
 	setSelected: (selected: boolean) => void
 }) => {
 	const id = useId()
-
-	const hasEvidence =
-		node.assertionType !== undefined && node.assertedValue !== undefined
-
-	const instantiation = hasEvidence
-		? null
-		: instantiations.find(instantiation => instantiation.node.id === node.id)!
-
-	const type = node.assertionType ?? (instantiation ? 'map' : null)
 
 	const onChange = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
@@ -36,34 +23,32 @@ const MapSheetNode = ({
 		[setSelected]
 	)
 
+	const valueIndex = mapNode.instantiation?.value ?? mapNode.node.assertedValue
+
 	return (
-		<div className="flex items-center gap-2">
-			<input
-				id={id}
-				type="checkbox"
-				checked={selected}
-				disabled={hasEvidence}
-				onChange={onChange}
-			/>
-			<label className={cx(hasEvidence && 'opacity-50')} htmlFor={id}>
-				{type && <span>({type}) </span>}
-				{node.assertionType === 'intervention' &&
-					node.assertedValue !== undefined && (
-						<>
-							<span className="italic">do</span>
-							<span>(</span>
-						</>
-					)}
-				<NodeName id={node.id} name={node.name} />
-				{instantiation && <span> = {node.values[instantiation.value]}</span>}
-				{node.assertionType !== undefined &&
-					node.assertedValue !== undefined && (
-						<span> = {node.values[node.assertedValue]}</span>
-					)}
-				{node.assertionType === 'intervention' &&
-					node.assertedValue !== undefined && <span>)</span>}
-			</label>
-		</div>
+		<tr>
+			<td>
+				{!['observation', 'intervention'].includes(mapNode.type) && (
+					<div className="flex justify-center items-center h-full">
+						<input
+							id={id}
+							type="checkbox"
+							checked={selected}
+							disabled={mapNode.hasEvidence}
+							onChange={onChange}
+						/>
+					</div>
+				)}
+			</td>
+			<td className="max-w-[115px]">
+				<label htmlFor={id}>
+					<NodeName id={mapNode.node.id} name={mapNode.node.name} />
+				</label>
+			</td>
+			<td className="max-w-[115px]">
+				{valueIndex !== undefined && mapNode.node.values[valueIndex]}
+			</td>
+		</tr>
 	)
 }
 
