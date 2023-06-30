@@ -65,11 +65,10 @@ const NodeSheetCptValue = ({
 				background: `rgb(${zero.map((z, i) => z + diff[i] * prob)})`
 			}}
 		>
-			<span className="px-4 invisible" aria-hidden>
+			<span className="px-4 invisible whitespace-nowrap" aria-hidden>
 				{_cptValue}
 			</span>
 			<input
-				// className="w-full px-2 py-1 outline-none transition-colors ease-linear absolute left-0"
 				className="w-full px-2 py-0 bg-transparent outline-none transition-colors ease-linear absolute left-0 inset-0"
 				type="number"
 				step={0.01}

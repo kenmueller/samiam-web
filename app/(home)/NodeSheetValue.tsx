@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback } from 'react'
 
 import { Node } from '@/lib/network'
 import useNetworkStore from '@/lib/stores/network'
@@ -28,11 +28,10 @@ const NodeSheetValue = ({
 
 	return (
 		<span className="relative">
-			<span className="px-4 invisible" aria-hidden>
+			<span className="px-4 invisible whitespace-nowrap" aria-hidden>
 				{value}
 			</span>
 			<input
-				// className="w-full px-2 py-1 text-center outline-none bg-transparent absolute left-0 inset-0"
 				className="bg-gray-200 w-full px-2 py-0 text-center outline-none absolute left-0 inset-0"
 				placeholder="Unnamed"
 				value={value}

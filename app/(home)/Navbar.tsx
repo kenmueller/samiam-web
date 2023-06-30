@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import Image from 'next/image'
 
 import {
 	DropdownMenu,
