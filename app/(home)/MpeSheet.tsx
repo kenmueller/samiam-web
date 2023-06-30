@@ -1,11 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import Evidence from 'samiam/lib/evidence'
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import renderTextWithMath from '@/lib/renderTextWithMath'
+import getEvidence from '@/lib/network/getEvidence'
 
 const MpeSheet = () => {
 	const { network, beliefNetwork } = useNetworkStore(
@@ -13,34 +13,7 @@ const MpeSheet = () => {
 	)
 
 	const evidence = useMemo(
-		() =>
-			Object.values(network.nodes).reduce<Evidence>(
-				(evidence, node) => {
-					if (
-						node.assertionType === 'observation' &&
-						node.assertedValue !== undefined
-					)
-						evidence.observations.push({
-							node: beliefNetwork.nodeMap.get(node.id)!,
-							value: node.assertedValue
-						})
-
-					if (
-						node.assertionType === 'intervention' &&
-						node.assertedValue !== undefined
-					)
-						evidence.interventions.push({
-							node: beliefNetwork.nodeMap.get(node.id)!,
-							value: node.assertedValue
-						})
-
-					return evidence
-				},
-				{
-					observations: [],
-					interventions: []
-				}
-			),
+		() => getEvidence(network, beliefNetwork),
 		[network, beliefNetwork]
 	)
 
@@ -56,14 +29,14 @@ const MpeSheet = () => {
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MPE}, \\text{evidence}_{\\text{obs}}|\\text{evidence}_{\\text{int}}) = ${mpe.jointProbability}$`
+							`$P(\\text{MPE}, \\text{e}_{\\text{obs}}|\\text{e}_{\\text{int}}) = ${mpe.jointProbability}$`
 						)
 					}}
 				/>
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MPE}|\\text{evidence}_{\\text{obs}}, \\text{evidence}_{\\text{int}}) = ${mpe.condProbability}$`
+							`$P(\\text{MPE}|\\text{e}_{\\text{obs}}, \\text{e}_{\\text{int}}) = ${mpe.condProbability}$`
 						)
 					}}
 				/>
