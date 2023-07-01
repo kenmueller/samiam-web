@@ -76,10 +76,13 @@ const MapSheet = () => {
 					? null
 					: map.instantiations.find(
 							instantiation => instantiation.node.id === node.id
-					  )!
+					  ) ?? null
 
-				const type: MapNode['type'] =
-					node.assertionType ?? (instantiation ? 'map' : 'unselected')
+				const type: MapNode['type'] = hasEvidence
+					? node.assertionType!
+					: instantiation
+					? 'map'
+					: 'unselected'
 
 				return { node, hasEvidence, instantiation, type }
 			}),
@@ -155,7 +158,6 @@ const MapSheet = () => {
 					}}
 				/>
 			</div>
-
 			<div className="overflow-x-auto" style={{ transform: 'rotateX(180deg)' }}>
 				<table
 					className={cx(styles.table, 'table-fixed border-collapse')}
@@ -177,16 +179,7 @@ const MapSheet = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{mapMapNodes.length > 0 && (
-							<>
-								<tr>
-									<td className="text-center underline" colSpan={3}>
-										MAP
-									</td>
-								</tr>
-								{renderMapNodes(mapMapNodes)}
-							</>
-						)}
+						{mapMapNodes.length > 0 && renderMapNodes(mapMapNodes)}
 						{unselectedMapNodes.length > 0 && (
 							<>
 								<tr>

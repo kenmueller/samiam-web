@@ -1,0 +1,15 @@
+.table {
+	* {
+		overflow-wrap: normal;
+		word-break: normal;
+	}
+
+	th,
+	td {
+		@apply px-4 border border-gray-500 overflow-hidden text-ellipsis;
+	}
+
+	th {
+		@apply bg-gray-200;
+	}
+}
