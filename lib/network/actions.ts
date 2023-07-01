@@ -281,3 +281,9 @@ export const setAssertedValue =
 	(network, beliefNetwork) => {
 		network.nodes[id.toString()].assertedValue = valueIndex ?? undefined
 	}
+
+export const setMonitorShowing =
+	(id: number, showing: boolean): NetworkAction =>
+	(network, beliefNetwork) => {
+		network.nodes[id.toString()].monitor = showing || undefined
+	}

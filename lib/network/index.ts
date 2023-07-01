@@ -19,6 +19,7 @@ export interface Node extends Position {
 	assertionType?: AssertionType
 	assertedValue?: number
 	cpt: number[][]
+	monitor?: true
 }
 
 export default interface Network {
