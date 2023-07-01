@@ -16,9 +16,9 @@ import NodeSheetValue from './NodeSheetValue'
 import { addNodeValue, removeNodeValue } from '@/lib/network/actions'
 import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
+import renderTextWithMath from '@/lib/renderTextWithMath'
 
 import styles from './NodeSheetCpt.module.scss'
-import renderTextWithMath from '@/lib/renderTextWithMath'
 
 const getRowSpan = (
 	child: Node,
