@@ -10,7 +10,13 @@ import { setMonitorShowing } from '@/lib/network/actions'
 const NodeSheetMonitorToggle = ({ node }: { node: Node }) => {
 	const id = useId()
 
-	const { applyAction } = useNetworkStore(pick('applyAction'))
+	const { applyAction, isPrior } = useNetworkStore(state => ({
+		applyAction: state.applyAction,
+		isPrior: !Object.values(state.network.nodes).some(
+			node =>
+				node.assertionType !== undefined && node.assertedValue !== undefined
+		)
+	}))
 
 	const onChange = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +33,9 @@ const NodeSheetMonitorToggle = ({ node }: { node: Node }) => {
 				checked={node.monitor ?? false}
 				onChange={onChange}
 			/>
-			<label htmlFor={id}>Show Monitor</label>
+			<label htmlFor={id}>
+				Show {isPrior ? 'Prior' : 'Posterior'} Marginal Distribution
+			</label>
 		</div>
 	)
 }

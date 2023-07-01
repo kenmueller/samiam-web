@@ -81,14 +81,14 @@ const MpeSheet = () => {
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MPE}, \\text{e}_{\\text{obs}}|\\text{e}_{\\text{int}}) = ${mpe.jointProbability}$`
+							`$P(\\text{MPE}, \\mathbf{e}_{\\text{obs}}|\\mathbf{e}_{\\text{int}}) = ${mpe.jointProbability}$`
 						)
 					}}
 				/>
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MPE}|\\text{e}_{\\text{obs}}, \\text{e}_{\\text{int}}) = ${mpe.condProbability}$`
+							`$P(\\text{MPE}|\\mathbf{e}_{\\text{obs}}, \\mathbf{e}_{\\text{int}}) = ${mpe.condProbability}$`
 						)
 					}}
 				/>

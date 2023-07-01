@@ -146,14 +146,14 @@ const MapSheet = () => {
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MAP}, \\text{e}_{\\text{obs}}|\\text{e}_{\\text{int}}) = ${map.jointProbability}$`
+							`$P(\\text{MAP}, \\mathbf{e}_{\\text{obs}}|\\mathbf{e}_{\\text{int}}) = ${map.jointProbability}$`
 						)
 					}}
 				/>
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{MAP}|\\text{e}_{\\text{obs}}, \\text{e}_{\\text{int}}) = ${map.condProbability}$`
+							`$P(\\text{MAP}|\\mathbf{e}_{\\text{obs}}, \\mathbf{e}_{\\text{int}}) = ${map.condProbability}$`
 						)
 					}}
 				/>
