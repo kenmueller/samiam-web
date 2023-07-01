@@ -29,7 +29,7 @@ const ProbabilityOfEvidenceSheet = () => {
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\text{e}) = ${probabilityOfEvidence}$`
+							`$P(\\mathbf{e}) = ${probabilityOfEvidence}$`
 						)
 					}}
 				/>
