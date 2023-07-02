@@ -1,6 +1,6 @@
 'use client'
 
-import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 
 import { Node, Position } from '@/lib/network'
@@ -187,7 +187,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		<div
 			ref={onRef}
 			className={cx(
-				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
+				'absolute px-4 py-2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
 				node.monitor ? 'rounded-lg' : 'rounded-[100%]',
 				(node.assertionType === undefined ||
 					node.assertedValue === undefined) &&
@@ -201,14 +201,10 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				isSelected &&
 					'after:absolute after:inset-[-3px] after:border-2 after:border-dashed after:border-black'
 			)}
-			style={
-				{
-					'--x': `${node.x}px`,
-					'--y': `${node.y}px`,
-					'--center-x': `${center.x}px`,
-					'--center-y': `${center.y}px`
-				} as CSSProperties
-			}
+			style={{
+				left: `calc(50% + ${node.x}px + ${center.x}px)`,
+				top: `calc(50% - ${node.y}px - ${center.y}px)`
+			}}
 		>
 			<p className="whitespace-nowrap text-center">
 				{node.assertionType === 'intervention' &&

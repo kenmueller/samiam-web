@@ -22,30 +22,29 @@ const ProbabilityOfEvidenceSheet = () => {
 		[beliefNetwork, evidence]
 	)
 
-	const evidenceString = useMemo(
-		() =>
-			[
-				evidence.observations
-					.map(
-						observation =>
-							`${observation.node.name} = ${
-								observation.node.values[observation.value]
-							}`
-					)
-					.join(', '),
-				evidence.interventions
-					.map(
-						observation =>
-							`${observation.node.name} = ${
-								observation.node.values[observation.value]
-							}`
-					)
-					.join(', ')
-			]
-				.filter(Boolean)
-				.join(' | '),
-		[evidence]
-	)
+	const evidenceString = useMemo(() => {
+		const observations = evidence.observations
+			.map(
+				observation =>
+					`${observation.node.name} = ${
+						observation.node.values[observation.value]
+					}`
+			)
+			.join(', ')
+
+		const interventions = evidence.interventions
+			.map(
+				intervention =>
+					`${intervention.node.name} = ${
+						intervention.node.values[intervention.value]
+					}`
+			)
+			.join(', ')
+
+		return [observations, interventions && `$do($${interventions}$)$`]
+			.filter(Boolean)
+			.join(' | ')
+	}, [evidence])
 
 	return (
 		<div className="flex flex-col items-stretch gap-4">
