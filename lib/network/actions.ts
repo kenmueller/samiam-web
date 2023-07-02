@@ -1,7 +1,7 @@
 import { Draft } from 'immer'
 import BeliefNetworkNode from 'samiam/lib/node'
 import * as util from 'samiam/lib/util'
-import Evidence from 'samiam/lib/evidence'
+import cloneDeep from 'lodash/cloneDeep'
 
 import Network, { AssertionType, Position, Node } from '.'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
@@ -51,7 +51,7 @@ export const initializeBeliefNetwork = (network: Network) => {
 	// add CPTs
 	for (const node of Object.values(network.nodes)) {
 		try {
-			beliefNetwork.nodeMap.get(node.id)!.setCpt(util.transpose(node.cpt))
+			beliefNetwork.nodeMap.get(node.id)!.setCpt(cloneDeep(node.cpt))
 		} catch (er) {
 			console.log(node.id)
 			throw er
@@ -93,8 +93,8 @@ export const addNode =
 			name: beliefNetworkNode.name,
 			parents: [],
 			children: [],
-			values: [...beliefNetworkNode.values],
-			cpt: util.transpose(beliefNetworkNode.cpt),
+			values: cloneDeep(beliefNetworkNode.values),
+			cpt: cloneDeep(beliefNetworkNode.cpt),
 			...position
 		}
 
@@ -143,7 +143,7 @@ export const addNodeValue =
 		beliefNetworkNode.addValue(valueName)
 
 		node.values.push(valueName)
-		node.cpt = util.transpose(beliefNetworkNode.cpt)
+		node.cpt = cloneDeep(beliefNetworkNode.cpt)
 	}
 
 export const removeNodeValue =
@@ -155,39 +155,41 @@ export const removeNodeValue =
 		beliefNetworkNode.removeValueIndex(valueIndex)
 
 		network.nodes[id.toString()].values.splice(valueIndex, 1)
-		node.cpt = util.transpose(beliefNetworkNode.cpt)
+		node.cpt = cloneDeep(beliefNetworkNode.cpt)
 	}
 
 export const setNodeCptValue =
 	(
 		id: number,
+		rowIndex: number,
 		valueIndex: number,
-		columnIndex: number,
 		value: number
 	): NetworkAction =>
 	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
 		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
 
-		beliefNetworkNode.setConditionalProbabilityCell(
-			columnIndex,
-			valueIndex,
-			value
-		)
+		beliefNetworkNode.setConditionalProbabilityCell(rowIndex, valueIndex, value)
 
 		if (node.values.length === 2)
 			beliefNetworkNode.setConditionalProbabilityCell(
-				columnIndex,
+				rowIndex,
 				1 - valueIndex,
 				util.probComplement(value)
 			)
 
-		node.cpt = util.transpose(beliefNetworkNode.cpt)
+		node.cpt = cloneDeep(beliefNetworkNode.cpt)
 	}
 
 export const normalizeNodeCptRow =
 	(id: number, rowIndex: number): NetworkAction =>
-	(network, beliefNetwork) => {}
+	(network, beliefNetwork) => {
+		const node = network.nodes[id.toString()]
+		const beliefNetworkNode = beliefNetwork.nodeMap.get(id)!
+
+		util.normalizeDistribution(beliefNetworkNode.cpt[rowIndex])
+		node.cpt = cloneDeep(beliefNetworkNode.cpt)
+	}
 
 export const setNodePosition =
 	(id: number, position: Position): NetworkAction =>
@@ -227,7 +229,7 @@ export const removeNode =
 				node => node.id as number
 			)
 
-			otherNode.cpt = util.transpose(otherBeliefNetworkNode.cpt)
+			otherNode.cpt = cloneDeep(beliefNetworkNode.cpt)
 		}
 	}
 
@@ -250,7 +252,7 @@ export const addEdge =
 			node => node.id as number
 		)
 
-		child.cpt = util.transpose(childBeliefNetworkNode.cpt)
+		child.cpt = cloneDeep(childBeliefNetworkNode.cpt)
 	}
 
 export const removeEdge =
@@ -271,7 +273,7 @@ export const removeEdge =
 			node => node.id as number
 		)
 
-		child.cpt = util.transpose(childBeliefNetworkNode.cpt)
+		child.cpt = cloneDeep(childBeliefNetworkNode.cpt)
 	}
 
 export const setAssertionType =
