@@ -10,7 +10,10 @@ import pick from '@/lib/pick'
 
 const zero = [9, 174, 106]
 const one = [217, 253, 238]
+const zeroInvalid = [240, 209, 222]
+const oneInvalid = [195, 70, 122]
 const diff = one.map((x, i) => x - zero[i])
+const diffInvalid = oneInvalid.map((x, i) => x - zeroInvalid[i])
 
 const NodeSheetCptValue = ({
 	node,
@@ -64,7 +67,11 @@ const NodeSheetCptValue = ({
 		<div
 			className="relative"
 			style={{
-				background: `rgb(${zero.map((z, i) => z + diff[i] * prob)})`
+				background: `rgb(${
+					isValid
+						? zero.map((z, i) => z + diff[i] * prob)
+						: zeroInvalid.map((z, i) => z + diffInvalid[i] * prob)
+				})`
 			}}
 		>
 			<span className="px-4 invisible whitespace-nowrap" aria-hidden>
