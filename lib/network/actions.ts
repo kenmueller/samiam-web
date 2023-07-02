@@ -179,7 +179,7 @@ export const setNodeCptValue =
 			beliefNetworkNode.setConditionalProbabilityCell(
 				columnIndex,
 				1 - valueIndex,
-				value
+				util.probComplement(value)
 			)
 
 		node.cpt = util.transpose(beliefNetworkNode.cpt)
