@@ -13,7 +13,11 @@ import NodeSheetCptValue from './NodeSheetCptValue'
 import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
 import NodeSheetValue from './NodeSheetValue'
-import { addNodeValue, removeNodeValue } from '@/lib/network/actions'
+import {
+	addNodeValue,
+	removeNodeValue,
+	normalizeNodeCptRow
+} from '@/lib/network/actions'
 import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 import renderTextWithMath from '@/lib/renderTextWithMath'
@@ -176,7 +180,11 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 										<th className="px-2">
 											<button
 												className="font-normal text-sky-500"
-												onClick={() => {}}
+												onClick={() => {
+													applyAction(
+														normalizeNodeCptRow(node.id, cptValueIndex)
+													)
+												}}
 											>
 												Norm
 											</button>

@@ -185,6 +185,10 @@ export const setNodeCptValue =
 		node.cpt = util.transpose(beliefNetworkNode.cpt)
 	}
 
+export const normalizeNodeCptRow =
+	(id: number, rowIndex: number): NetworkAction =>
+	(network, beliefNetwork) => {}
+
 export const setNodePosition =
 	(id: number, position: Position): NetworkAction =>
 	(network, beliefNetwork) => {
