@@ -18,15 +18,15 @@ const diffInvalid = oneInvalid.map((x, i) => x - zeroInvalid[i])
 const NodeSheetCptValue = ({
 	node,
 	isValid,
-	valueIndex,
-	cptValueIndex
+	rowIndex,
+	valueIndex
 }: {
 	node: Node
 	isValid: boolean
+	rowIndex: number
 	valueIndex: number
-	cptValueIndex: number
 }) => {
-	const cptValue = node.cpt[valueIndex][cptValueIndex]
+	const cptValue = node.cpt[rowIndex][valueIndex]
 	if (typeof cptValue !== 'number') throw new Error(`CPT value not found`)
 
 	const { applyAction } = useNetworkStore(pick('applyAction'))
@@ -52,13 +52,13 @@ const NodeSheetCptValue = ({
 				applyAction(
 					setNodeCptValue(
 						node.id,
+						rowIndex,
 						valueIndex,
-						cptValueIndex,
 						clamp(newCptValue, 0, 1)
 					)
 				)
 		},
-		[_setCptValue, applyAction, node.id, valueIndex, cptValueIndex]
+		[_setCptValue, applyAction, node.id, rowIndex, valueIndex]
 	)
 
 	const prob = clamp(cptValue, 0, 1)
