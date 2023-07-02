@@ -107,9 +107,10 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 										onClick={() => {
 											setContent(<NodeSheet id={parent.id} />)
 										}}
-									>
-										{parent.name}
-									</button>
+										dangerouslySetInnerHTML={{
+											__html: renderTextWithMath(parent.name)
+										}}
+									/>
 								</th>
 							))}
 							{node.values.map((_value, valueIndex) => (
