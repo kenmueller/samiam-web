@@ -2,7 +2,11 @@
 
 import { useCallback, useMemo } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import {
+	faPlus,
+	faTrash,
+	faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons'
 import cx from 'classnames'
 import { toast } from 'react-toastify'
 import { areFloatsEqual } from 'samiam/lib/util'
@@ -82,10 +86,30 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 		}
 	}, [beliefNetwork, node.id])
 
+	const isCptValid = node.cpt.every(row =>
+		areFloatsEqual(
+			row.reduce((sum, value) => sum + value, 0),
+			1
+		)
+	)
+
 	return (
 		<div className="flex flex-col gap-2 max-w-max">
 			<div className="flex justify-between items-center gap-4">
-				<h3>CPT</h3>
+				<div className="flex items-center gap-2">
+					<h3>CPT</h3>
+					{!isCptValid && (
+						<div
+							data-balloon-pos="up-left"
+							aria-label="One or more distributions do not sum to 1, click Norm to fix"
+						>
+							<FontAwesomeIcon
+								className="text-xl text-raspberry"
+								icon={faTriangleExclamation}
+							/>
+						</div>
+					)}
+				</div>
 				<button
 					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
 					onClick={exportToLatex}
@@ -134,12 +158,10 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 					</thead>
 					<tbody>
 						{node.cpt.map((_row, rowIndex) => {
-							const sum = node.cpt[rowIndex].reduce(
-								(sum, value) => sum + value,
-								0
+							const isRowValid = areFloatsEqual(
+								node.cpt[rowIndex].reduce((sum, value) => sum + value, 0),
+								1
 							)
-
-							const isValid = areFloatsEqual(sum, 1)
 
 							return (
 								<tr key={rowIndex}>
@@ -166,13 +188,13 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 										<td key={valueIndex}>
 											<NodeSheetCptValue
 												node={node}
-												isValid={isValid}
+												isValid={isRowValid}
 												rowIndex={rowIndex}
 												valueIndex={valueIndex}
 											/>
 										</td>
 									))}
-									{isValid ? (
+									{isRowValid ? (
 										<th />
 									) : (
 										<th className="px-2">
