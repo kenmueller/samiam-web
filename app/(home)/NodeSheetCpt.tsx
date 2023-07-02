@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import cx from 'classnames'
 import { toast } from 'react-toastify'
+import { areFloatsEqual } from 'samiam/lib/util'
 
 import { Node } from '@/lib/network'
 import pick from '@/lib/pick'
@@ -54,9 +55,6 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 		},
 		[network]
 	)
-
-	const rows = (node.cpt[0] as number[] | undefined)?.length
-	if (!rows) throw new Error(`Empty CPT for node ${node.id}`)
 
 	const parents = useMemo(
 		() =>
@@ -135,19 +133,19 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 						</tr>
 					</thead>
 					<tbody>
-						{new Array(rows).fill(undefined).map((_row, cptValueIndex) => {
-							const sum = node.cpt[cptValueIndex].reduce(
+						{node.cpt.map((_row, rowIndex) => {
+							const sum = node.cpt[rowIndex].reduce(
 								(sum, value) => sum + value,
 								0
 							)
 
-							const isValid = sum === 1
+							const isValid = areFloatsEqual(sum, 1)
 
 							return (
-								<tr key={cptValueIndex}>
+								<tr key={rowIndex}>
 									{parents.map(({ parent, rowSpan }, parentIndex) => {
 										const valueIndex =
-											(cptValueIndex / rowSpan) % parent.values.length
+											(rowIndex / rowSpan) % parent.values.length
 										if (!Number.isInteger(valueIndex)) return null
 
 										return (
@@ -169,8 +167,8 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 											<NodeSheetCptValue
 												node={node}
 												isValid={isValid}
+												rowIndex={rowIndex}
 												valueIndex={valueIndex}
-												cptValueIndex={cptValueIndex}
 											/>
 										</td>
 									))}
@@ -181,9 +179,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 											<button
 												className="font-normal text-sky-500"
 												onClick={() => {
-													applyAction(
-														normalizeNodeCptRow(node.id, cptValueIndex)
-													)
+													applyAction(normalizeNodeCptRow(node.id, rowIndex))
 												}}
 											>
 												Norm
@@ -197,7 +193,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							{parents.map((_parent, parentIndex) => (
 								<th key={parentIndex} />
 							))}
-							{node.cpt.map((_row, valueIndex) => (
+							{node.cpt[0].map((_row, valueIndex) => (
 								<th key={valueIndex}>
 									<button
 										className="w-full text-xl text-raspberry disabled:opacity-50"
