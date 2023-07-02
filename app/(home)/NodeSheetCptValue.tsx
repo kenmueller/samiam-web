@@ -14,10 +14,12 @@ const diff = one.map((x, i) => x - zero[i])
 
 const NodeSheetCptValue = ({
 	node,
+	isValid,
 	valueIndex,
 	cptValueIndex
 }: {
 	node: Node
+	isValid: boolean
 	valueIndex: number
 	cptValueIndex: number
 }) => {
