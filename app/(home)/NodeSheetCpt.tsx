@@ -131,39 +131,60 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 						</tr>
 					</thead>
 					<tbody>
-						{new Array(rows).fill(undefined).map((_row, cptValueIndex) => (
-							<tr key={cptValueIndex}>
-								{parents.map(({ parent, rowSpan }, parentIndex) => {
-									const valueIndex =
-										(cptValueIndex / rowSpan) % parent.values.length
-									if (!Number.isInteger(valueIndex)) return null
+						{new Array(rows).fill(undefined).map((_row, cptValueIndex) => {
+							const sum = node.cpt[cptValueIndex].reduce(
+								(sum, value) => sum + value,
+								0
+							)
 
-									return (
-										<th
-											key={parent.id}
-											className={cx(
-												'px-3',
-												parentIndex === parents.length - 1 &&
-													'whitespace-nowrap'
-											)}
-											rowSpan={rowSpan}
-										>
-											{parent.values[valueIndex]}
+							const isValid = sum === 1
+
+							return (
+								<tr key={cptValueIndex}>
+									{parents.map(({ parent, rowSpan }, parentIndex) => {
+										const valueIndex =
+											(cptValueIndex / rowSpan) % parent.values.length
+										if (!Number.isInteger(valueIndex)) return null
+
+										return (
+											<th
+												key={parent.id}
+												className={cx(
+													'px-3',
+													parentIndex === parents.length - 1 &&
+														'whitespace-nowrap'
+												)}
+												rowSpan={rowSpan}
+											>
+												{parent.values[valueIndex]}
+											</th>
+										)
+									})}
+									{node.values.map((_value, valueIndex) => (
+										<td key={valueIndex}>
+											<NodeSheetCptValue
+												node={node}
+												isValid={isValid}
+												valueIndex={valueIndex}
+												cptValueIndex={cptValueIndex}
+											/>
+										</td>
+									))}
+									{isValid ? (
+										<th />
+									) : (
+										<th className="px-2">
+											<button
+												className="font-normal text-sky-500"
+												onClick={() => {}}
+											>
+												Norm
+											</button>
 										</th>
-									)
-								})}
-								{node.values.map((_value, valueIndex) => (
-									<td key={valueIndex}>
-										<NodeSheetCptValue
-											node={node}
-											valueIndex={valueIndex}
-											cptValueIndex={cptValueIndex}
-										/>
-									</td>
-								))}
-								<th />
-							</tr>
-						))}
+									)}
+								</tr>
+							)
+						})}
 						<tr>
 							{parents.map((_parent, parentIndex) => (
 								<th key={parentIndex} />
