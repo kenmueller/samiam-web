@@ -1,13 +1,30 @@
 import Evidence from 'samiam/lib/evidence'
+import pick from 'lodash/pick'
 
 import Network from '.'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 
+export const networkToEvidenceNodes = (network: Network) =>
+	Object.values(network.nodes).map(node =>
+		pick(
+			node,
+			'id',
+			'parents',
+			'children',
+			'values',
+			'assertionType',
+			'assertedValue',
+			'cpt'
+		)
+	)
+
+export type EvidenceNode = ReturnType<typeof networkToEvidenceNodes>[number]
+
 const getEvidence = (
-	network: Network,
+	evidenceNodes: EvidenceNode[],
 	beliefNetwork: BeliefNetworkWithNodeMap
 ) =>
-	Object.values(network.nodes).reduce<Evidence>(
+	evidenceNodes.reduce<Evidence>(
 		(evidence, node) => {
 			if (
 				node.assertionType === 'observation' &&

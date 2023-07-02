@@ -3,12 +3,13 @@
 import { useCallback, useMemo, useState } from 'react'
 import cx from 'classnames'
 import Instantiation from 'samiam/lib/instantiation'
+import { useDeepCompareMemo } from 'use-deep-compare'
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import MapSheetNode from './MapSheetNode'
 import renderTextWithMath from '@/lib/renderTextWithMath'
-import getEvidence from '@/lib/network/getEvidence'
+import getEvidence, { networkToEvidenceNodes } from '@/lib/network/getEvidence'
 import IndeterminateCheckbox, {
 	IndeterminateCheckboxValue
 } from '@/components/IndeterminateCheckbox'
@@ -51,9 +52,14 @@ const MapSheet = () => {
 		[allNonEvidenceNodes, selectedNodes]
 	)
 
-	const evidence = useMemo(
-		() => getEvidence(network, beliefNetwork),
-		[network, beliefNetwork]
+	const evidenceNodes = useMemo(
+		() => networkToEvidenceNodes(network),
+		[network]
+	)
+
+	const evidence = useDeepCompareMemo(
+		() => getEvidence(evidenceNodes, beliefNetwork),
+		[evidenceNodes]
 	)
 
 	const nodes = useMemo(
