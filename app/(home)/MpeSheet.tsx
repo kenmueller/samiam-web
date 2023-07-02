@@ -2,11 +2,12 @@
 
 import { useMemo } from 'react'
 import cx from 'classnames'
+import { useDeepCompareMemo } from 'use-deep-compare'
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
 import renderTextWithMath from '@/lib/renderTextWithMath'
-import getEvidence from '@/lib/network/getEvidence'
+import getEvidence, { networkToEvidenceNodes } from '@/lib/network/getEvidence'
 import Instantiation from 'samiam/lib/instantiation'
 import { AssertionType, Node } from '@/lib/network'
 import MpeSheetNode from './MpeSheetNode'
@@ -25,9 +26,14 @@ const MpeSheet = () => {
 		pick('network', 'beliefNetwork')
 	)
 
-	const evidence = useMemo(
-		() => getEvidence(network, beliefNetwork),
-		[network, beliefNetwork]
+	const evidenceNodes = useMemo(
+		() => networkToEvidenceNodes(network),
+		[network]
+	)
+
+	const evidence = useDeepCompareMemo(
+		() => getEvidence(evidenceNodes, beliefNetwork),
+		[evidenceNodes]
 	)
 
 	const mpe = useMemo(

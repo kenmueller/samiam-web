@@ -1,20 +1,26 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useDeepCompareMemo } from 'use-deep-compare'
 
 import { Node } from '@/lib/network'
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
-import getEvidence from '@/lib/network/getEvidence'
+import getEvidence, { networkToEvidenceNodes } from '@/lib/network/getEvidence'
 
 const NodeMonitor = ({ node }: { node: Node }) => {
 	const { network, beliefNetwork } = useNetworkStore(
 		pick('network', 'beliefNetwork')
 	)
 
-	const evidence = useMemo(
-		() => getEvidence(network, beliefNetwork),
-		[network, beliefNetwork]
+	const evidenceNodes = useMemo(
+		() => networkToEvidenceNodes(network),
+		[network]
+	)
+
+	const evidence = useDeepCompareMemo(
+		() => getEvidence(evidenceNodes, beliefNetwork),
+		[evidenceNodes]
 	)
 
 	const distribution = useMemo(
