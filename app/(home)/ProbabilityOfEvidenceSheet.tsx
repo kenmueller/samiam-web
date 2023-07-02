@@ -47,9 +47,11 @@ const ProbabilityOfEvidenceSheet = () => {
 			)
 			.join(', ')
 
-		return [observations, interventions && `$do($${interventions}$)$`]
-			.filter(Boolean)
-			.join(' | ')
+		return (
+			[observations, interventions && `$do($${interventions}$)$`]
+				.filter(Boolean)
+				.join(' | ') || '$\\emptyset$'
+		)
 	}, [evidence])
 
 	return (
