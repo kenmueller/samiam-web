@@ -21,6 +21,7 @@ import {
 	snapNodeToGrid
 } from '@/lib/network/actions'
 import NodeName from './NodeName'
+import NodeMonitor from './NodeMonitor'
 
 const NetworkNode = ({ node }: { node: Node }) => {
 	const { applyAction } = useNetworkStore(pick('applyAction'))
@@ -186,7 +187,8 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		<div
 			ref={onRef}
 			className={cx(
-				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 rounded-[100%] -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
+				'absolute left-[calc(50%+var(--x)+var(--center-x))] top-[calc(50%-var(--y)-var(--center-y))] px-4 py-2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
+				node.monitor ? 'rounded-lg' : 'rounded-[100%]',
 				(node.assertionType === undefined ||
 					node.assertedValue === undefined) &&
 					'bg-white border bg-opacity-50 border-charcoal-400',
@@ -208,7 +210,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				} as CSSProperties
 			}
 		>
-			<p className="whitespace-nowrap">
+			<p className="whitespace-nowrap text-center">
 				{node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined && (
 						<>
@@ -224,6 +226,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				{node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined && <span>)</span>}
 			</p>
+			{node.monitor && <NodeMonitor node={node} />}
 		</div>
 	)
 }
