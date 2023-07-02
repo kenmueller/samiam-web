@@ -1,14 +1,6 @@
 'use client'
 
-import {
-	CSSProperties,
-	useCallback,
-	useEffect,
-	useId,
-	useMemo,
-	useRef,
-	useState
-} from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import cx from 'classnames'
 
 import useNetworkStore from '@/lib/stores/network'
@@ -236,11 +228,11 @@ const Canvas = () => {
 		>
 			<span
 				className="pointer-events-none absolute bg-black bg-opacity-10 left-0 right-0 top-[calc(50%-var(--y))] h-[1px] -translate-y-1/2"
-				style={{ '--y': `${center.y}px` } as CSSProperties}
+				style={{ top: `calc(50% - ${center.y}px)` }}
 			/>
 			<span
-				className="pointer-events-none absolute bg-black bg-opacity-10 left-[calc(50%+var(--x))] top-0 bottom-0 w-[1px] -translate-x-1/2"
-				style={{ '--x': `${center.x}px` } as CSSProperties}
+				className="pointer-events-none absolute bg-black bg-opacity-10 top-0 bottom-0 w-[1px] -translate-x-1/2"
+				style={{ left: `calc(50% + ${center.x}px)` }}
 			/>
 			{Object.values(network.nodes).map(node => (
 				<NetworkNode key={node.id} node={node} />
@@ -289,15 +281,13 @@ const Canvas = () => {
 			)}
 			{option === 'select' && selectionBounds && (
 				<span
-					className="absolute left-[var(--from-x)] top-[var(--from-y)] w-[calc(var(--to-x)-var(--from-x))] h-[calc(var(--to-y)-var(--from-y))] bg-sky-500 bg-opacity-20 border-2 border-sky-500"
-					style={
-						{
-							'--from-x': `${selectionBounds.from.x}px`,
-							'--from-y': `${selectionBounds.from.y}px`,
-							'--to-x': `${selectionBounds.to.x}px`,
-							'--to-y': `${selectionBounds.to.y}px`
-						} as CSSProperties
-					}
+					className="absolute bg-sky-500 bg-opacity-20 border-2 border-sky-500"
+					style={{
+						left: `${selectionBounds.from.x}px`,
+						top: `${selectionBounds.from.y}px`,
+						width: `${selectionBounds.to.x - selectionBounds.from.x}px`,
+						height: `${selectionBounds.to.y - selectionBounds.from.y}px`
+					}}
 				/>
 			)}
 		</main>
