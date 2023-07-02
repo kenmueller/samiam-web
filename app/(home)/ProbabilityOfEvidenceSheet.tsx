@@ -22,6 +22,31 @@ const ProbabilityOfEvidenceSheet = () => {
 		[beliefNetwork, evidence]
 	)
 
+	const evidenceString = useMemo(
+		() =>
+			[
+				evidence.observations
+					.map(
+						observation =>
+							`${observation.node.name} = ${
+								observation.node.values[observation.value]
+							}`
+					)
+					.join(', '),
+				evidence.interventions
+					.map(
+						observation =>
+							`${observation.node.name} = ${
+								observation.node.values[observation.value]
+							}`
+					)
+					.join(', ')
+			]
+				.filter(Boolean)
+				.join(' | '),
+		[evidence]
+	)
+
 	return (
 		<div className="flex flex-col items-stretch gap-4">
 			<h3>Probability of Evidence</h3>
@@ -29,7 +54,7 @@ const ProbabilityOfEvidenceSheet = () => {
 				<p
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath(
-							`$P(\\mathbf{e}) = ${probabilityOfEvidence}$`
+							`$P($${evidenceString}$) = ${probabilityOfEvidence}$`
 						)
 					}}
 				/>
