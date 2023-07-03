@@ -111,7 +111,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 					)}
 				</div>
 				<button
-					className="text-sky-500 hover:opacity-70 transition-opacity ease-linear"
+					className="text-uranian-1000 hover:opacity-70 transition-opacity ease-linear"
 					onClick={exportToLatex}
 					dangerouslySetInnerHTML={{
 						__html: renderTextWithMath('Export to $\\LaTeX$')
@@ -199,7 +199,7 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 									) : (
 										<th className="px-2">
 											<button
-												className="font-normal text-sky-500"
+												className="font-normal text-uranian-1000"
 												onClick={() => {
 													applyAction(normalizeNodeCptRow(node.id, rowIndex))
 												}}
@@ -212,9 +212,10 @@ const NodeSheetCpt = ({ node }: { node: Node }) => {
 							)
 						})}
 						<tr>
-							{parents.map((_parent, parentIndex) => (
+							{parents.length ? <th key={0} colSpan={parents.length} /> : ''}
+							{/* {parents.map((_parent, parentIndex) => (
 								<th key={parentIndex} />
-							))}
+							))} */}
 							{node.cpt[0].map((_row, valueIndex) => (
 								<th key={valueIndex}>
 									<button
