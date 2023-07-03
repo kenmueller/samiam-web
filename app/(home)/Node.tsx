@@ -187,8 +187,8 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		<div
 			ref={onRef}
 			className={cx(
-				'absolute px-4 py-2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
-				node.monitor ? 'rounded-lg' : 'rounded-[100%]',
+				'absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
+				node.monitor ? 'px-2 py-1.5 rounded-lg' : 'px-4 py-2 rounded-[100%]',
 				(node.assertionType === undefined ||
 					node.assertedValue === undefined) &&
 					'bg-white border bg-opacity-50 border-charcoal-400',
