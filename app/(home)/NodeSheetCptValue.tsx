@@ -7,13 +7,14 @@ import { Node } from '@/lib/network'
 import useNetworkStore from '@/lib/stores/network'
 import { setNodeCptValue } from '@/lib/network/actions'
 import pick from '@/lib/pick'
-
-const zero = [9, 174, 106]
-const one = [217, 253, 238]
-const zeroInvalid = [240, 209, 222]
-const oneInvalid = [195, 70, 122]
-const diff = one.map((x, i) => x - zero[i])
-const diffInvalid = oneInvalid.map((x, i) => x - zeroInvalid[i])
+import {
+	zero,
+	one,
+	zeroInvalid,
+	oneInvalid,
+	diff,
+	diffInvalid
+} from '@/lib/probabilityColors'
 
 const NodeSheetCptValue = ({
 	node,
