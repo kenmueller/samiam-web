@@ -22,6 +22,9 @@ export interface Node extends Position {
 	monitor?: true
 }
 
+export type EliminationOrderHeuristic = 'min-fill' | 'min-size'
+
 export default interface Network {
+	eliminationOrderHeuristic: EliminationOrderHeuristic
 	nodes: Record<string, Node>
 }

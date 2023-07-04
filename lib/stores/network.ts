@@ -18,7 +18,10 @@ export interface NetworkStore {
 	applyAction: <ReturnType>(action: NetworkAction<ReturnType>) => ReturnType
 }
 
-const EMPTY_NETWORK: Network = { nodes: {} }
+const EMPTY_NETWORK: Network = {
+	eliminationOrderHeuristic: 'min-fill',
+	nodes: {}
+}
 
 const useNetworkStore = create(
 	immer<NetworkStore>((set, get) => ({

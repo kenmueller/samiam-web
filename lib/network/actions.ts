@@ -3,7 +3,12 @@ import BeliefNetworkNode from 'samiam/lib/node'
 import * as util from 'samiam/lib/util'
 import cloneDeep from 'lodash/cloneDeep'
 
-import Network, { AssertionType, Position, Node } from '.'
+import Network, {
+	AssertionType,
+	Position,
+	Node,
+	EliminationOrderHeuristic
+} from '.'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 
 export type NetworkAction<ReturnType = void> = (
@@ -292,4 +297,10 @@ export const setMonitorShowing =
 	(id: number, showing: boolean): NetworkAction =>
 	(network, beliefNetwork) => {
 		network.nodes[id.toString()].monitor = showing || undefined
+	}
+
+export const setEliminationOrderHeuristic =
+	(heuristic: EliminationOrderHeuristic): NetworkAction =>
+	(network, beliefNetwork) => {
+		network.eliminationOrderHeuristic = heuristic
 	}
