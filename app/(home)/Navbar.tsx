@@ -157,7 +157,10 @@ const Navbar = () => {
 					<DropdownMenuGroup>
 						<DropdownMenuSub>
 							<DropdownMenuSubTrigger
-								className="flex items-center gap-1 disabled:text-raspberry"
+								className={cx(
+									'flex items-center gap-1',
+									invalidNodes.length > 0 && 'text-raspberry'
+								)}
 								disabled={invalidNodes.length > 0}
 							>
 								{invalidNodes.length > 0 && (
