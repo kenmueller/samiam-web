@@ -132,8 +132,8 @@ const NetworkEdge = ({
 				? intersectionPointRectCenterToOutside(
 						to.x,
 						to.y,
-						toNode.offsetWidth,
-						toNode.offsetHeight,
+						toNode.offsetWidth + padding + 4,
+						toNode.offsetHeight + padding + 4,
 						from.x,
 						from.y
 				  )
