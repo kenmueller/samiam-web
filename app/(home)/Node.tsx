@@ -22,6 +22,8 @@ import {
 } from '@/lib/network/actions'
 import NodeName from './NodeName'
 import NodeMonitor from './NodeMonitor'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 
 const NetworkNode = ({ node }: { node: Node }) => {
 	const { beliefNetwork, applyAction } = useNetworkStore(
@@ -198,19 +200,15 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			className={cx(
 				'absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
 				node.monitor ? 'px-2 py-1.5 rounded-lg' : 'px-4 py-2 rounded-[100%]',
-				invalidDistributions.length > 0
-					? 'bg-raspberry bg-opacity-50 border-2 border-raspberry'
-					: [
-							(node.assertionType === undefined ||
-								node.assertedValue === undefined) &&
-								'bg-white border bg-opacity-50 border-charcoal-400',
-							node.assertionType === 'observation' &&
-								node.assertedValue !== undefined &&
-								'bg-gold-100 border-2 bg-opacity-50 border-gold-500',
-							node.assertionType === 'intervention' &&
-								node.assertedValue !== undefined &&
-								'bg-uranian border-2 bg-opacity-50 border-uranian-400'
-					  ],
+				(node.assertionType === undefined ||
+					node.assertedValue === undefined) &&
+					'bg-white border bg-opacity-50 border-charcoal-400',
+				node.assertionType === 'observation' &&
+					node.assertedValue !== undefined &&
+					'bg-gold-100 border-2 bg-opacity-50 border-gold-500',
+				node.assertionType === 'intervention' &&
+					node.assertedValue !== undefined &&
+					'bg-uranian border-2 bg-opacity-50 border-uranian-400',
 				isSelected &&
 					'after:absolute after:inset-[-3px] after:border-2 after:border-dashed after:border-black'
 			)}
@@ -234,6 +232,12 @@ const NetworkNode = ({ node }: { node: Node }) => {
 					)}
 				{node.assertionType === 'intervention' &&
 					node.assertedValue !== undefined && <span>)</span>}
+				{invalidDistributions.length > 0 && (
+					<FontAwesomeIcon
+						className="ml-1 text-raspberry"
+						icon={faTriangleExclamation}
+					/>
+				)}
 			</p>
 			{node.monitor && <NodeMonitor node={node} />}
 		</div>
