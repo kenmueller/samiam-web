@@ -24,6 +24,55 @@ export interface EdgePosition {
 	to: Position
 }
 
+const intersectionPointRectCenterToOutside = (
+	rectCenterX: number,
+	rectCenterY: number,
+	width: number,
+	height: number,
+	x: number,
+	y: number
+) => {
+	const halfHeight = height / 2
+	const halfWidth = width / 2
+	const top = rectCenterY + halfHeight
+	const bottom = rectCenterY - halfHeight
+	const left = rectCenterX - halfWidth
+	const right = rectCenterX + halfWidth
+	// if (x > left && x < right && y > bottom && y < top) return undefined
+	if (x === rectCenterX)
+		if (y > rectCenterY) return { x, y: top }
+		else return { x, y: bottom }
+	if (y === rectCenterY)
+		if (x > rectCenterX) return { x: right, y }
+		else return { x: left, y }
+	const aspectRatio = width / height
+	const slope = (y - rectCenterY) / (x - rectCenterX)
+	if (x > rectCenterX && y > rectCenterY)
+		if (aspectRatio * slope < 1)
+			// on upper half of rectangle's right edge
+			return { x: right, y: rectCenterY + slope * halfWidth }
+		// on right half of rectangle's top edge
+		else return { x: rectCenterX + halfHeight / slope, y: top }
+	else if (x > rectCenterX && y <= rectCenterY)
+		if (aspectRatio * slope > -1)
+			// on lower half of rectangle's right edge
+			return { x: right, y: rectCenterY + slope * halfWidth }
+		// on right half of rectangle's bottom edge
+		else return { x: rectCenterX - halfHeight / slope, y: bottom }
+	else if (x <= rectCenterX && y <= rectCenterY)
+		if (aspectRatio * slope < 1)
+			// on bottom half of rectangle's left edge
+			return { x: left, y: rectCenterY - slope * halfWidth }
+		// on left half of rectangle's bottom edge
+		else return { x: rectCenterX - halfHeight / slope, y: bottom }
+	else if (x <= rectCenterX && y > rectCenterY)
+		if (aspectRatio * slope > -1)
+			// on top half of rectangle's left edge
+			return { x: left, y: rectCenterY - slope * halfWidth }
+		// on left half of rectangle's top edge
+		else return { x: rectCenterX + halfHeight / slope, y: top }
+}
+
 const NetworkEdge = ({
 	arrowId,
 	edge,
@@ -61,23 +110,41 @@ const NetworkEdge = ({
 	const toNode = edge && getNodeRef(edge.to?.id)
 
 	const fromPoint =
-		from && fromNode && typeof angle === 'number'
-			? {
-					x: from.x + (fromNode.offsetWidth / 2) * Math.cos(angle),
-					y: from.y + (fromNode.offsetHeight / 2) * Math.sin(angle)
-			  }
+		from && fromNode && to && typeof angle === 'number'
+			? edge.from.monitor
+				? intersectionPointRectCenterToOutside(
+						from.x,
+						from.y,
+						fromNode.offsetWidth,
+						fromNode.offsetHeight,
+						to.x,
+						to.y
+				  )
+				: {
+						x: from.x + (fromNode.offsetWidth / 2) * Math.cos(angle),
+						y: from.y + (fromNode.offsetHeight / 2) * Math.sin(angle)
+				  }
 			: from
 
 	const toPoint =
-		to && toNode && typeof angle === 'number'
-			? {
-					x:
-						to.x +
-						(toNode.offsetWidth / 2 + padding) * Math.cos(angle + Math.PI),
-					y:
-						to.y +
-						(toNode.offsetHeight / 2 + padding) * Math.sin(angle + Math.PI)
-			  }
+		to && toNode && from && typeof angle === 'number'
+			? edge.to.monitor
+				? intersectionPointRectCenterToOutside(
+						to.x,
+						to.y,
+						toNode.offsetWidth,
+						toNode.offsetHeight,
+						from.x,
+						from.y
+				  )
+				: {
+						x:
+							to.x +
+							(toNode.offsetWidth / 2 + padding) * Math.cos(angle + Math.PI),
+						y:
+							to.y +
+							(toNode.offsetHeight / 2 + padding) * Math.sin(angle + Math.PI)
+				  }
 			: to
 
 	const ref = useRef<SVGLineElement | null>(null)
