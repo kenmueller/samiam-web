@@ -146,9 +146,12 @@ export const addNodeValue =
 		const valueName = name ?? `Value ${node.values.length}`
 
 		beliefNetworkNode.addValue(valueName)
-
 		node.values.push(valueName)
-		node.cpt = cloneDeep(beliefNetworkNode.cpt)
+
+		for (const otherNode of Object.values(network.nodes)) {
+			const otherBeliefNetworkNode = beliefNetwork.nodeMap.get(otherNode.id)!
+			otherNode.cpt = cloneDeep(otherBeliefNetworkNode.cpt)
+		}
 	}
 
 export const removeNodeValue =
@@ -234,7 +237,7 @@ export const removeNode =
 				node => node.id as number
 			)
 
-			otherNode.cpt = cloneDeep(beliefNetworkNode.cpt)
+			otherNode.cpt = cloneDeep(otherBeliefNetworkNode.cpt)
 		}
 	}
 
