@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import cx from 'classnames'
 
 import { Node, Position } from '@/lib/network'
@@ -24,7 +24,9 @@ import NodeName from './NodeName'
 import NodeMonitor from './NodeMonitor'
 
 const NetworkNode = ({ node }: { node: Node }) => {
-	const { applyAction } = useNetworkStore(pick('applyAction'))
+	const { beliefNetwork, applyAction } = useNetworkStore(
+		pick('beliefNetwork', 'applyAction')
+	)
 	const {
 		center,
 		currentArrowFrom,
@@ -45,6 +47,13 @@ const NetworkNode = ({ node }: { node: Node }) => {
 
 	const [startMouse, setStartMouse] = useState<Position | null>(null)
 	const [draggingMouse, setDraggingMouse] = useState<Position | null>(null)
+
+	const invalidDistributions = useMemo(
+		() => beliefNetwork.nodeMap.get(node.id)!.invalidDistributions,
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[node.id, node.cpt, beliefNetwork]
+	)
 
 	const onMouseMove = useCallback(
 		(event: globalThis.MouseEvent) => {
@@ -189,15 +198,19 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			className={cx(
 				'absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-colors ease-linear',
 				node.monitor ? 'px-2 py-1.5 rounded-lg' : 'px-4 py-2 rounded-[100%]',
-				(node.assertionType === undefined ||
-					node.assertedValue === undefined) &&
-					'bg-white border bg-opacity-50 border-charcoal-400',
-				node.assertionType === 'observation' &&
-					node.assertedValue !== undefined &&
-					'bg-gold-100 border-2 bg-opacity-50 border-gold-500',
-				node.assertionType === 'intervention' &&
-					node.assertedValue !== undefined &&
-					'bg-uranian border-2 bg-opacity-50 border-uranian-400',
+				invalidDistributions.length > 0
+					? 'bg-raspberry bg-opacity-50 border-2 border-raspberry'
+					: [
+							(node.assertionType === undefined ||
+								node.assertedValue === undefined) &&
+								'bg-white border bg-opacity-50 border-charcoal-400',
+							node.assertionType === 'observation' &&
+								node.assertedValue !== undefined &&
+								'bg-gold-100 border-2 bg-opacity-50 border-gold-500',
+							node.assertionType === 'intervention' &&
+								node.assertedValue !== undefined &&
+								'bg-uranian border-2 bg-opacity-50 border-uranian-400'
+					  ],
 				isSelected &&
 					'after:absolute after:inset-[-3px] after:border-2 after:border-dashed after:border-black'
 			)}

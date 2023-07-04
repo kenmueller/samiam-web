@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { toast } from 'react-toastify'
-import Image from 'next/image'
+import cx from 'classnames'
 
 import {
 	DropdownMenu,
@@ -21,7 +21,10 @@ import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 import pick from '@/lib/pick'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import {
+	faBars,
+	faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons'
 import useSheetStore from '@/lib/stores/sheet'
 import ProbabilityOfEvidenceSheet from './ProbabilityOfEvidenceSheet'
 import MpeSheet from './MpeSheet'
@@ -30,6 +33,8 @@ import renderTextWithMath from '@/lib/renderTextWithMath'
 
 const Navbar = () => {
 	const {
+		network,
+		beliefNetwork,
 		loadNetworkFromStorage,
 		loadNetworkFromFile,
 		saveNetworkToFile,
@@ -37,6 +42,8 @@ const Navbar = () => {
 		clearNetworkFromStorage
 	} = useNetworkStore(
 		pick(
+			'network',
+			'beliefNetwork',
 			'loadNetworkFromStorage',
 			'loadNetworkFromFile',
 			'saveNetworkToFile',
@@ -45,6 +52,13 @@ const Navbar = () => {
 		)
 	)
 	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
+
+	const invalidNodes = useMemo(
+		() => beliefNetwork.invalidNodes,
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[network, beliefNetwork]
+	)
 
 	const openNetwork = useCallback(async () => {
 		try {
@@ -142,7 +156,15 @@ const Navbar = () => {
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuSub>
-							<DropdownMenuSubTrigger>Query</DropdownMenuSubTrigger>
+							<DropdownMenuSubTrigger
+								className="flex items-center gap-1 disabled:text-raspberry"
+								disabled={invalidNodes.length > 0}
+							>
+								{invalidNodes.length > 0 && (
+									<FontAwesomeIcon icon={faTriangleExclamation} />
+								)}
+								<span>Query</span>
+							</DropdownMenuSubTrigger>
 							<DropdownMenuPortal>
 								<DropdownMenuSubContent>
 									<DropdownMenuItem>
