@@ -52,7 +52,9 @@ module.exports = {
 					600: '#4EC0F9',
 					700: '#3AB9F8',
 					800: '#26B2F7',
-					900: '#13ABF6'
+					900: '#13ABF6',
+					1000: '#0679B2',
+					1100: '#056B9E'
 				},
 				seagreen: {
 					100: '#53F3B3',
@@ -67,7 +69,7 @@ module.exports = {
 					DEFAULT: '#0A8754'
 				},
 				raspberry: {
-					DEFAULT: '#AF3B6E'
+					DEFAULT: '#EB5160'
 				}
 			},
 			keyframes: {
