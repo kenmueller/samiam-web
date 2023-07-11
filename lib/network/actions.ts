@@ -115,12 +115,19 @@ export const copyNode =
 
 		beliefNetwork.nodeMap.set(id, beliefNetwork.nodeMap.get(node.id)!.clone(id))
 
-		network.nodes[id.toString()] = {
-			...node,
-			id,
-			x: node.x + GRID_SPACING_X,
-			y: node.y - GRID_SPACING_Y
-		}
+		const newNode = cloneDeep(node)
+
+		newNode.id = id
+		newNode.x = node.x + GRID_SPACING_X
+		newNode.y = node.y - GRID_SPACING_Y
+
+		network.nodes[id.toString()] = newNode
+
+		for (const parentId of newNode.parents)
+			network.nodes[parentId.toString()].children.push(newNode.id)
+
+		for (const childId of newNode.children)
+			network.nodes[childId.toString()].parents.push(newNode.id)
 	}
 
 export const setNodeName =
