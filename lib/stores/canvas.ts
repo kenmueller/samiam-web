@@ -5,7 +5,7 @@ import { castDraft } from 'immer'
 import { Bounds, Node, Position } from '@/lib/network'
 import useNetworkStore from './network'
 import isInBounds from '../isInBounds'
-import { copyNode } from '../network/actions'
+import { copyNode, removeNode } from '../network/actions'
 
 export interface CanvasStore {
 	center: Position
@@ -24,6 +24,7 @@ export interface CanvasStore {
 	unselectNodes: () => void
 	copySelectedNodes: () => Promise<void> | false
 	pasteCopiedNodes: (copiedText: string) => boolean
+	removeSelectedNodes: () => void
 }
 
 const useCanvasStore = create(
@@ -91,6 +92,12 @@ const useCanvasStore = create(
 			for (const node of copiedNodes) applyAction(copyNode(node))
 
 			return true
+		},
+		removeSelectedNodes: () => {
+			const { selectedNodes } = get()
+			const { applyAction } = useNetworkStore.getState()
+
+			for (const id of selectedNodes) applyAction(removeNode(id))
 		}
 	}))
 )

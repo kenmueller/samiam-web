@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 
 const useEvent = <
-	Source extends 'window' | 'body',
+	Source extends 'window' | 'document' | 'body',
 	EventMap extends Source extends 'window'
 		? WindowEventMap
+		: Source extends 'document'
+		? DocumentEventMap
 		: Source extends 'body'
 		? HTMLElementEventMap
 		: never,
@@ -14,7 +16,14 @@ const useEvent = <
 	handler: (event: EventMap[Type]) => void
 ) => {
 	useEffect(() => {
-		const _source = source === 'window' ? window : document.body
+		const _source =
+			source === 'window'
+				? window
+				: source === 'document'
+				? document
+				: source === 'body'
+				? document.body
+				: (undefined as never)
 
 		_source.addEventListener(
 			type as string,

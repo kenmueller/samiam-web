@@ -35,7 +35,8 @@ const Canvas = () => {
 		selectNodesInBounds,
 		unselectNodes,
 		copySelectedNodes,
-		pasteCopiedNodes
+		pasteCopiedNodes,
+		removeSelectedNodes
 	} = useCanvasStore(
 		pick(
 			'center',
@@ -45,7 +46,8 @@ const Canvas = () => {
 			'selectNodesInBounds',
 			'unselectNodes',
 			'copySelectedNodes',
-			'pasteCopiedNodes'
+			'pasteCopiedNodes',
+			'removeSelectedNodes'
 		)
 	)
 	const { option } = useOptionStore(pick('option'))
@@ -205,6 +207,26 @@ const Canvas = () => {
 	)
 
 	useEvent('window', 'paste', onPaste)
+
+	const onKeyDown = useCallback(
+		(event: globalThis.KeyboardEvent) => {
+			if (
+				document.activeElement instanceof HTMLInputElement ||
+				document.activeElement instanceof HTMLTextAreaElement
+			)
+				return
+
+			switch (event.key) {
+				case 'Backspace':
+					event.preventDefault()
+					removeSelectedNodes()
+					break
+			}
+		},
+		[removeSelectedNodes]
+	)
+
+	useEvent('document', 'keydown', onKeyDown)
 
 	useChangeEffect(() => {
 		unselectNodes()
