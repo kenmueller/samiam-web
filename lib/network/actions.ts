@@ -206,13 +206,13 @@ export const normalizeNodeCptRow =
 		node.cpt = cloneDeep(beliefNetworkNode.cpt)
 	}
 
-export const setNodePosition =
-	(id: number, position: Position): NetworkAction =>
+export const moveNode =
+	(id: number, delta: Position): NetworkAction =>
 	(network, beliefNetwork) => {
 		const node = network.nodes[id.toString()]
 
-		node.x = position.x
-		node.y = position.y
+		node.x += delta.x
+		node.y += delta.y
 	}
 
 export const snapNodeToGrid =

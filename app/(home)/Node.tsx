@@ -13,11 +13,10 @@ import alertError from '@/lib/error/alert'
 import errorFromUnknown from '@/lib/error/fromUnknown'
 import useSheetStore from '@/lib/stores/sheet'
 import NodeSheet from './NodeSheet'
-import renderTextWithMath from '@/lib/renderTextWithMath'
 import {
 	addEdge,
 	removeNode,
-	setNodePosition,
+	moveNode,
 	snapNodeToGrid
 } from '@/lib/network/actions'
 import NodeName from './NodeName'
@@ -35,20 +34,24 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		setCurrentArrowFrom,
 		getNodeRef,
 		setNodeRef,
-		isSelected
+		selectedNodes,
+		unselectNodes
 	} = useCanvasStore(state => ({
 		center: state.center,
 		currentArrowFrom: state.currentArrowFrom,
 		setCurrentArrowFrom: state.setCurrentArrowFrom,
 		getNodeRef: state.getNodeRef,
 		setNodeRef: state.setNodeRef,
-		isSelected: state.selectedNodes.includes(node.id)
+		selectedNodes: state.selectedNodes,
+		unselectNodes: state.unselectNodes
 	}))
 	const { option } = useOptionStore(pick('option'))
 	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
 
 	const [startMouse, setStartMouse] = useState<Position | null>(null)
 	const [draggingMouse, setDraggingMouse] = useState<Position | null>(null)
+
+	const isSelected = selectedNodes.includes(node.id)
 
 	const invalidDistributions = useMemo(
 		() => beliefNetwork.nodeMap.get(node.id)!.invalidDistributions,
@@ -61,23 +64,26 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		(event: globalThis.MouseEvent) => {
 			if (!(startMouse && draggingMouse)) return
 
-			applyAction(
-				setNodePosition(node.id, {
-					x: node.x + (event.clientX - draggingMouse.x),
-					y: node.y - (event.clientY - draggingMouse.y)
-				})
-			)
+			const delta: Position = {
+				x: event.clientX - draggingMouse.x,
+				y: -(event.clientY - draggingMouse.y)
+			}
+
+			if (selectedNodes.length) {
+				for (const id of selectedNodes) applyAction(moveNode(id, delta))
+			} else {
+				applyAction(moveNode(node.id, delta))
+			}
 
 			setDraggingMouse({ x: event.clientX, y: event.clientY })
 		},
 		[
 			node.id,
-			node.x,
-			node.y,
 			startMouse,
 			draggingMouse,
 			applyAction,
-			setDraggingMouse
+			setDraggingMouse,
+			selectedNodes
 		]
 	)
 
@@ -89,7 +95,11 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			setSheetContent(<NodeSheet id={node.id} />)
 		}
 
-		applyAction(snapNodeToGrid(node.id))
+		if (selectedNodes.length) {
+			for (const id of selectedNodes) applyAction(snapNodeToGrid(id))
+		} else {
+			applyAction(snapNodeToGrid(node.id))
+		}
 
 		setStartMouse(null)
 		setDraggingMouse(null)
@@ -98,6 +108,7 @@ const NetworkNode = ({ node }: { node: Node }) => {
 		draggingMouse,
 		setSheetContent,
 		node.id,
+		selectedNodes,
 		applyAction,
 		setStartMouse,
 		setDraggingMouse
@@ -115,6 +126,8 @@ const NetworkNode = ({ node }: { node: Node }) => {
 				default:
 					event.stopPropagation()
 
+					if (!isSelected) unselectNodes()
+
 					setStartMouse({ x: event.clientX, y: event.clientY })
 					setDraggingMouse({ x: event.clientX, y: event.clientY })
 			}
@@ -125,7 +138,9 @@ const NetworkNode = ({ node }: { node: Node }) => {
 			setCurrentArrowFrom,
 			applyAction,
 			setStartMouse,
-			setDraggingMouse
+			setDraggingMouse,
+			isSelected,
+			unselectNodes
 		]
 	)
 
