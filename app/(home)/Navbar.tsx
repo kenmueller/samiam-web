@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import cx from 'classnames'
+import { signIn } from 'next-auth/react'
 
 import {
 	DropdownMenu,
@@ -60,8 +61,6 @@ const Navbar = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[network, beliefNetwork]
 	)
-
-	const signIn = useCallback(() => {}, [])
 
 	const openNetwork = useCallback(async () => {
 		try {
@@ -124,7 +123,9 @@ const Navbar = () => {
 						<DropdownMenuItem>
 							<button
 								className="w-full text-left flex items-center gap-2"
-								onClick={openNetwork}
+								onClick={() => {
+									signIn()
+								}}
 							>
 								<FontAwesomeIcon icon={faGoogle} />
 								Sign in
