@@ -25,6 +25,7 @@ import {
 	faBars,
 	faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons'
+import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import useSheetStore from '@/lib/stores/sheet'
 import ProbabilityOfEvidenceSheet from './ProbabilityOfEvidenceSheet'
 import MpeSheet from './MpeSheet'
@@ -59,6 +60,8 @@ const Navbar = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[network, beliefNetwork]
 	)
+
+	const signIn = useCallback(() => {}, [])
 
 	const openNetwork = useCallback(async () => {
 		try {
@@ -117,6 +120,18 @@ const Navbar = () => {
 					<FontAwesomeIcon icon={faBars} />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
+					<DropdownMenuGroup>
+						<DropdownMenuItem>
+							<button
+								className="w-full text-left flex items-center gap-2"
+								onClick={openNetwork}
+							>
+								<FontAwesomeIcon icon={faGoogle} />
+								Sign in
+							</button>
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuItem>
 							<button className="w-full text-left" onClick={openNetwork}>
