@@ -2,7 +2,7 @@ if (!process.env.GOOGLE_CLIENT_ID) throw new Error('Missing GOOGLE_CLIENT_ID')
 if (!process.env.GOOGLE_CLIENT_SECRET)
 	throw new Error('Missing GOOGLE_CLIENT_SECRET')
 
-import NextAuth from 'next-auth'
+import { AuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { FirestoreAdapter } from '@next-auth/firebase-adapter'
 import { getFirestore } from 'firebase-admin/firestore'
@@ -11,7 +11,7 @@ import admin from './firebase/admin'
 
 const firestore = getFirestore(admin)
 
-const auth = NextAuth({
+const authOptions: AuthOptions = {
 	adapter: FirestoreAdapter(firestore),
 	providers: [
 		GoogleProvider({
@@ -19,6 +19,6 @@ const auth = NextAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET
 		})
 	]
-})
+}
 
-export default auth
+export default authOptions
