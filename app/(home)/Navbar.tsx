@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import cx from 'classnames'
-import { signIn } from 'next-auth/react'
+import { signIn, signOut } from 'next-auth/react'
 
 import {
 	DropdownMenu,
@@ -32,6 +32,7 @@ import ProbabilityOfEvidenceSheet from './ProbabilityOfEvidenceSheet'
 import MpeSheet from './MpeSheet'
 import MapSheet from './MapSheet'
 import renderTextWithMath from '@/lib/renderTextWithMath'
+import useUserStore from '@/lib/stores/user'
 
 const Navbar = () => {
 	const {
@@ -54,6 +55,7 @@ const Navbar = () => {
 		)
 	)
 	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
+	const { user } = useUserStore(pick('user'))
 
 	const invalidNodes = useMemo(
 		() => beliefNetwork.invalidNodes,
@@ -123,12 +125,12 @@ const Navbar = () => {
 						<DropdownMenuItem>
 							<button
 								className="w-full text-left flex items-center gap-2"
-								onClick={() => {
-									signIn()
+								onClick={async () => {
+									await (user ? signOut() : signIn())
 								}}
 							>
 								<FontAwesomeIcon icon={faGoogle} />
-								Sign in
+								Sign {user ? 'out' : 'in'}
 							</button>
 						</DropdownMenuItem>
 					</DropdownMenuGroup>

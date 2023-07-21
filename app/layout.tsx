@@ -2,11 +2,15 @@ import { ReactNode } from 'react'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import cx from 'classnames'
+import { getServerSession } from 'next-auth'
 
 import baseMetadata from '@/lib/metadata/base'
 import ToastContainer from './ToastContainer'
 import Sheet from '@/components/Sheet'
 import FontAwesomeConfig from './FontAwesomeConfig'
+import SetRootLayoutState from './SetState'
+import User from '@/lib/user'
+import authOptions from '@/lib/auth'
 
 import 'balloon-css/balloon.css'
 import 'react-toastify/dist/ReactToastify.css'
@@ -41,21 +45,27 @@ const sfMono = localFont({
 export const dynamic = 'force-dynamic'
 export const metadata = baseMetadata
 
-const RootLayout = ({ children }: { children: ReactNode }) => (
-	<html lang="en" dir="ltr" className="h-full scroll-smooth">
-		<body
-			className={cx(
-				inter.className,
-				sfMono.variable,
-				'h-full scroll-smooth select-none touch-none'
-			)}
-		>
-			{children}
-			<Sheet />
-			<FontAwesomeConfig />
-			<ToastContainer />
-		</body>
-	</html>
-)
+const RootLayout = async ({ children }: { children: ReactNode }) => {
+	const session = await getServerSession(authOptions)
+	const user = (session?.user ?? null) as User | null
+
+	return (
+		<html lang="en" dir="ltr" className="h-full scroll-smooth">
+			<body
+				className={cx(
+					inter.className,
+					sfMono.variable,
+					'h-full scroll-smooth select-none touch-none'
+				)}
+			>
+				<SetRootLayoutState user={user} />
+				{children}
+				<Sheet />
+				<FontAwesomeConfig />
+				<ToastContainer />
+			</body>
+		</html>
+	)
+}
 
 export default RootLayout
