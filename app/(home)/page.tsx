@@ -1,7 +1,7 @@
 import pageMetadata from '@/lib/metadata/page'
-import Navbar from './Navbar'
-import Canvas from './Canvas'
-import Options from './Options'
+import Navbar from '@/components/Navbar'
+import Canvas from '@/components/Canvas'
+import Options from '@/components/Options'
 
 export const generateMetadata = () =>
 	pageMetadata({
