@@ -35,7 +35,11 @@ import MapSheet from './MapSheet'
 import renderTextWithMath from '@/lib/renderTextWithMath'
 import useUserStore from '@/lib/stores/user'
 
-const Navbar = () => {
+const Navbar = ({
+	loadNetworkFromStorage: shouldLoadNetworkFromStorage = true
+}: {
+	loadNetworkFromStorage?: boolean
+}) => {
 	const {
 		network,
 		beliefNetwork,
@@ -125,8 +129,8 @@ const Navbar = () => {
 	}, [setSheetContent])
 
 	useEffect(() => {
-		loadNetworkFromStorage()
-	}, [loadNetworkFromStorage])
+		if (shouldLoadNetworkFromStorage) loadNetworkFromStorage()
+	}, [shouldLoadNetworkFromStorage, loadNetworkFromStorage])
 
 	return (
 		<nav className="absolute top-0 left-0 right-0 flex items-center gap-4 px-6 py-4 z-10 pointer-events-none [&>*]:pointer-events-auto">
