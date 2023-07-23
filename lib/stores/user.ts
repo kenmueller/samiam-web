@@ -1,6 +1,7 @@
-import { User } from 'next-auth/core/types'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+
+import User from '@/lib/user'
 
 export interface UserStore {
 	user: User | null

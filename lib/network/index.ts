@@ -25,6 +25,7 @@ export interface Node extends Position {
 export type EliminationOrderHeuristic = 'min-fill' | 'min-size'
 
 export default interface Network {
+	name: string | null
 	eliminationOrderHeuristic: EliminationOrderHeuristic
 	nodes: Record<string, Node>
 }

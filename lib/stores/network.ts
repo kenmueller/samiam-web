@@ -6,6 +6,8 @@ import { NetworkAction, initializeBeliefNetwork } from '@/lib/network/actions'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 import networkToLatex from '../network/toLatex'
+import useUserStore from './user'
+import saveNetworkToCloud from '../network/saveToCloud'
 
 export interface NetworkStore {
 	network: Network
@@ -13,12 +15,14 @@ export interface NetworkStore {
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
+	saveNetworkToCloud: () => Promise<string>
 	getNetworkAsLatex: () => string
 	clearNetworkFromStorage: () => void
 	applyAction: <ReturnType>(action: NetworkAction<ReturnType>) => ReturnType
 }
 
 const EMPTY_NETWORK: Network = {
+	name: null,
 	eliminationOrderHeuristic: 'min-fill',
 	nodes: {}
 }
@@ -89,6 +93,14 @@ const useNetworkStore = create(
 			})
 
 			saveAs(file, 'network.json')
+		},
+		saveNetworkToCloud: async () => {
+			const { user } = useUserStore.getState()
+			if (!user) throw new Error('User is not logged in')
+
+			const { network } = get()
+
+			return await saveNetworkToCloud(user, network)
 		},
 		getNetworkAsLatex: () => networkToLatex(get().network),
 		clearNetworkFromStorage: () => {

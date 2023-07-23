@@ -41,6 +41,7 @@ const Navbar = () => {
 		loadNetworkFromStorage,
 		loadNetworkFromFile,
 		saveNetworkToFile,
+		saveNetworkToCloud,
 		getNetworkAsLatex,
 		clearNetworkFromStorage
 	} = useNetworkStore(
@@ -49,6 +50,7 @@ const Navbar = () => {
 			'beliefNetwork',
 			'loadNetworkFromStorage',
 			'loadNetworkFromFile',
+			'saveNetworkToCloud',
 			'saveNetworkToFile',
 			'getNetworkAsLatex',
 			'clearNetworkFromStorage'
@@ -139,6 +141,15 @@ const Navbar = () => {
 						<DropdownMenuItem>
 							<button className="w-full text-left" onClick={openNetwork}>
 								Open
+							</button>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<button
+								className={cx('w-full text-left', !user && 'opacity-50')}
+								disabled={!user}
+								onClick={saveNetworkToCloud}
+							>
+								Save
 							</button>
 						</DropdownMenuItem>
 						<DropdownMenuSub>
