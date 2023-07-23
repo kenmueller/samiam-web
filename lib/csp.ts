@@ -16,6 +16,7 @@ const csp = (nonceKey: string) =>
 			'default-src': [SELF],
 			'style-src': [SELF, UNSAFE_INLINE],
 			'script-src': [SELF, nonce(nonceKey), ...(DEV ? [UNSAFE_EVAL] : [])],
+			'connect-src': [SELF, 'authjs.dev'],
 			'font-src': [SELF, DATA, 'at.alicdn.com'],
 			'img-src': [SELF, 'authjs.dev']
 		}
