@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { toast } from 'react-toastify'
 import cx from 'classnames'
 import { signIn, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 import {
 	DropdownMenu,
@@ -59,6 +60,8 @@ const Navbar = () => {
 	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
 	const { user } = useUserStore(pick('user'))
 
+	const router = useRouter()
+
 	const invalidNodes = useMemo(
 		() => beliefNetwork.invalidNodes,
 
@@ -73,6 +76,15 @@ const Navbar = () => {
 			alertError(errorFromUnknown(unknownError))
 		}
 	}, [loadNetworkFromFile])
+
+	const saveNetworkToCloudAndRedirect = useCallback(async () => {
+		try {
+			const id = await saveNetworkToCloud()
+			router.push(`/networks/${encodeURIComponent(id)}`)
+		} catch (unknownError) {
+			alertError(errorFromUnknown(unknownError))
+		}
+	}, [router, saveNetworkToCloud])
 
 	const exportNetworkAsFile = useCallback(async () => {
 		try {
@@ -147,7 +159,7 @@ const Navbar = () => {
 							<button
 								className={cx('w-full text-left', !user && 'opacity-50')}
 								disabled={!user}
-								onClick={saveNetworkToCloud}
+								onClick={saveNetworkToCloudAndRedirect}
 							>
 								Save
 							</button>

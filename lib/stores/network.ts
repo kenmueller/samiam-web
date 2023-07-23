@@ -12,6 +12,7 @@ import saveNetworkToCloud from '../network/saveToCloud'
 export interface NetworkStore {
 	network: Network
 	beliefNetwork: BeliefNetworkWithNodeMap
+	setNetwork: (network: Network) => void
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
@@ -31,6 +32,12 @@ const useNetworkStore = create(
 	immer<NetworkStore>((set, get) => ({
 		network: EMPTY_NETWORK,
 		beliefNetwork: initializeBeliefNetwork(EMPTY_NETWORK),
+		setNetwork: network => {
+			set(state => {
+				state.network = network
+				state.beliefNetwork = initializeBeliefNetwork(state.network)
+			})
+		},
 		loadNetworkFromStorage: () => {
 			const networkString = localStorage.getItem('network')
 			if (!networkString) return
