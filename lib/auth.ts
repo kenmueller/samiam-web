@@ -1,3 +1,4 @@
+if (!process.env.NEXTAUTH_SECRET) throw new Error('Missing NEXTAUTH_SECRET')
 if (!process.env.GOOGLE_CLIENT_ID) throw new Error('Missing GOOGLE_CLIENT_ID')
 if (!process.env.GOOGLE_CLIENT_SECRET)
 	throw new Error('Missing GOOGLE_CLIENT_SECRET')
@@ -13,6 +14,7 @@ import User from './user'
 const firestore = getFirestore(admin)
 
 const authOptions: AuthOptions = {
+	secret: process.env.NEXTAUTH_SECRET,
 	adapter: FirestoreAdapter(firestore),
 	providers: [
 		GoogleProvider({
