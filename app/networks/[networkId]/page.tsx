@@ -25,7 +25,7 @@ const NetworkPage = async ({
 	return (
 		<div className="relative h-full">
 			<SetNetworkPageState network={network} />
-			<Navbar loadNetworkFromStorage={false} />
+			<Navbar isNetworkFromCloud />
 			<Canvas />
 			<Options />
 		</div>

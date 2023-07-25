@@ -34,11 +34,12 @@ import MpeSheet from './MpeSheet'
 import MapSheet from './MapSheet'
 import renderTextWithMath from '@/lib/renderTextWithMath'
 import useUserStore from '@/lib/stores/user'
+import { changeName } from '@/lib/network/actions'
 
 const Navbar = ({
-	loadNetworkFromStorage: shouldLoadNetworkFromStorage = true
+	isNetworkFromCloud = false
 }: {
-	loadNetworkFromStorage?: boolean
+	isNetworkFromCloud?: boolean
 }) => {
 	const {
 		network,
@@ -48,7 +49,8 @@ const Navbar = ({
 		saveNetworkToFile,
 		saveNetworkToCloud,
 		getNetworkAsLatex,
-		clearNetworkFromStorage
+		clearNetworkFromStorage,
+		applyAction
 	} = useNetworkStore(
 		pick(
 			'network',
@@ -58,7 +60,8 @@ const Navbar = ({
 			'saveNetworkToCloud',
 			'saveNetworkToFile',
 			'getNetworkAsLatex',
-			'clearNetworkFromStorage'
+			'clearNetworkFromStorage',
+			'applyAction'
 		)
 	)
 	const { setContent: setSheetContent } = useSheetStore(pick('setContent'))
@@ -128,14 +131,24 @@ const Navbar = ({
 		setSheetContent(<MapSheet />)
 	}, [setSheetContent])
 
+	const editName = useCallback(() => {
+		const newName = prompt(
+			'Enter a new name for the network',
+			network.name ?? 'Untitled Network'
+		)
+		if (!newName) return
+
+		applyAction(changeName(newName))
+	}, [applyAction, network.name])
+
 	useEffect(() => {
-		if (shouldLoadNetworkFromStorage) loadNetworkFromStorage()
-	}, [shouldLoadNetworkFromStorage, loadNetworkFromStorage])
+		if (!isNetworkFromCloud) loadNetworkFromStorage()
+	}, [isNetworkFromCloud, loadNetworkFromStorage])
 
 	return (
-		<nav className="absolute top-0 left-0 right-0 flex items-center gap-4 px-6 py-4 z-10 pointer-events-none [&>*]:pointer-events-auto">
+		<nav className="absolute top-0 left-0 right-0 flex justify-between items-center gap-4 px-6 py-4 z-10 pointer-events-none [&>*]:pointer-events-auto">
 			<DropdownMenu>
-				<DropdownMenuTrigger className="text-xl">
+				<DropdownMenuTrigger className="w-[26px] text-xl">
 					<FontAwesomeIcon icon={faBars} />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
@@ -240,6 +253,10 @@ const Navbar = ({
 					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
+			<button className="text-xl font-bold text-center" onClick={editName}>
+				{network.name ?? 'Untitled Network'}
+			</button>
+			<span className="w-[26px]" />
 		</nav>
 	)
 }

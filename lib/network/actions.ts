@@ -66,6 +66,12 @@ export const initializeBeliefNetwork = (network: Network) => {
 	return beliefNetwork
 }
 
+export const changeName =
+	(name: string): NetworkAction =>
+	(network, beliefNetwork) => {
+		network.name = name
+	}
+
 export const addNode =
 	({ x, y }: Position): NetworkAction<Node> =>
 	(network, beliefNetwork) => {
