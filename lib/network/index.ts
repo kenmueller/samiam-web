@@ -29,3 +29,9 @@ export default interface Network {
 	eliminationOrderHeuristic: EliminationOrderHeuristic
 	nodes: Record<string, Node>
 }
+
+export interface NetworkMeta {
+	id: string
+	name: string | null
+	user: string
+}

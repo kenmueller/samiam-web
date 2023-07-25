@@ -6,3 +6,5 @@ export default interface User {
 	name: string
 	email: string
 }
+
+export type PublicUser = Omit<User, 'email'>
