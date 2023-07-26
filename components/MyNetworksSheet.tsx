@@ -32,7 +32,7 @@ const MyNetworksSheet = () => {
 							key={network.id}
 							href={`/networks/${encodeURIComponent(network.id)}`}
 						>
-							{network.name}
+							{network.name ?? 'Untitled Network'}
 						</Link>
 					))
 				) : (
