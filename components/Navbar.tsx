@@ -36,29 +36,30 @@ import renderTextWithMath from '@/lib/renderTextWithMath'
 import useUserStore from '@/lib/stores/user'
 import { changeName } from '@/lib/network/actions'
 import MyNetworksSheet from './MyNetworksSheet'
+import ORIGIN from '@/lib/origin'
 
-const Navbar = ({
-	isNetworkFromCloud = false
-}: {
-	isNetworkFromCloud?: boolean
-}) => {
+const Navbar = () => {
 	const {
+		meta,
 		network,
 		beliefNetwork,
 		loadNetworkFromStorage,
 		loadNetworkFromFile,
 		saveNetworkToFile,
-		saveNetworkToCloud,
+		saveNewNetworkToCloud,
+		saveExistingNetworkToCloud,
 		getNetworkAsLatex,
 		clearNetworkFromStorage,
 		applyAction
 	} = useNetworkStore(
 		pick(
+			'meta',
 			'network',
 			'beliefNetwork',
 			'loadNetworkFromStorage',
 			'loadNetworkFromFile',
-			'saveNetworkToCloud',
+			'saveNewNetworkToCloud',
+			'saveExistingNetworkToCloud',
 			'saveNetworkToFile',
 			'getNetworkAsLatex',
 			'clearNetworkFromStorage',
@@ -91,12 +92,22 @@ const Navbar = ({
 
 	const saveNetworkToCloudAndRedirect = useCallback(async () => {
 		try {
-			const id = await saveNetworkToCloud()
-			router.push(`/networks/${encodeURIComponent(id)}`)
+			if (meta) {
+				await saveExistingNetworkToCloud()
+				toast.success('Saved new network changes')
+			} else {
+				const id = await saveNewNetworkToCloud()
+				const path = `/networks/${encodeURIComponent(id)}`
+
+				router.push(path)
+
+				await navigator.clipboard.writeText(new URL(path, ORIGIN).href)
+				toast.success('Copied new network URL to clipboard')
+			}
 		} catch (unknownError) {
 			alertError(errorFromUnknown(unknownError))
 		}
-	}, [router, saveNetworkToCloud])
+	}, [router, meta, saveNewNetworkToCloud, saveExistingNetworkToCloud])
 
 	const exportNetworkAsFile = useCallback(async () => {
 		try {
@@ -146,9 +157,11 @@ const Navbar = ({
 		applyAction(changeName(newName))
 	}, [applyAction, network.name])
 
+	const hasMeta = !!meta
+
 	useEffect(() => {
-		if (!isNetworkFromCloud) loadNetworkFromStorage()
-	}, [isNetworkFromCloud, loadNetworkFromStorage])
+		if (!hasMeta) loadNetworkFromStorage()
+	}, [hasMeta, loadNetworkFromStorage])
 
 	return (
 		<nav className="absolute top-0 left-0 right-0 flex justify-between items-center gap-4 px-6 py-4 z-10 pointer-events-none [&>*]:pointer-events-auto">
@@ -188,7 +201,11 @@ const Navbar = ({
 								disabled={!user}
 								onClick={saveNetworkToCloudAndRedirect}
 							>
-								Save
+								{meta && user
+									? meta.user === user.id
+										? 'Save Changes'
+										: 'Save Changes as New Network'
+									: 'Save'}
 							</button>
 						</DropdownMenuItem>
 						<DropdownMenuSub>

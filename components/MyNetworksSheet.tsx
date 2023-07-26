@@ -24,7 +24,7 @@ const MyNetworksSheet = () => {
 	if (!user) return null
 
 	return (
-		<div>
+		<div className="flex flex-col items-stretch gap-2">
 			{networks ? (
 				networks.length > 0 ? (
 					networks.map(network => (

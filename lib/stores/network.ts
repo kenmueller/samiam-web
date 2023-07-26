@@ -1,22 +1,27 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-import Network from '@/lib/network'
+import Network, { NetworkMeta } from '@/lib/network'
 import { NetworkAction, initializeBeliefNetwork } from '@/lib/network/actions'
 import saveNetworkToStorage from '@/lib/network/saveToStorage'
 import BeliefNetworkWithNodeMap from '@/lib/beliefNetwork/withNodeMap'
 import networkToLatex from '../network/toLatex'
 import useUserStore from './user'
-import saveNetworkToCloud from '../network/saveToCloud'
+import {
+	saveNewNetworkToCloud,
+	saveExistingNetworkToCloud
+} from '../network/saveToCloud'
 
 export interface NetworkStore {
+	meta: NetworkMeta | null
 	network: Network
 	beliefNetwork: BeliefNetworkWithNodeMap
-	setNetwork: (network: Network) => void
+	setNetwork: (meta: NetworkMeta, network: Network) => void
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
-	saveNetworkToCloud: () => Promise<string>
+	saveNewNetworkToCloud: () => Promise<string>
+	saveExistingNetworkToCloud: () => Promise<void>
 	getNetworkAsLatex: () => string
 	clearNetworkFromStorage: () => void
 	applyAction: <ReturnType>(action: NetworkAction<ReturnType>) => ReturnType
@@ -30,10 +35,12 @@ const EMPTY_NETWORK: Network = {
 
 const useNetworkStore = create(
 	immer<NetworkStore>((set, get) => ({
+		meta: null,
 		network: EMPTY_NETWORK,
 		beliefNetwork: initializeBeliefNetwork(EMPTY_NETWORK),
-		setNetwork: network => {
+		setNetwork: (meta, network) => {
 			set(state => {
+				state.meta = meta
 				state.network = network
 				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})
@@ -43,6 +50,7 @@ const useNetworkStore = create(
 			if (!networkString) return
 
 			set(state => {
+				state.meta = null
 				state.network = JSON.parse(networkString) as Network
 				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})
@@ -86,6 +94,7 @@ const useNetworkStore = create(
 			})
 
 			set(state => {
+				state.meta = null
 				state.network = network
 				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})
@@ -101,17 +110,20 @@ const useNetworkStore = create(
 
 			saveAs(file, 'network.json')
 		},
-		saveNetworkToCloud: async () => {
-			const { user } = useUserStore.getState()
-			if (!user) throw new Error('User is not logged in')
-
+		saveNewNetworkToCloud: async () => {
 			const { network } = get()
+			return await saveNewNetworkToCloud(network)
+		},
+		saveExistingNetworkToCloud: async () => {
+			const { meta, network } = get()
+			if (!meta) throw new Error('Network does not exist')
 
-			return await saveNetworkToCloud(user, network)
+			await saveExistingNetworkToCloud(meta.id, network)
 		},
 		getNetworkAsLatex: () => networkToLatex(get().network),
 		clearNetworkFromStorage: () => {
 			set(state => {
+				state.meta = null
 				state.network = EMPTY_NETWORK
 				state.beliefNetwork = initializeBeliefNetwork(state.network)
 			})

@@ -5,15 +5,20 @@ import { getStorage } from 'firebase-admin/storage'
 import { nanoid } from 'nanoid'
 
 import Network from '.'
-import User from '../user'
 import admin from '../firebase/admin'
+import getCurrentUser from '../user/getCurrent'
 
 const firestore = getFirestore(admin)
 const storage = getStorage(admin).bucket()
 
 const contentType = 'application/json'
 
-const saveNetworkToCloud = async (user: User, network: Network) => {
+export const saveNewNetworkToCloud = async (network: Network) => {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('Not signed in')
+
+	console.log(user)
+
 	const id = nanoid()
 
 	await Promise.all([
@@ -33,4 +38,31 @@ const saveNetworkToCloud = async (user: User, network: Network) => {
 	return id
 }
 
-export default saveNetworkToCloud
+export const saveExistingNetworkToCloud = async (
+	id: string,
+	network: Network
+) => {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('Not signed in')
+
+	const snapshot = await firestore
+		.doc(`networks/${encodeURIComponent(id)}`)
+		.get()
+
+	if (!snapshot.exists) throw new Error('Network does not exist')
+	if (snapshot.get('user') !== user.id)
+		throw new Error('You do not own this network')
+
+	await Promise.all([
+		firestore.doc(`networks/${encodeURIComponent(id)}`).update({
+			name: network.name
+		}),
+		storage
+			.file(`networks/${encodeURIComponent(id)}`)
+			.save(JSON.stringify(network), {
+				gzip: true,
+				contentType,
+				metadata: { contentType }
+			})
+	])
+}

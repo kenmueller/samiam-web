@@ -38,12 +38,12 @@ const NetworkPage = async ({
 	const networkWithMeta = await getNetwork(networkId)
 	if (!networkWithMeta) notFound()
 
-	const { network } = networkWithMeta
+	const { meta, network } = networkWithMeta
 
 	return (
 		<div className="relative h-full">
-			<SetNetworkPageState network={network} />
-			<Navbar isNetworkFromCloud />
+			<SetNetworkPageState meta={meta} network={network} />
+			<Navbar />
 			<Canvas />
 			<Options />
 		</div>
