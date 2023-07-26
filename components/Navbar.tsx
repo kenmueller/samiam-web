@@ -35,6 +35,7 @@ import MapSheet from './MapSheet'
 import renderTextWithMath from '@/lib/renderTextWithMath'
 import useUserStore from '@/lib/stores/user'
 import { changeName } from '@/lib/network/actions'
+import MyNetworksSheet from './MyNetworksSheet'
 
 const Navbar = ({
 	isNetworkFromCloud = false
@@ -75,6 +76,10 @@ const Navbar = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[network, beliefNetwork]
 	)
+
+	const openMyNetworks = useCallback(() => {
+		setSheetContent(<MyNetworksSheet />)
+	}, [setSheetContent])
 
 	const openNetwork = useCallback(async () => {
 		try {
@@ -167,6 +172,11 @@ const Navbar = ({
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
+						<DropdownMenuItem>
+							<button className="w-full text-left" onClick={openMyNetworks}>
+								My Networks
+							</button>
+						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<button className="w-full text-left" onClick={openNetwork}>
 								Open

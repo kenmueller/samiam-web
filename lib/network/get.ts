@@ -17,7 +17,7 @@ const getNetwork = cache(async (id: string) => {
 					.get()
 				if (!snapshot.exists) throw { code: 404 }
 
-				return snapshot.data() as NetworkMeta
+				return { id: snapshot.id, ...snapshot.data() } as NetworkMeta
 			})(),
 			(async () => {
 				const [data] = await storage
