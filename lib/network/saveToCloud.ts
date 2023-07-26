@@ -17,8 +17,6 @@ export const saveNewNetworkToCloud = async (network: Network) => {
 	const user = await getCurrentUser()
 	if (!user) throw new Error('Not signed in')
 
-	console.log(user)
-
 	const id = nanoid()
 
 	await Promise.all([
