@@ -27,7 +27,6 @@ import {
 	faBars,
 	faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons'
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import useSheetStore from '@/lib/stores/sheet'
 import ProbabilityOfEvidenceSheet from './ProbabilityOfEvidenceSheet'
 import MpeSheet from './MpeSheet'
@@ -173,12 +172,11 @@ const Navbar = () => {
 					<DropdownMenuGroup>
 						<DropdownMenuItem>
 							<button
-								className="w-full text-left flex items-center gap-2"
+								className="w-full text-left"
 								onClick={async () => {
 									await (user ? signOut() : signIn())
 								}}
 							>
-								<FontAwesomeIcon icon={faGoogle} />
 								Sign {user ? 'out' : 'in'}
 							</button>
 						</DropdownMenuItem>
