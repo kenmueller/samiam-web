@@ -3,8 +3,6 @@ import { Suspense } from 'react'
 import ArchivedNetworkList from './ArchivedNetworkList'
 import pageMetadata from '@/lib/metadata/page'
 
-export const dynamic = 'force-static'
-
 export const generateMetadata = () =>
 	pageMetadata({
 		title: 'Archived Networks | SamIam',

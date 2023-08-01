@@ -4,8 +4,6 @@ import { getFirestore } from 'firebase-admin/firestore'
 import admin from '../firebase/admin'
 import { NetworkMeta } from '.'
 
-export const revalidate = 3600
-
 const firestore = getFirestore(admin)
 
 const getArchivedNetworks = cache(async () => {
