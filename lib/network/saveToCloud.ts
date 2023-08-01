@@ -22,6 +22,7 @@ export const saveNewNetworkToCloud = async (network: Network) => {
 	await Promise.all([
 		firestore.doc(`networks/${encodeURIComponent(id)}`).create({
 			name: network.name,
+			archived: false,
 			user: user.id
 		}),
 		storage

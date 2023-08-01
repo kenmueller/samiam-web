@@ -33,5 +33,6 @@ export default interface Network {
 export interface NetworkMeta {
 	id: string
 	name: string | null
+	archived?: boolean
 	user: string
 }
