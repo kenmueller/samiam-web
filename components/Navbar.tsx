@@ -190,7 +190,7 @@ const Navbar = () => {
 						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<button className="w-full text-left" onClick={openNetwork}>
-								Open
+								Upload
 							</button>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
