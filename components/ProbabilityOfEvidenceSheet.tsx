@@ -1,7 +1,6 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import { useDeepCompareMemo } from 'use-deep-compare'
+import { useCallback } from 'react'
 import {
 	Select,
 	SelectContent,
@@ -12,56 +11,17 @@ import {
 
 import pick from '@/lib/pick'
 import useNetworkStore from '@/lib/stores/network'
-import getEvidence, { networkToEvidenceNodes } from '@/lib/network/getEvidence'
 import renderTextWithMath from '@/lib/renderTextWithMath'
 import { setEliminationOrderHeuristic } from '@/lib/network/actions'
 import { EliminationOrderHeuristic } from '@/lib/network'
+import useProbabilityOfEvidence from '@/lib/useProbabilityOfEvidence'
 
 const ProbabilityOfEvidenceSheet = () => {
-	const { network, beliefNetwork, applyAction } = useNetworkStore(
-		pick('network', 'beliefNetwork', 'applyAction')
+	const { network, applyAction } = useNetworkStore(
+		pick('network', 'applyAction')
 	)
 
-	const evidenceNodes = useMemo(
-		() => networkToEvidenceNodes(network),
-		[network]
-	)
-
-	const evidence = useDeepCompareMemo(
-		() => getEvidence(evidenceNodes, beliefNetwork),
-		[evidenceNodes]
-	)
-
-	const probabilityOfEvidence = useMemo(
-		() => beliefNetwork.probability(evidence),
-		[beliefNetwork, evidence]
-	)
-
-	const evidenceString = useMemo(() => {
-		const observations = evidence.observations
-			.map(
-				observation =>
-					`${observation.node.name} = ${
-						observation.node.values[observation.value]
-					}`
-			)
-			.join(', ')
-
-		const interventions = evidence.interventions
-			.map(
-				intervention =>
-					`${intervention.node.name} = ${
-						intervention.node.values[intervention.value]
-					}`
-			)
-			.join(', ')
-
-		return (
-			[observations, interventions && `$do($${interventions}$)$`]
-				.filter(Boolean)
-				.join(' | ') || '$\\emptyset$'
-		)
-	}, [evidence])
+	const { evidenceString, probabilityOfEvidence } = useProbabilityOfEvidence()
 
 	const onValueChange = useCallback(
 		(value: string) => {
