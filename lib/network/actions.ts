@@ -90,7 +90,6 @@ export const addNode =
 			['Yes', 'No']
 		)
 
-		beliefNetwork.addNode(beliefNetworkNode)
 		beliefNetwork.nodeMap.set(id, beliefNetworkNode)
 
 		const node: Node = {
