@@ -184,7 +184,11 @@ const Navbar = () => {
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuItem>
-							<button className="w-full text-left" onClick={openMyNetworks}>
+							<button
+								className={cx('w-full text-left', !user && 'opacity-50')}
+								disabled={!user}
+								onClick={openMyNetworks}
+							>
 								My Networks
 							</button>
 						</DropdownMenuItem>
