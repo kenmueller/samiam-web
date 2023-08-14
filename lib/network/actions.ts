@@ -54,14 +54,8 @@ export const initializeBeliefNetwork = (network: Network) => {
 				.addParent(beliefNetwork.nodeMap.get(parentId)!)
 
 	// add CPTs
-	for (const node of Object.values(network.nodes)) {
-		try {
-			beliefNetwork.nodeMap.get(node.id)!.setCpt(cloneDeep(node.cpt))
-		} catch (er) {
-			console.log(node.id)
-			throw er
-		}
-	}
+	for (const node of Object.values(network.nodes))
+		beliefNetwork.nodeMap.get(node.id)!.setCpt(cloneDeep(node.cpt))
 
 	return beliefNetwork
 }
