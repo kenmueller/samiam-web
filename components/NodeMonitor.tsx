@@ -52,7 +52,7 @@ const NodeMonitor = ({ node }: { node: Node }) => {
 		<table className="flex flex-col items-stretch gap-2 border-separate border-spacing-2">
 			<tbody>
 				{node.values.map((value, valueIndex) => {
-					const probability = distribution[valueIndex]
+					const probability = distribution.tensor.cells[valueIndex]
 
 					return (
 						<tr key={valueIndex}>
