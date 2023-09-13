@@ -34,10 +34,9 @@ const NodeMonitor = ({ node }: { node: Node }) => {
 
 	const distribution = useMemo(
 		() =>
-			beliefNetwork.posteriorMarginal(
-				evidence,
+			beliefNetwork.posteriorMarginal(evidence, [
 				beliefNetwork.nodeMap.get(node.id)!
-			),
+			]),
 		[evidence, beliefNetwork, node.id]
 	)
 
