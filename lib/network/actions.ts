@@ -132,6 +132,9 @@ export const copyNode =
 export const setNodeName =
 	(id: number, name: string): NetworkAction =>
 	(network, beliefNetwork) => {
+		if (Object.values(network.nodes).some(node => node.name === name))
+			throw new Error('Node with this name already exists')
+
 		beliefNetwork.nodeMap.get(id)!.rename(name)
 		network.nodes[id.toString()].name = name
 	}
