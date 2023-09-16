@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+import { castDraft } from 'immer'
 
 import Network, { NetworkMeta } from '@/lib/network'
 import { NetworkAction, initializeBeliefNetwork } from '@/lib/network/actions'
@@ -42,7 +43,7 @@ const useNetworkStore = create(
 			set(state => {
 				state.meta = meta
 				state.network = network
-				state.beliefNetwork = initializeBeliefNetwork(state.network)
+				state.beliefNetwork = castDraft(initializeBeliefNetwork(state.network))
 			})
 		},
 		loadNetworkFromStorage: () => {
@@ -52,7 +53,7 @@ const useNetworkStore = create(
 			set(state => {
 				state.meta = null
 				state.network = JSON.parse(networkString) as Network
-				state.beliefNetwork = initializeBeliefNetwork(state.network)
+				state.beliefNetwork = castDraft(initializeBeliefNetwork(state.network))
 			})
 		},
 		loadNetworkFromFile: async () => {
@@ -96,7 +97,7 @@ const useNetworkStore = create(
 			set(state => {
 				state.meta = null
 				state.network = network
-				state.beliefNetwork = initializeBeliefNetwork(state.network)
+				state.beliefNetwork = castDraft(initializeBeliefNetwork(state.network))
 			})
 
 			saveNetworkToStorage(network)
@@ -125,7 +126,7 @@ const useNetworkStore = create(
 			set(state => {
 				state.meta = null
 				state.network = EMPTY_NETWORK
-				state.beliefNetwork = initializeBeliefNetwork(state.network)
+				state.beliefNetwork = castDraft(initializeBeliefNetwork(state.network))
 			})
 
 			saveNetworkToStorage(get().network)
