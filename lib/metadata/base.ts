@@ -9,7 +9,6 @@ const baseMetadata: Metadata = {
 	authors: [{ name: 'Ken Mueller', url: ORIGIN }],
 	publisher: 'Ken Mueller',
 	creator: 'Ken Mueller',
-	themeColor: 'white',
 	manifest: '/manifest.webmanifest',
 	icons: favicon.src
 }

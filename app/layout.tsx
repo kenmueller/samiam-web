@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import cx from 'classnames'
@@ -42,6 +43,7 @@ const sfMono = localFont({
 
 export const dynamic = 'force-dynamic'
 export const metadata = baseMetadata
+export const viewport: Viewport = { themeColor: 'white' }
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
 	const user = await getCurrentUser()
