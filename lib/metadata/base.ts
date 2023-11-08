@@ -10,6 +10,7 @@ const baseMetadata: Metadata = {
 	publisher: 'Ken Mueller',
 	creator: 'Ken Mueller',
 	manifest: '/manifest.webmanifest',
+	themeColor: 'white',
 	icons: favicon.src
 }
 
