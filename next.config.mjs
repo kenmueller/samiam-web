@@ -9,6 +9,9 @@ const config = {
 	swcMinify: true,
 	images: {
 		domains: []
+	},
+	experimental: {
+		serverActions: true
 	}
 }
 
