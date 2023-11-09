@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import cx from 'classnames'
 import Instantiation from 'samiam/lib/instantiation'
 import { useDeepCompareMemo } from 'use-deep-compare'
@@ -16,6 +16,8 @@ import IndeterminateCheckbox, {
 import { AssertionType, Node } from '@/lib/network'
 
 import styles from './MapSheet.module.scss'
+import useSheetStore from '@/lib/stores/sheet'
+import MapResult from 'samiam/lib/map-result'
 
 export interface MapNode {
 	node: Node
@@ -28,6 +30,13 @@ const MapSheet = () => {
 	const { network, beliefNetwork } = useNetworkStore(
 		pick('network', 'beliefNetwork')
 	)
+	const { close } = useSheetStore()
+
+	const nodeCount = Object.keys(network.nodes).length
+
+	useEffect(() => {
+		if (!nodeCount) close()
+	}, [nodeCount, close])
 
 	const [selectedNodes, setSelectedNodes] = useState<number[]>([])
 
@@ -67,9 +76,12 @@ const MapSheet = () => {
 		[beliefNetwork, selectedNodes]
 	)
 
-	const map = useMemo(
-		() => beliefNetwork.map(evidence, nodes),
-		[beliefNetwork, evidence, nodes]
+	const map: MapResult = useMemo(
+		() =>
+			nodeCount > 0
+				? beliefNetwork.map(evidence, nodes)
+				: { condProbability: 1, jointProbability: 1, instantiations: [] },
+		[nodeCount, beliefNetwork, evidence, nodes]
 	)
 
 	const mapNodes: MapNode[] = useMemo(

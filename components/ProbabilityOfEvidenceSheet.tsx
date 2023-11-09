@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import {
 	Select,
 	SelectContent,
@@ -15,11 +15,19 @@ import renderTextWithMath from '@/lib/renderTextWithMath'
 import { setEliminationOrderHeuristic } from '@/lib/network/actions'
 import { EliminationOrderHeuristic } from '@/lib/network'
 import useProbabilityOfEvidence from '@/lib/useProbabilityOfEvidence'
+import useSheetStore from '@/lib/stores/sheet'
 
 const ProbabilityOfEvidenceSheet = () => {
 	const { network, applyAction } = useNetworkStore(
 		pick('network', 'applyAction')
 	)
+	const { close } = useSheetStore()
+
+	const nodeCount = Object.keys(network.nodes).length
+
+	useEffect(() => {
+		if (!nodeCount) close()
+	}, [nodeCount, close])
 
 	const { evidenceString, probabilityOfEvidence } = useProbabilityOfEvidence()
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import cx from 'classnames'
 import { useDeepCompareMemo } from 'use-deep-compare'
 
@@ -13,6 +13,8 @@ import { AssertionType, Node } from '@/lib/network'
 import MpeSheetNode from './MpeSheetNode'
 
 import styles from './MpeSheet.module.scss'
+import useSheetStore from '@/lib/stores/sheet'
+import MapResult from 'samiam/lib/map-result'
 
 export interface MpeNode {
 	node: Node
@@ -25,6 +27,13 @@ const MpeSheet = () => {
 	const { network, beliefNetwork } = useNetworkStore(
 		pick('network', 'beliefNetwork')
 	)
+	const { close } = useSheetStore()
+
+	const nodeCount = Object.keys(network.nodes).length
+
+	useEffect(() => {
+		if (!nodeCount) close()
+	}, [nodeCount, close])
 
 	const evidenceNodes = useMemo(
 		() => networkToEvidenceNodes(network),
@@ -36,9 +45,12 @@ const MpeSheet = () => {
 		[evidenceNodes]
 	)
 
-	const mpe = useMemo(
-		() => beliefNetwork.mpe(evidence),
-		[beliefNetwork, evidence]
+	const mpe: MapResult = useMemo(
+		() =>
+			nodeCount > 0
+				? beliefNetwork.mpe(evidence)
+				: { condProbability: 1, jointProbability: 1, instantiations: [] },
+		[nodeCount, beliefNetwork, evidence]
 	)
 
 	const mpeNodes: MpeNode[] = useMemo(

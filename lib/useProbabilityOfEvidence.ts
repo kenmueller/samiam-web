@@ -10,6 +10,8 @@ const useProbabilityOfEvidence = () => {
 		pick('network', 'beliefNetwork')
 	)
 
+	const nodeCount = Object.keys(network.nodes).length
+
 	const evidenceNodes = useMemo(
 		() => networkToEvidenceNodes(network),
 		[network]
@@ -21,8 +23,8 @@ const useProbabilityOfEvidence = () => {
 	)
 
 	const probabilityOfEvidence = useMemo(
-		() => beliefNetwork.probability(evidence),
-		[beliefNetwork, evidence]
+		() => (nodeCount > 0 ? beliefNetwork.probability(evidence) : 1),
+		[nodeCount, beliefNetwork, evidence]
 	)
 
 	const evidenceString = useMemo(() => {
