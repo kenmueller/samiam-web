@@ -70,10 +70,10 @@ const Navbar = () => {
 
 	const router = useRouter()
 
-	const invalidNodes = useMemo(
-		() => beliefNetwork.invalidNodes,
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	const canQuery = useMemo(
+		() =>
+			Object.keys(network.nodes).length > 0 &&
+			beliefNetwork.invalidNodes.length === 0,
 		[network, beliefNetwork]
 	)
 
@@ -246,13 +246,11 @@ const Navbar = () => {
 							<DropdownMenuSubTrigger
 								className={cx(
 									'flex items-center gap-1',
-									invalidNodes.length > 0 && 'text-raspberry'
+									!canQuery && 'text-raspberry'
 								)}
-								disabled={invalidNodes.length > 0}
+								disabled={!canQuery}
 							>
-								{invalidNodes.length > 0 && (
-									<FontAwesomeIcon icon={faTriangleExclamation} />
-								)}
+								{!canQuery && <FontAwesomeIcon icon={faTriangleExclamation} />}
 								<span>Query</span>
 							</DropdownMenuSubTrigger>
 							<DropdownMenuPortal>
