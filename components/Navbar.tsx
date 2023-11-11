@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import cx from 'classnames'
 import { signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 import {
 	DropdownMenu,
@@ -277,6 +278,14 @@ const Navbar = () => {
 								</DropdownMenuSubContent>
 							</DropdownMenuPortal>
 						</DropdownMenuSub>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
+						<DropdownMenuItem>
+							<Link className="w-full text-left" href="/about">
+								About
+							</Link>
+						</DropdownMenuItem>
 					</DropdownMenuGroup>
 				</DropdownMenuContent>
 			</DropdownMenu>
