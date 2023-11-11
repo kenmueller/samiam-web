@@ -11,7 +11,7 @@ export const generateMetadata = () =>
 
 const ArchivedNetworks = () => (
 	<div className="flex flex-col items-stretch gap-2 px-8 py-6">
-		<h1>About SamIam</h1>
+		<h1>About</h1>
 		<p>
 			Contact{' '}
 			<a
