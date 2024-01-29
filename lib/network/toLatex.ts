@@ -7,7 +7,7 @@ const networkToLatex = ({ nodes }: Network) => {
 	)
 
 	return `\\usepackage{tikz}
-\\usetikzlibrary{arrows}
+\\usetikzlibrary{arrows, shapes}
 
 \\begin{tikzpicture}[->, >=stealth', every node/.style={draw, ellipse, node distance=1.5cm}]
 ${Object.values(nodes)
