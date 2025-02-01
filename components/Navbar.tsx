@@ -284,9 +284,7 @@ const Navbar = () => {
 							</DropdownMenuPortal>
 						</DropdownMenuSub>
 						<DropdownMenuItem>
-							<Link className="w-full text-left" onClick={() => alert('Coming soon')}>
-								Sensitivity Analysis
-							</Link>
+							<button className="w-full text-left" onClick={() => alert('Coming soon')}>Sensitivity Analysis</button>
 						</DropdownMenuItem>
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
