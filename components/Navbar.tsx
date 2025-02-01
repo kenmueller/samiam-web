@@ -194,6 +194,11 @@ const Navbar = () => {
 							</button>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
+							<button className="w-full text-left" onClick={alert('Coming soon')}>
+								Describe Network
+							</button>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
 							<button className="w-full text-left" onClick={openNetwork}>
 								Upload
 							</button>
@@ -278,6 +283,11 @@ const Navbar = () => {
 								</DropdownMenuSubContent>
 							</DropdownMenuPortal>
 						</DropdownMenuSub>
+						<DropdownMenuItem>
+							<Link className="w-full text-left" onClick={alert('Coming soon')}>
+								Sensitivity Analysis
+							</Link>
+						</DropdownMenuItem>
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
