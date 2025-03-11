@@ -37,6 +37,7 @@ import useUserStore from '@/lib/stores/user'
 import { changeName } from '@/lib/network/actions'
 import MyNetworksSheet from './MyNetworksSheet'
 import ORIGIN from '@/lib/origin'
+import AiChat from './AiChat'
 
 const Navbar = () => {
 	const {
@@ -194,7 +195,10 @@ const Navbar = () => {
 							</button>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
-							<button className="w-full text-left" onClick={() => alert('Coming soon')}>
+							<button
+								className="w-full text-left"
+								onClick={() => alert('Coming soon')}
+							>
 								Describe Network
 							</button>
 						</DropdownMenuItem>
@@ -284,7 +288,12 @@ const Navbar = () => {
 							</DropdownMenuPortal>
 						</DropdownMenuSub>
 						<DropdownMenuItem>
-							<button className="w-full text-left" onClick={() => alert('Coming soon')}>Sensitivity Analysis</button>
+							<button
+								className="w-full text-left"
+								onClick={() => alert('Coming soon')}
+							>
+								Sensitivity Analysis
+							</button>
 						</DropdownMenuItem>
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
@@ -300,7 +309,7 @@ const Navbar = () => {
 			<button className="text-xl font-bold text-center" onClick={editName}>
 				{network.name ?? 'Untitled Network'}
 			</button>
-			<span className="w-[26px]" />
+			<AiChat />
 		</nav>
 	)
 }

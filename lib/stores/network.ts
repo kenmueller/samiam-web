@@ -17,7 +17,7 @@ export interface NetworkStore {
 	meta: NetworkMeta | null
 	network: Network
 	beliefNetwork: BeliefNetworkWithNodeMap
-	setNetwork: (meta: NetworkMeta, network: Network) => void
+	setNetwork: (meta: NetworkMeta | null, network: Network) => void
 	loadNetworkFromStorage: () => void
 	loadNetworkFromFile: () => Promise<void>
 	saveNetworkToFile: () => Promise<void>
